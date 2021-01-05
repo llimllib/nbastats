@@ -13,8 +13,9 @@ def tryint(mayben):
             return mayben
 
 
-# TODO: actually get
-# https://www.basketball-reference.com/leagues/NBA_2021_totals.html
+# TODO:
+# * actually get https://www.basketball-reference.com/leagues/NBA_2021_totals.html
+# * slashes to underscores (bpm-dum and ws-dum (what are they?))
 soup = BeautifulSoup(open("totals.html"), "html.parser")
 
 players = {}

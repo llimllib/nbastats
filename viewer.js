@@ -78,14 +78,13 @@ function graph(stats) {
   // https://observablehq.com/@d3/scatterplot-tour
   const points = svg
     .append("g")
-    .attr("fill", "none")
-    .attr("stroke-linecap", "round")
-    .selectAll("path")
+    .attr("fill", "#1f77b4")
+    .selectAll("circle")
     .data(stats, (d) => d.name)
-    .join("path")
-    .attr("d", (d) => `M${x(d.ts_pct)},${y(d.usg_pct)}h0`)
-    .attr("stroke-width", " 6")
-    .attr("stroke", "#1f77b4");
+    .join("circle")
+    .attr("cx", (d) => x(d.ts_pct))
+    .attr("cy", (d) => y(d.usg_pct))
+    .attr("r", "4");
 
   // https://observablehq.com/@d3/line-chart-with-tooltip
   // TODO: tooltip overflows right bounds of the chart
@@ -130,21 +129,17 @@ function graph(stats) {
   // https://observablehq.com/@d3/dot-plot
   return Object.assign(svg.node(), {
     update(stats, xfield, yfield) {
-      jb = stats.filter((p) => p.name == "Jaylen Brown")[0];
       y.domain(d3.reverse(d3.extent(stats, (s) => s[yfield])));
       x.domain(d3.extent(stats, (s) => s[xfield]));
 
       // XXX think I need the axes too... let's see if we can get this to work
       // at all first
       // XXX need to update the tooltip function to work with this
-      console.log("jb efg x pos: ", x(jb.efg_pct));
 
-      // points.transition().attr("transform", (d) => {
-      //   const mv = `translate(${x(d[xfield])},${y(d[yfield])})`;
-      //   console.log(mv, d);
-      //   return mv;
-      // });
-      // points.transition().attr("y", y(d[yfield]))
+      points
+        .transition()
+        .attr("cy", (d) => y(d[yfield]))
+        .attr("cx", (d) => x(d[xfield]));
     },
   });
 }
