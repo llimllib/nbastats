@@ -3,6 +3,40 @@ function values(obj) {
   return Object.keys(obj).map((key) => obj[key]);
 }
 
+function hover(event, tooltip, stats, x, y, xfield, yfield) {
+  const ptr = d3.pointer(event, this);
+
+  // this is an absolutely dumb way (linear search) to find the closest
+  // player, but it is not a huge array so it may not be prohibitive
+  //
+  // it seems plenty fast enough but ATM it's returning ~50% of the time
+  // terrible results
+  //
+  // the problem was that I was doing the calculation in stat coordinate
+  // space instead of screen coordinate space! the y axis has a much larger
+  // domain than the x axis. Fixed once I converted to screen space
+  var closest = Number.MAX_VALUE;
+  var closestPlayer;
+  stats.forEach((player) => {
+    // euclidean distance -> √((x₀-x₁)² + (y₀-y₁)²)
+    var distance = Math.sqrt(
+      Math.pow(x(player[xfield]) - ptr[0], 2) +
+        Math.pow(y(player[yfield]) - ptr[1], 2)
+    );
+    if (distance < closest) {
+      closest = distance;
+      closestPlayer = player;
+    }
+  });
+  tooltip
+    .attr(
+      "transform",
+      `translate(${x(closestPlayer.ts_pct)},${y(closestPlayer.usg_pct)})`
+    )
+    // TODO: add stats to callout
+    .call(callout, `${closestPlayer.name}`);
+}
+
 // stats should be a list of player objects
 // TODO
 // * need to be able to set the variables to be compared
@@ -90,39 +124,9 @@ function graph(stats) {
   // TODO: tooltip overflows right bounds of the chart
   const tooltip = svg.append("g");
 
-  svg.on("touchmove mousemove", function (event) {
-    const ptr = d3.pointer(event, this);
-
-    // this is an absolutely dumb way (linear search) to find the closest
-    // player, but it is not a huge array so it may not be prohibitive
-    //
-    // it seems plenty fast enough but ATM it's returning ~50% of the time
-    // terrible results
-    //
-    // the problem was that I was doing the calculation in stat coordinate
-    // space instead of screen coordinate space! the y axis has a much larger
-    // domain than the x axis. Fixed once I converted to screen space
-    var closest = Number.MAX_VALUE;
-    var closestPlayer;
-    stats.forEach((player) => {
-      // euclidean distance -> √((x0-x1)² + (y0-y1)²)
-      var distance = Math.sqrt(
-        Math.pow(x(player.ts_pct) - ptr[0], 2) +
-          Math.pow(y(player.usg_pct) - ptr[1], 2)
-      );
-      if (distance < closest) {
-        closest = distance;
-        closestPlayer = player;
-      }
-    });
-    tooltip
-      .attr(
-        "transform",
-        `translate(${x(closestPlayer.ts_pct)},${y(closestPlayer.usg_pct)})`
-      )
-      // TODO: add stats to callout
-      .call(callout, `${closestPlayer.name}`);
-  });
+  svg.on("touchmove mousemove", (evt) =>
+    hover(evt, tooltip, stats, x, y, "ts_pct", "usg_pct")
+  );
 
   svg.on("touchend mouseleave", () => tooltip.call(callout, null));
 
@@ -134,7 +138,14 @@ function graph(stats) {
 
       // XXX think I need the axes too... let's see if we can get this to work
       // at all first
-      // XXX need to update the tooltip function to work with this
+
+      // If an event listener was previously registered for the same typename
+      // on a selected element, the old listener is removed before the new
+      // listener is added.
+      // https://github.com/d3/d3-selection/blob/v2.0.0/README.md#selection_on
+      svg.on("touchmove mousemove", (evt) => {
+        return hover(evt, tooltip, stats, x, y, xfield, yfield);
+      });
 
       points
         .transition()
