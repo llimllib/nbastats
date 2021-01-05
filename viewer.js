@@ -43,23 +43,23 @@ function hover(event, tooltip, stats, x, y, xfield, yfield) {
 //   * https://observablehq.com/@d3/scatterplot-with-shapes
 // * nice transitions when you change the statistics
 // * teams instead of players
-function graph(stats) {
+function graph(stats, xfield, yfield) {
   const svg = d3.select("#canvas");
 
   // XXX: these are hard-coded; scale them by browser width
   const width = 1024;
   const height = 768;
 
-  const padding = { left: 40, top: 20, right: 20, bottom: 40 };
+  const padding = { left: 40, top: 20, right: 40, bottom: 40 };
 
   // scales
   const x = d3
     .scaleLinear()
-    .domain(d3.extent(stats, (s) => s.ts_pct))
+    .domain(d3.extent(stats, (s) => s[xfield]))
     .range([padding.left, width - padding.right]);
   const y = d3
     .scaleLinear()
-    .domain(d3.reverse(d3.extent(stats, (s) => s.usg_pct)))
+    .domain(d3.reverse(d3.extent(stats, (s) => s[yfield])))
     .range([padding.top, height - padding.bottom]);
 
   // axes
@@ -77,9 +77,7 @@ function graph(stats) {
     .call(xaxis)
     .call((g) => g.select(".domain").remove())
     .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
-    .call((g) =>
-      g.selectAll(".tick text").attr("y", 0).attr("dy", 0).attr("dx", 15)
-    );
+    .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", 15));
 
   const yaxis = d3.axisRight(y).tickSize(width);
 
@@ -89,7 +87,7 @@ function graph(stats) {
     .call(yaxis)
     .call((g) => g.select(".domain").remove())
     .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
-    .call((g) => g.selectAll(".tick text").attr("x", 4).attr("dy", -4));
+    .call((g) => g.selectAll(".tick text").attr("dy", -4).attr("x", 4));
 
   // axis labels
   //
@@ -117,21 +115,75 @@ function graph(stats) {
     .append("g")
     .attr("fill", "#1f77b4")
     .selectAll("circle")
-    .data(stats, (d) => {
-      console.log(d.name, d.ts_pct, d.usg_pct);
-      return d.name;
-    })
+    .data(stats, (d) => d.name)
     .join("circle")
-    .attr("cx", (d) => x(d.ts_pct))
-    .attr("cy", (d) => y(d.usg_pct))
+    .attr("cx", (d) => x(d[xfield]))
+    .attr("cy", (d) => y(d[yfield]))
     .attr("r", "4");
+
+  // point labels
+  const delaunay = d3.Delaunay.from(
+    stats,
+    (p) => x(p[xfield]),
+    (p) => y(p[yfield])
+  );
+  const voronoi = delaunay.voronoi([-1, -1, width + 1, height + 1]);
+  const orient = {
+    top: (text) => text.attr("text-anchor", "middle").attr("y", -6),
+    right: (text) =>
+      text.attr("text-anchor", "start").attr("dy", "0.35em").attr("x", 6),
+    bottom: (text) =>
+      text.attr("text-anchor", "middle").attr("dy", "0.71em").attr("y", 6),
+    left: (text) =>
+      text.attr("text-anchor", "end").attr("dy", "0.35em").attr("x", -6),
+  };
+
+  const cells = stats.map((d, i) => [d, voronoi.cellPolygon(i)]);
+
+  // for some reason, I'm getting exactly one player with an empty cell...
+  // their stats and x and y appear totally normally, so I have no idea why.
+  // this is a hack FIXME
+  const hack_cells = cells.filter(([_, c]) => c);
+
+  svg
+    .append("g")
+    .style("font", "10px sans-serif")
+    .selectAll("text")
+    .data(hack_cells)
+    .join("text")
+    .each(function ([player, cell]) {
+      console.log(player, cell);
+      const [cx, cy] = d3.polygonCentroid(cell);
+      const angle =
+        (Math.round(
+          (Math.atan2(cy - y(player[yfield]), cx - x(player[xfield])) /
+            Math.PI) *
+            2
+        ) +
+          4) %
+        4;
+      d3.select(this).call(
+        angle === 0
+          ? orient.right
+          : angle === 3
+          ? orient.top
+          : angle === 1
+          ? orient.bottom
+          : orient.left
+      );
+    })
+    .attr("transform", ([d]) => `translate(${x(d[xfield])},${y(d[yfield])})`)
+    .attr("display", ([, cell]) =>
+      -d3.polygonArea(cell) > 3000 ? null : "none"
+    )
+    .text((d, i) => d[0].name);
 
   // https://observablehq.com/@d3/line-chart-with-tooltip
   // TODO: tooltip overflows right bounds of the chart
   const tooltip = svg.append("g");
 
   svg.on("touchmove mousemove", (evt) =>
-    hover(evt, tooltip, stats, x, y, "ts_pct", "usg_pct")
+    hover(evt, tooltip, stats, x, y, xfield, yfield)
   );
 
   svg.on("touchend mouseleave", () => tooltip.call(callout, null));
@@ -155,8 +207,6 @@ function graph(stats) {
 
       const duration = 1000;
 
-      // This is giving lots of <<Error: <text> attribute dy: Expected length,
-      // "NaN".>> no idea what that means
       // TODO: make this axis work for categorical variables
       xaxisg
         .transition()
@@ -166,6 +216,9 @@ function graph(stats) {
         .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
         .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", 15));
 
+      // This is giving lots of <<Error: <text> attribute dy: Expected length,
+      // "NaN".>> no idea what that means. For some reason only the bottom four
+      // ticks have a NaN for dy?
       yaxisg
         .transition()
         .duration(duration)
@@ -461,8 +514,9 @@ window.addEventListener("DOMContentLoaded", (evt) => {
   // TODO idea: automatically label points that have enough space to be labelled
   //       https://observablehq.com/@d3/voronoi-labels
   const gstats = stats.filter((x) => x.fga > 30);
+  xxx = gstats;
 
-  const svg = graph(gstats);
+  const svg = graph(gstats, "ts_pct", "usg_pct");
   // TODO: get the values from the select boxes; this makes it easier to test though
   document
     .querySelector("#draw")
