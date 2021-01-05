@@ -1,4 +1,5 @@
 import json
+import requests
 
 from bs4 import BeautifulSoup
 
@@ -16,13 +17,15 @@ def tryint(mayben):
 # TODO:
 # * actually get https://www.basketball-reference.com/leagues/NBA_2021_totals.html
 # * slashes to underscores (bpm-dum and ws-dum (what are they?))
-soup = BeautifulSoup(open("totals.html"), "html.parser")
+# * save all downloaded data
+res = requests.get("https://www.basketball-reference.com/leagues/NBA_2021_totals.html")
+soup = BeautifulSoup(res.text, "html.parser")
 
 players = {}
 
 for player in soup.find_all("tr", {"class": "full_table"}):
     stats = {
-        t["data-stat"]: tryint("".join(str(c) for c in t.children))
+        t["data-stat"].replace("-", "_"): tryint("".join(str(c) for c in t.children))
         for t in player.find_all("td")
     }
     stats["name"] = BeautifulSoup(stats["player"], "html.parser").text
@@ -30,13 +33,19 @@ for player in soup.find_all("tr", {"class": "full_table"}):
     players[stats["name"]] = stats
 
 # https://www.basketball-reference.com/leagues/NBA_2021_advanced.html
-soup = BeautifulSoup(open("advanced.html"), "html.parser")
+res = requests.get(
+    "https://www.basketball-reference.com/leagues/NBA_2021_advanced.html"
+)
+soup = BeautifulSoup(res.text, "html.parser")
 for player in soup.find_all("tr", {"class": "full_table"}):
     advstats = {
-        t["data-stat"]: tryint("".join(str(c) for c in t.children))
+        t["data-stat"].replace("-", "_"): tryint("".join(str(c) for c in t.children))
         for t in player.find_all("td")
     }
     name = BeautifulSoup(advstats["player"], "html.parser").text
     players[name] = {**players[name], **advstats}
 
-json.dump(players, open("stats.json", "w"))
+s = json.dumps(list(players.values()))
+fout = open("stats.js", "w")
+fout.write(f"const stats={s}")
+fout.close()

@@ -1,8 +1,3 @@
-// return the values of an object
-function values(obj) {
-  return Object.keys(obj).map((key) => obj[key]);
-}
-
 function hover(event, tooltip, stats, x, y, xfield, yfield) {
   const ptr = d3.pointer(event, this);
 
@@ -122,7 +117,10 @@ function graph(stats) {
     .append("g")
     .attr("fill", "#1f77b4")
     .selectAll("circle")
-    .data(stats, (d) => d.name)
+    .data(stats, (d) => {
+      console.log(d.name, d.ts_pct, d.usg_pct);
+      return d.name;
+    })
     .join("circle")
     .attr("cx", (d) => x(d.ts_pct))
     .attr("cy", (d) => y(d.usg_pct))
@@ -462,7 +460,7 @@ window.addEventListener("DOMContentLoaded", (evt) => {
   // TODO configurable. Better to just take the top _n_ percentile or something?
   // TODO idea: automatically label points that have enough space to be labelled
   //       https://observablehq.com/@d3/voronoi-labels
-  const gstats = values(stats).filter((x) => x.fga > 30);
+  const gstats = stats.filter((x) => x.fga > 30);
 
   const svg = graph(gstats);
   // TODO: get the values from the select boxes; this makes it easier to test though
