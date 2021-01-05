@@ -31,7 +31,7 @@ function hover(event, tooltip, stats, x, y, xfield, yfield) {
   tooltip
     .attr(
       "transform",
-      `translate(${x(closestPlayer.ts_pct)},${y(closestPlayer.usg_pct)})`
+      `translate(${x(closestPlayer[xfield])},${y(closestPlayer[yfield])})`
     )
     // TODO: add stats to callout
     .call(callout, `${closestPlayer.name}`);
@@ -47,6 +47,7 @@ function hover(event, tooltip, stats, x, y, xfield, yfield) {
 // * color points by teams / positions / other
 //   * https://observablehq.com/@d3/scatterplot-with-shapes
 // * nice transitions when you change the statistics
+// * teams instead of players
 function graph(stats) {
   const svg = d3.select("#canvas");
 
@@ -70,43 +71,50 @@ function graph(stats) {
   // https://observablehq.com/@d3/styled-axes
   // XXX: there will have to be some table from statistic -> tick formatting,
   // not sure we can (should?) work that out automatically
-  svg
+  const xaxis = d3
+    .axisTop(x)
+    .tickSize(height)
+    .tickFormat((d) => d.toFixed(2).slice(1));
+
+  const xaxisg = svg
     .append("g")
     .attr("transform", `translate(0, ${height - 20})`)
-    .call(
-      d3
-        .axisTop(x)
-        .tickSize(height)
-        .tickFormat((d) => d.toFixed(2).slice(1))
-    )
+    .call(xaxis)
     .call((g) => g.select(".domain").remove())
     .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
-    .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", 15));
+    .call((g) =>
+      g.selectAll(".tick text").attr("y", 0).attr("dy", 0).attr("dx", 15)
+    );
 
-  svg
+  const yaxis = d3.axisRight(y).tickSize(width);
+
+  const yaxisg = svg
     .append("g")
     .attr("transform", `translate(30, 0)`)
-    .call(d3.axisRight(y).tickSize(width))
+    .call(yaxis)
     .call((g) => g.select(".domain").remove())
     .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
     .call((g) => g.selectAll(".tick text").attr("x", 4).attr("dy", -4));
 
   // axis labels
-  svg
+  //
+  // I like the axis labels on health & wealth:
+  // https://observablehq.com/@mbostock/the-wealth-health-of-nations
+  const xlabel = svg
     .append("text")
     .attr("class", "x label")
-    .attr("text-anchor", "end")
+    .attr("text-anchor", "middle")
     .attr("x", width / 2)
-    .attr("y", height)
-    .text("TS%");
-  svg
+    .attr("y", height - 5)
+    .text("True Shooting %");
+  const ylabel = svg
     .append("text")
     .attr("class", "y label")
-    .attr("text-anchor", "start")
+    .attr("text-anchor", "middle")
     .attr("x", 10)
     .attr("y", height / 2)
     .attr("transform", `rotate(90,10,${height / 2})`) // https://stackoverflow.com/a/11257082
-    .text("Usage");
+    .text("Usage %");
 
   // points
   // https://observablehq.com/@d3/scatterplot-tour
@@ -147,8 +155,34 @@ function graph(stats) {
         return hover(evt, tooltip, stats, x, y, xfield, yfield);
       });
 
+      const duration = 1000;
+
+      // This is giving lots of <<Error: <text> attribute dy: Expected length,
+      // "NaN".>> no idea what that means
+      // TODO: make this axis work for categorical variables
+      xaxisg
+        .transition()
+        .duration(duration)
+        .call(xaxis)
+        .call((g) => g.select(".domain").remove())
+        .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
+        .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", 15));
+
+      yaxisg
+        .transition()
+        .duration(duration)
+        .call(yaxis)
+        .call((g) => g.select(".domain").remove())
+        .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
+        .call((g) => g.selectAll(".tick text").attr("x", 4).attr("dy", -4));
+
+      xlabel.text(statMeta[xfield].name);
+      ylabel.text(statMeta[yfield].name);
+
+      // TODO: does this handle entries and exits?
       points
         .transition()
+        .duration(duration)
         .attr("cy", (d) => y(d[yfield]))
         .attr("cx", (d) => x(d[xfield]));
     },
@@ -252,7 +286,7 @@ statMeta = {
     type: "float",
   },
   efg_pct: {
-    name: "",
+    name: "Effective Field Goal %",
     type: "ordinal",
   },
   ft: {
@@ -427,11 +461,18 @@ window.addEventListener("DOMContentLoaded", (evt) => {
 
   // TODO configurable. Better to just take the top _n_ percentile or something?
   // TODO idea: automatically label points that have enough space to be labelled
+  //       https://observablehq.com/@d3/voronoi-labels
   const gstats = values(stats).filter((x) => x.fga > 30);
 
   const svg = graph(gstats);
   // TODO: get the values from the select boxes; this makes it easier to test though
   document
     .querySelector("#draw")
-    .addEventListener("click", () => svg.update(gstats, "efg_pct", "usg_pct"));
+    .addEventListener("click", () =>
+      svg.update(
+        gstats,
+        d3.select("#statx").node().value,
+        d3.select("#staty").node().value
+      )
+    );
 });
