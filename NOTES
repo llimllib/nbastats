@@ -1,0 +1,9 @@
+https://observablehq.com/@d3/chart-template?collection=@d3/d3-axis
+
+This notebook demonstrates conventions for basic xy charts in D3. Fork it as a starting point to create your own chart.
+
+Bar chart race: https://observablehq.com/@d3/bar-chart-race
+dot plot: https://observablehq.com/@d3/dot-plot
+and the wealth and health of nations: https://observablehq.com/@mbostock/the-wealth-health-of-nations
+
+give ideas on how to handle updated data

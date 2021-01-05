@@ -1,0 +1,18 @@
+<html><head>
+    <title>NBA Statistics Viewer</title>
+    <!-- vendor this? -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="stats.js"></script>
+    <script src="viewer.js"></script>
+  </head>
+  <body>
+    <div>
+      <svg id="canvas" width="1024" height="768"></svg>
+    </div>
+    <div style="margin-top: 50px">
+      <span>X axis: <select id="statx"></select></span>
+      <span style="margin-left: 40px">Y axis: <select id="staty"></select></span>
+      <button id="draw">draw</button>
+    </div>
+  </body>
+</html>
