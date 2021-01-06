@@ -1,0 +1,178 @@
+{
+  "Boston Celtics": [
+    "#008348",
+    "#BB9753",
+    "#000000",
+    "#A73832",
+    "#FFFFFF"
+  ],
+  "Brooklyn Nets": [
+    "#000000",
+    "#FFFFFF",
+    "#707271"
+  ],
+  "New York Knicks": [
+    "#006BB6",
+    "#F58426",
+    "#BEC0C2",
+    "#000000",
+    "#FFFFFF"
+  ],
+  "Philadelphia 76ers": [
+    "#006BB6",
+    "#ED174C",
+    "#C4CED4",
+    "#000000",
+    "#002B5C",
+    "#FFFFFF"
+  ],
+  "Toronto Raptors": [
+    "#CE1141",
+    "#000000",
+    "#393A96",
+    "#B4975A",
+    "#FFFFFF"
+  ],
+  "Chicago Bulls": [
+    "#CE1141",
+    "#000000"
+  ],
+  "Cleveland Cavaliers": [
+    "#6F263D",
+    "#FFB81C",
+    "#041E42",
+    "#000000"
+  ],
+  "Detroit Pistons": [
+    "#1D428A",
+    "#C8102E",
+    "#BEC0C2",
+    "#000000",
+    "#FFFFFF"
+  ],
+  "Indiana Pacers": [
+    "#002D62",
+    "#FDBB30",
+    "#BEC0C2"
+  ],
+  "Milwaukee Bucks": [
+    "#00471B",
+    "#EEE1C6",
+    "#0077C0",
+    "#000000",
+    "#FFFFFF"
+  ],
+  "Atlanta Hawks": [
+    "#C8102E",
+    "#FDB927",
+    "#000000",
+    "#9EA2A2"
+  ],
+  "Charlotte Hornets": [
+    "#00788C",
+    "#1D1160",
+    "#A1A1A4",
+    "#FFFFFF"
+  ],
+  "Miami Heat": [
+    "#000000",
+    "#98002E",
+    "#F9A01B"
+  ],
+  "Orlando Magic": [
+    "#0077C0",
+    "#000000",
+    "#C4CED4"
+  ],
+  "Washington Wizards": [
+    "#002B5C",
+    "#E31837",
+    "#C4CED4",
+    "#FFFFFF"
+  ],
+  "Denver Nuggets": [
+    "#0E2240",
+    "#FEC524",
+    "#8B2131",
+    "#244289"
+  ],
+  "Minnesota Timberwolves": [
+    "#0C2340",
+    "#78BE20",
+    "#236192",
+    "#9EA2A2",
+    "#FFFFFF"
+  ],
+  "Oklahoma City Thunder": [
+    "#007AC1",
+    "#EF3B24",
+    "#FDBB30",
+    "#002D62"
+  ],
+  "Portland Trail Blazers": [
+    "#E03A3E",
+    "#000000",
+    "#FFFFFF"
+  ],
+  "Utah Jazz": [
+    "#002B5C",
+    "#F9A01B",
+    "#00471B"
+  ],
+  "Golden State Warriors": [
+    "#1D428A",
+    "#FDB927"
+  ],
+  "Los Angeles Clippers": [
+    "#C8102E",
+    "#1D428A",
+    "#000000",
+    "#BEC0C2",
+    "#FFFFFF"
+  ],
+  "Los Angeles Lakers": [
+    "#552583",
+    "#FDB927",
+    "#000000"
+  ],
+  "Phoenix Suns": [
+    "#1D1160",
+    "#E56020",
+    "#000000",
+    "#63727A",
+    "#F9A01B"
+  ],
+  "Sacramento Kings": [
+    "#5A2B81",
+    "#63727A",
+    "#000000"
+  ],
+  "Dallas Mavericks": [
+    "#0064B1",
+    "#00285E",
+    "#BBC4CA",
+    "#000000"
+  ],
+  "Houston Rockets": [
+    "#CE1141",
+    "#000000",
+    "#9EA2A2",
+    "#373A36",
+    "#FFFFFF"
+  ],
+  "Memphis Grizzlies": [
+    "#5D76A9",
+    "#12173F",
+    "#707271",
+    "#F5B112"
+  ],
+  "New Orleans Pelicans": [
+    "#0A2240",
+    "#8C734B",
+    "#CE0E2D"
+  ],
+  "San Antonio Spurs": [
+    "#000000",
+    "#C4CED4"
+  ]
+}
