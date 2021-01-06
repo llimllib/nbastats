@@ -102,6 +102,7 @@ function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
 //   * steps to repro: do a transition, then hover over a player with a bottom
 //     label
 // * permalinks
+// * use the voronoi we already have to handle the tooltip selection
 // * highlight a player or particular set of players
 // * small multiples by team?
 // * customizable filter
