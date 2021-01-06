@@ -103,6 +103,7 @@ function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
 //     label
 // * permalinks
 // * use the voronoi we already have to handle the tooltip selection
+// * nice transitions between years
 // * highlight a player or particular set of players
 // * small multiples by team?
 // * customizable filter
