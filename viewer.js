@@ -551,7 +551,8 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
 
   prepare();
 
-  // TODO configurable. Better to just take the top _n_ percentile or something?
+  // TODO configurable.
+  //
   // right now, grab the top 2/3 of the league by fga
   const bar = d3.quantile(stats, 0.66, (p) => p.fga);
   const gstats = stats.filter((x) => x.fga > bar);
