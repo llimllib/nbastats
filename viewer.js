@@ -113,6 +113,8 @@ function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
 // * labels sometimes overlap each other, or dots
 //   * collision detect after labelling?
 // * labels overlap axis label
+// * there are a lot of stats - how to give the user better control of them?
+//   * sorting, autocomplete? gloassary?
 function graph(stats, xfield, yfield) {
   const svg = d3.select("#canvas");
 
@@ -120,7 +122,7 @@ function graph(stats, xfield, yfield) {
   const width = 1024;
   const height = 768;
 
-  const padding = { left: 40, top: 20, right: 40, bottom: 40 };
+  const padding = { left: 60, top: 40, right: 40, bottom: 40 };
 
   // scales
   const x = d3
@@ -525,14 +527,29 @@ function prepare() {
   d3.select("#staty_usg_pct").attr("selected", true);
 }
 
-window.addEventListener("DOMContentLoaded", (evt) => {
+async function changeYear(evt) {
+  console.log("change year", evt.target.value);
+  const res = await fetch(`./data/${evt.target.value}/stats.json`);
+  const stats = await res.json();
+
+  // TODO: configurable
+  const gstats = stats.filter((x) => x.fga > 30);
+  const xfield = d3.select("#statx").node().value;
+  const yfield = d3.select("#staty").node().value;
+  d3.selectAll("#canvas").html("");
+  const svg = graph(gstats, xfield, yfield);
+}
+
+window.addEventListener("DOMContentLoaded", async (evt) => {
+  const res = await fetch("./data/2021/stats.json");
+  const stats = await res.json();
+
   prepare();
 
   // TODO configurable. Better to just take the top _n_ percentile or something?
   // TODO idea: automatically label points that have enough space to be labelled
   //       https://observablehq.com/@d3/voronoi-labels
   const gstats = stats.filter((x) => x.fga > 30);
-  xxx = gstats;
 
   const svg = graph(gstats, "ts_pct", "usg_pct");
   // TODO: get the values from the select boxes; this makes it easier to test though
@@ -545,4 +562,5 @@ window.addEventListener("DOMContentLoaded", (evt) => {
         d3.select("#staty").node().value
       )
     );
+  document.querySelector("#yearChooser").addEventListener("change", changeYear);
 });

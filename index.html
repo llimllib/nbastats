@@ -2,7 +2,6 @@
     <title>NBA Statistics Viewer</title>
     <!-- vendor this? -->
     <script src="https://d3js.org/d3.v6.min.js"></script>
-    <script src="stats.js"></script>
     <script src="viewer.js"></script>
   </head>
   <body>
@@ -10,7 +9,21 @@
       <svg id="canvas" width="1024" height="768"></svg>
     </div>
     <div style="margin-top: 50px">
-      <span>X axis: <select id="statx"></select></span>
+      <span>Year: <select id="yearChooser">
+        <option value="2021">2021</option>
+        <option value="2020">2020</option>
+        <option value="2019">2019</option>
+        <option value="2018">2018</option>
+        <option value="2017">2017</option>
+        <option value="2016">2016</option>
+        <option value="2015">2015</option>
+        <option value="2014">2014</option>
+        <option value="2013">2013</option>
+        <option value="2012">2012</option>
+        <option value="2011">2011</option>
+        <option value="2010">2010</option>
+        </select></span>
+      <span style="margin-left: 40px">X axis: <select id="statx"></select></span>
       <span style="margin-left: 40px">Y axis: <select id="staty"></select></span>
       <button id="draw">draw</button>
     </div>
