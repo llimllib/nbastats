@@ -97,7 +97,8 @@ function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
 
 // stats should be a list of player objects
 // TODO
-// * don't show domain lines on transitions
+// * organize things better
+//   * updateAxis, updatePoints, etc?
 // * tooltip should display above the player label after transitions
 //   * steps to repro: do a transition, then hover over a player with a bottom
 //     label
@@ -154,6 +155,7 @@ function graph(stats, xfield, yfield, useTeamColors) {
   const xaxisg = svg
     .append("g")
     .attr("transform", `translate(0, ${height - 20})`)
+    .attr("class", "xaxis")
     .call(xaxis)
     .call((g) => g.select(".domain").remove())
     .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
@@ -164,6 +166,7 @@ function graph(stats, xfield, yfield, useTeamColors) {
   const yaxisg = svg
     .append("g")
     .attr("transform", `translate(30, 0)`)
+    .attr("class", "yaxis")
     .call(yaxis)
     .call((g) => g.select(".domain").remove())
     .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
@@ -246,6 +249,9 @@ function graph(stats, xfield, yfield, useTeamColors) {
         .transition()
         .duration(duration)
         .call(xaxis)
+        .on("start", function () {
+          xaxisg.select(".domain").remove(); // https://stackoverflow.com/a/50254240/42559
+        })
         .call((g) => g.select(".domain").remove())
         .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
         .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", 15));
@@ -257,6 +263,9 @@ function graph(stats, xfield, yfield, useTeamColors) {
         .transition()
         .duration(duration)
         .call(yaxis)
+        .on("start", function () {
+          yaxisg.select(".domain").remove(); // https://stackoverflow.com/a/50254240/42559
+        })
         .call((g) => g.select(".domain").remove())
         .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
         .call((g) => g.selectAll(".tick text").attr("x", 4).attr("dy", -4));
