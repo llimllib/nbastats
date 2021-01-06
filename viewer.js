@@ -533,9 +533,12 @@ async function changeYear(evt) {
   const stats = await res.json();
 
   // TODO: configurable
-  const gstats = stats.filter((x) => x.fga > 30);
+  const bar = d3.quantile(stats, 0.66, (p) => p.fga);
+  const gstats = stats.filter((x) => x.fga > bar);
+
   const xfield = d3.select("#statx").node().value;
   const yfield = d3.select("#staty").node().value;
+
   d3.selectAll("#canvas").html("");
   const svg = graph(gstats, xfield, yfield);
 }
@@ -547,9 +550,9 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
   prepare();
 
   // TODO configurable. Better to just take the top _n_ percentile or something?
-  // TODO idea: automatically label points that have enough space to be labelled
-  //       https://observablehq.com/@d3/voronoi-labels
-  const gstats = stats.filter((x) => x.fga > 30);
+  // right now, grab the top 2/3 of the league by fga
+  const bar = d3.quantile(stats, 0.66, (p) => p.fga);
+  const gstats = stats.filter((x) => x.fga > bar);
 
   const svg = graph(gstats, "ts_pct", "usg_pct");
   // TODO: get the values from the select boxes; this makes it easier to test though
