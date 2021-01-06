@@ -1,3 +1,5 @@
+$ = (s) => document.querySelector(s);
+
 function hover(event, tooltip, stats, x, y, xfield, yfield) {
   const ptr = d3.pointer(event, this);
 
@@ -43,13 +45,13 @@ function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
   );
   const voronoi = delaunay.voronoi([-1, -1, width + 1, height + 1]);
   const orient = {
-    top: (text) => text.attr("text-anchor", "middle").attr("y", -6),
+    top: (text) => text.attr("text-anchor", "middle").attr("y", -8),
     right: (text) =>
-      text.attr("text-anchor", "start").attr("dy", "0.35em").attr("x", 6),
+      text.attr("text-anchor", "start").attr("dy", "0.35em").attr("x", 8),
     bottom: (text) =>
-      text.attr("text-anchor", "middle").attr("dy", "0.71em").attr("y", 6),
+      text.attr("text-anchor", "middle").attr("dy", "0.71em").attr("y", 8),
     left: (text) =>
-      text.attr("text-anchor", "end").attr("dy", "0.35em").attr("x", -6),
+      text.attr("text-anchor", "end").attr("dy", "0.35em").attr("x", -8),
   };
 
   const cells = stats.map((d, i) => [d, voronoi.cellPolygon(i)]);
@@ -95,15 +97,15 @@ function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
 
 // stats should be a list of player objects
 // TODO
+// * don't show domain lines on transitions
+// * tooltip should display above the player label after transitions
+//   * steps to repro: do a transition, then hover over a player with a bottom
+//     label
+// * permalinks
 // * highlight a player or particular set of players
 // * small multiples by team?
 // * customizable filter
 //   * user filter querying?
-// * color points by teams / positions / other
-//   * https://observablehq.com/@d3/scatterplot-with-shapes
-//   * little logos? would they be readable?
-//   * what about two-colored dots? i.e. Celts would be green with gold
-//     inside, Lakers purple and yellow, etc
 // * nice transitions when you change the statistics
 // * teams instead of players
 // * axis formatting is broken - x axis always formats like a float.
@@ -117,12 +119,14 @@ function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
 //   * sorting, autocomplete? gloassary?
 // * view a set of players through years
 // * team view
-function graph(stats, xfield, yfield) {
+function graph(stats, xfield, yfield, useTeamColors) {
   const svg = d3.select("#canvas");
 
   // XXX: these are hard-coded; scale them by browser width
   const width = 1024;
   const height = 768;
+
+  const dotRadius = 6;
 
   const padding = { left: 60, top: 40, right: 40, bottom: 40 };
 
@@ -187,19 +191,27 @@ function graph(stats, xfield, yfield) {
   // https://observablehq.com/@d3/scatterplot-tour
   const points = svg
     .append("g")
-    .attr("fill", "#1f77b4")
     .selectAll("circle")
     .data(stats, (d) => d.name)
-    .join("circle")
-    .attr("cx", (d) => x(d[xfield]))
-    .attr("cy", (d) => y(d[yfield]))
-    .attr("r", "4");
+    .join("g")
+    .attr("transform", (d) => `translate(${x(d[xfield])},${y(d[yfield])})`);
+  if (useTeamColors) {
+    points
+      .append("circle")
+      .attr("fill", (d) => teams[d.team].colors[0])
+      .attr("r", dotRadius);
+    points
+      .append("circle")
+      .attr("fill", (d) => teams[d.team].colors[1])
+      .attr("r", dotRadius / 2);
+  } else {
+    points.append("circle").attr("fill", "#1f77b4").attr("r", dotRadius);
+  }
 
   // point labels
   pointLabels(stats, svg, height, width, x, y, xfield, yfield);
 
   // https://observablehq.com/@d3/line-chart-with-tooltip
-  // TODO: tooltip overflows right bounds of the chart
   const tooltip = svg.append("g");
 
   svg.on("touchmove mousemove", (evt) =>
@@ -254,8 +266,7 @@ function graph(stats, xfield, yfield) {
       points
         .transition()
         .duration(duration)
-        .attr("cy", (d) => y(d[yfield]))
-        .attr("cx", (d) => x(d[xfield]));
+        .attr("transform", (d) => `translate(${x(d[xfield])},${y(d[yfield])})`);
 
       pointLabels(stats, svg, height, width, x, y, xfield, yfield);
     },
@@ -508,6 +519,120 @@ statMeta = {
   },
 };
 
+// rg -o --replace '$1' --no-filename 'teams/(\w{3})' data/**/stats.json | sort | uniq
+// to get every team abbreivation in the data set. Remember teams change! NJN
+// -> BKN for ex
+//
+// I gave the New Jersey Nets the same colors as the Brooklyn nets, but I
+// should probably go back and get their real colors
+const teams = {
+  ATL: {
+    name: "Atlanta Hawks",
+    colors: ["#C8102E", "#FDB927", "#000000", "#9EA2A2"],
+  },
+  BOS: {
+    name: "Boston Celtics",
+    colors: ["#008348", "#BB9753", "#000000", "#A73832", "#FFFFFF"],
+  },
+  BRK: { name: "Brooklyn Nets", colors: ["#000000", "#FFFFFF", "#707271"] },
+  CHA: { name: "Charlotte Bobcats", colors: ["#f26532", "#2f598c", "#959da0"] },
+  CHI: { name: "Chicago Bulls", colors: ["#CE1141", "#000000"] },
+  CHO: {
+    name: "Charlotte Hornets",
+    colors: ["#00788C", "#1D1160", "#A1A1A4", "#FFFFFF"],
+  },
+  CLE: {
+    name: "Cleveland Cavaliers",
+    colors: ["#6F263D", "#FFB81C", "#041E42", "#000000"],
+  },
+  DAL: {
+    name: "Dallas Mavericks",
+    colors: ["#0064B1", "#00285E", "#BBC4CA", "#000000"],
+  },
+  DEN: {
+    name: "Denver Nuggets",
+    colors: ["#0E2240", "#FEC524", "#8B2131", "#244289"],
+  },
+  DET: {
+    name: "Detroit Pistons",
+    colors: ["#1D428A", "#C8102E", "#BEC0C2", "#000000", "#FFFFFF"],
+  },
+  GSW: { name: "Golden State Warriors", colors: ["#1D428A", "#FDB927"] },
+  HOU: {
+    name: "Houston Rockets",
+    colors: ["#CE1141", "#000000", "#9EA2A2", "#373A36", "#FFFFFF"],
+  },
+  IND: { name: "Indiana Pacers", colors: ["#002D62", "#FDBB30", "#BEC0C2"] },
+  LAC: {
+    name: "Los Angeles Clippers",
+    colors: ["#C8102E", "#1D428A", "#000000", "#BEC0C2", "#FFFFFF"],
+  },
+  LAL: {
+    name: "Los Angeles Lakers",
+    colors: ["#552583", "#FDB927", "#000000"],
+  },
+  MEM: {
+    name: "Memphis Grizzlies",
+    colors: ["#5D76A9", "#12173F", "#707271", "#F5B112"],
+  },
+  MIA: { name: "Miami Heat", colors: ["#000000", "#98002E", "#F9A01B"] },
+  MIL: {
+    name: "Milwaukee Bucks",
+    colors: ["#00471B", "#EEE1C6", "#0077C0", "#000000", "#FFFFFF"],
+  },
+  MIN: {
+    name: "Minnesota Timberwolves",
+    colors: ["#0C2340", "#78BE20", "#236192", "#9EA2A2", "#FFFFFF"],
+  },
+  NJN: { name: "New Jersey Nets", colors: ["#000000", "#FFFFFF", "#707271"] },
+  NOH: {
+    name: "New Orleans Hornets",
+    colors: ["#00788C", "#1D1160", "#A1A1A4", "#FFFFFF"],
+  },
+  NOP: {
+    name: "New Orleans Pelicans",
+    colors: ["#0A2240", "#8C734B", "#CE0E2D"],
+  },
+  NYK: {
+    name: "New York Knicks",
+    colors: ["#006BB6", "#F58426", "#BEC0C2", "#000000", "#FFFFFF"],
+  },
+  OKC: {
+    name: "Oklahoma City Thunder",
+    colors: ["#007AC1", "#EF3B24", "#FDBB30", "#002D62"],
+  },
+  ORL: { name: "Orlando Magic", colors: ["#0077C0", "#000000", "#C4CED4"] },
+  PHI: {
+    name: "Philadelphia 76ers",
+    colors: ["#006BB6", "#ED174C", "#C4CED4", "#000000", "#002B5C", "#FFFFFF"],
+  },
+  PHO: {
+    name: "Phoenix Suns",
+    colors: ["#1D1160", "#E56020", "#000000", "#63727A", "#F9A01B"],
+  },
+  POR: {
+    name: "Portland Trailblazers",
+    colors: ["#E03A3E", "#000000", "#FFFFFF"],
+  },
+  SAC: { name: "Sacramento Kings", colors: ["#5A2B81", "#63727A", "#000000"] },
+  SAS: { name: "San Antonio Spurs", colors: ["#000000", "#C4CED4"] },
+  TOR: {
+    name: "Toronto Raptors",
+    colors: ["#CE1141", "#000000", "#393A96", "#B4975A", "#FFFFFF"],
+  },
+  TOT: {
+    name: "Season Total",
+    comment:
+      "bbref uses TOT to indicate a player's season total if they were on more than one team",
+    colors: ["#888888", "#000000"],
+  },
+  UTA: { name: "Utah Jazz", colors: ["#002B5C", "#F9A01B", "#00471B"] },
+  WAS: {
+    name: "Washington Wizards",
+    colors: ["#002B5C", "#E31837", "#C4CED4", "#FFFFFF"],
+  },
+};
+
 function prepare() {
   Object.keys(statMeta).forEach((key) => {
     meta = statMeta[key];
@@ -530,9 +655,8 @@ function prepare() {
 }
 
 async function changeYear(evt) {
-  console.log("change year", evt.target.value);
   const res = await fetch(`./data/${evt.target.value}/stats.json`);
-  const stats = await res.json();
+  window.stats = await res.json();
 
   // TODO: configurable
   const bar = d3.quantile(stats, 0.66, (p) => p.fga);
@@ -542,12 +666,24 @@ async function changeYear(evt) {
   const yfield = d3.select("#staty").node().value;
 
   d3.selectAll("#canvas").html("");
-  const svg = graph(gstats, xfield, yfield);
+  const svg = graph(gstats, xfield, yfield, $("#teamcolors").checked);
+}
+
+function changeUseTeamColors(evt) {
+  // TODO: configurable
+  const bar = d3.quantile(stats, 0.66, (p) => p.fga);
+  const gstats = stats.filter((x) => x.fga > bar);
+
+  const xfield = d3.select("#statx").node().value;
+  const yfield = d3.select("#staty").node().value;
+
+  d3.selectAll("#canvas").html("");
+  const svg = graph(gstats, xfield, yfield, $("#teamcolors").checked);
 }
 
 window.addEventListener("DOMContentLoaded", async (evt) => {
   const res = await fetch("./data/2021/stats.json");
-  const stats = await res.json();
+  window.stats = await res.json();
 
   prepare();
 
@@ -557,16 +693,15 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
   const bar = d3.quantile(stats, 0.66, (p) => p.fga);
   const gstats = stats.filter((x) => x.fga > bar);
 
-  const svg = graph(gstats, "ts_pct", "usg_pct");
+  const svg = graph(gstats, "ts_pct", "usg_pct", $("#teamcolors").checked);
   // TODO: get the values from the select boxes; this makes it easier to test though
-  document
-    .querySelector("#draw")
-    .addEventListener("click", () =>
-      svg.update(
-        gstats,
-        d3.select("#statx").node().value,
-        d3.select("#staty").node().value
-      )
-    );
-  document.querySelector("#yearChooser").addEventListener("change", changeYear);
+  $("#draw").addEventListener("click", () =>
+    svg.update(
+      gstats,
+      d3.select("#statx").node().value,
+      d3.select("#staty").node().value
+    )
+  );
+  $("#yearChooser").addEventListener("change", changeYear);
+  $("#teamcolors").addEventListener("change", changeUseTeamColors);
 });

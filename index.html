@@ -9,6 +9,13 @@
       <svg id="canvas" width="1024" height="768"></svg>
     </div>
     <div style="margin-top: 50px">
+      <span>X axis: <select id="statx"></select></span>
+      <span style="margin-left: 40px">Y axis: <select id="staty"></select></span>
+      <span style="margin-left: 40px">
+        <button id="draw">draw</button>
+      </span>
+    </div>
+    <div style="margin-top: 20px">
       <span>Year: <select id="yearChooser">
         <option value="2021">2021</option>
         <option value="2020">2020</option>
@@ -23,9 +30,9 @@
         <option value="2011">2011</option>
         <option value="2010">2010</option>
         </select></span>
-      <span style="margin-left: 40px">X axis: <select id="statx"></select></span>
-      <span style="margin-left: 40px">Y axis: <select id="staty"></select></span>
-      <button id="draw">draw</button>
+      <span style="margin-left: 40px">
+        <label for="teamcolors">Team Colors</label><input type="checkbox" id="teamcolors" checked></input>
+      </span>
     </div>
   </body>
 </html>
