@@ -32,17 +32,87 @@ function hover(event, tooltip, stats, x, y, xfield, yfield) {
     .call(callout, `${closestPlayer.name}`);
 }
 
+function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
+  // TODO figure out how to nicely transition labels
+  d3.selectAll(".player_label").remove();
+
+  const delaunay = d3.Delaunay.from(
+    stats,
+    (p) => x(p[xfield]),
+    (p) => y(p[yfield])
+  );
+  const voronoi = delaunay.voronoi([-1, -1, width + 1, height + 1]);
+  const orient = {
+    top: (text) => text.attr("text-anchor", "middle").attr("y", -6),
+    right: (text) =>
+      text.attr("text-anchor", "start").attr("dy", "0.35em").attr("x", 6),
+    bottom: (text) =>
+      text.attr("text-anchor", "middle").attr("dy", "0.71em").attr("y", 6),
+    left: (text) =>
+      text.attr("text-anchor", "end").attr("dy", "0.35em").attr("x", -6),
+  };
+
+  const cells = stats.map((d, i) => [d, voronoi.cellPolygon(i)]);
+
+  // for some reason, I'm getting exactly one player with an empty cell...
+  // their stats and x and y appear totally normally, so I have no idea why.
+  // just remove the empty player. this is a hack FIXME
+  const hack_cells = cells.filter(([_, c]) => c);
+
+  svg
+    .append("g")
+    .style("font", "10px sans-serif")
+    .selectAll("text")
+    .data(hack_cells, (d) => d[0].name)
+    .join("text")
+    .each(function ([player, cell]) {
+      const [cx, cy] = d3.polygonCentroid(cell);
+      const angle =
+        (Math.round(
+          (Math.atan2(cy - y(player[yfield]), cx - x(player[xfield])) /
+            Math.PI) *
+            2
+        ) +
+          4) %
+        4;
+      d3.select(this).call(
+        angle === 0
+          ? orient.right
+          : angle === 3
+          ? orient.top
+          : angle === 1
+          ? orient.bottom
+          : orient.left
+      );
+    })
+    .attr("transform", ([d]) => `translate(${x(d[xfield])},${y(d[yfield])})`)
+    .attr("display", ([, cell]) =>
+      -d3.polygonArea(cell) > 3000 ? null : "none"
+    )
+    .attr("class", "player_label")
+    .text((d, i) => d[0].name);
+}
+
 // stats should be a list of player objects
 // TODO
-// * need to be able to set the variables to be compared
 // * highlight a player or particular set of players
 // * small multiples by team?
 // * customizable filter
 //   * user filter querying?
 // * color points by teams / positions / other
 //   * https://observablehq.com/@d3/scatterplot-with-shapes
+//   * little logos? would they be readable?
+//   * what about two-colored dots? i.e. Celts would be green with gold
+//     inside, Lakers purple and yellow, etc
 // * nice transitions when you change the statistics
 // * teams instead of players
+// * axis formatting is broken - x axis always formats like a float.
+//   * use metadata do label axes
+// * label transitions
+// * labels shouldn't hit the left edge of the graph
+// * labels sometimes overlap each other, or dots
+//   * collision detect after labelling?
+// * labels overlap axis label
 function graph(stats, xfield, yfield) {
   const svg = d3.select("#canvas");
 
@@ -99,7 +169,7 @@ function graph(stats, xfield, yfield) {
     .attr("text-anchor", "middle")
     .attr("x", width / 2)
     .attr("y", height - 5)
-    .text("True Shooting %");
+    .text(statMeta[xfield].name);
   const ylabel = svg
     .append("text")
     .attr("class", "y label")
@@ -107,7 +177,7 @@ function graph(stats, xfield, yfield) {
     .attr("x", 10)
     .attr("y", height / 2)
     .attr("transform", `rotate(90,10,${height / 2})`) // https://stackoverflow.com/a/11257082
-    .text("Usage %");
+    .text(statMeta[yfield].name);
 
   // points
   // https://observablehq.com/@d3/scatterplot-tour
@@ -122,61 +192,7 @@ function graph(stats, xfield, yfield) {
     .attr("r", "4");
 
   // point labels
-  const delaunay = d3.Delaunay.from(
-    stats,
-    (p) => x(p[xfield]),
-    (p) => y(p[yfield])
-  );
-  const voronoi = delaunay.voronoi([-1, -1, width + 1, height + 1]);
-  const orient = {
-    top: (text) => text.attr("text-anchor", "middle").attr("y", -6),
-    right: (text) =>
-      text.attr("text-anchor", "start").attr("dy", "0.35em").attr("x", 6),
-    bottom: (text) =>
-      text.attr("text-anchor", "middle").attr("dy", "0.71em").attr("y", 6),
-    left: (text) =>
-      text.attr("text-anchor", "end").attr("dy", "0.35em").attr("x", -6),
-  };
-
-  const cells = stats.map((d, i) => [d, voronoi.cellPolygon(i)]);
-
-  // for some reason, I'm getting exactly one player with an empty cell...
-  // their stats and x and y appear totally normally, so I have no idea why.
-  // this is a hack FIXME
-  const hack_cells = cells.filter(([_, c]) => c);
-
-  svg
-    .append("g")
-    .style("font", "10px sans-serif")
-    .selectAll("text")
-    .data(hack_cells)
-    .join("text")
-    .each(function ([player, cell]) {
-      console.log(player, cell);
-      const [cx, cy] = d3.polygonCentroid(cell);
-      const angle =
-        (Math.round(
-          (Math.atan2(cy - y(player[yfield]), cx - x(player[xfield])) /
-            Math.PI) *
-            2
-        ) +
-          4) %
-        4;
-      d3.select(this).call(
-        angle === 0
-          ? orient.right
-          : angle === 3
-          ? orient.top
-          : angle === 1
-          ? orient.bottom
-          : orient.left
-      );
-    })
-    .attr("transform", ([d]) => `translate(${x(d[xfield])},${y(d[yfield])})`)
-    .attr("display", ([, cell]) =>
-      -d3.polygonArea(cell) > 3000 ? null : "none"
-    )
-    .text((d, i) => d[0].name);
+  pointLabels(stats, svg, height, width, x, y, xfield, yfield);
 
   // https://observablehq.com/@d3/line-chart-with-tooltip
   // TODO: tooltip overflows right bounds of the chart
@@ -236,6 +252,8 @@ function graph(stats, xfield, yfield) {
         .duration(duration)
         .attr("cy", (d) => y(d[yfield]))
         .attr("cx", (d) => x(d[xfield]));
+
+      pointLabels(stats, svg, height, width, x, y, xfield, yfield);
     },
   });
 }
