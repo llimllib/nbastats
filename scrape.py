@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import json
 from os import mkdir, stat
 from os.path import isdir
