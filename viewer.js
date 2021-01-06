@@ -115,6 +115,8 @@ function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
 // * labels overlap axis label
 // * there are a lot of stats - how to give the user better control of them?
 //   * sorting, autocomplete? gloassary?
+// * view a set of players through years
+// * team view
 function graph(stats, xfield, yfield) {
   const svg = d3.select("#canvas");
 
