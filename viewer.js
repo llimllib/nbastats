@@ -97,6 +97,8 @@ function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
 
 // stats should be a list of player objects
 // TODO
+// * organize things better
+//   * updateAxis, updatePoints, etc?
 // * sometimes labels are wrong
 //   * ex: go to 2020, and Kemba's dot says Schröder
 //   * ex: go to x axis 2pt fg%, y axis 3pt fg%, and Tatum's dot says JaVale
@@ -157,6 +159,7 @@ function graph(stats, xfield, yfield, useTeamColors) {
   const xaxisg = svg
     .append("g")
     .attr("transform", `translate(0, ${height - 20})`)
+    .attr("class", "xaxis")
     .call(xaxis)
     .call((g) => g.select(".domain").remove())
     .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
@@ -167,6 +170,7 @@ function graph(stats, xfield, yfield, useTeamColors) {
   const yaxisg = svg
     .append("g")
     .attr("transform", `translate(30, 0)`)
+    .attr("class", "yaxis")
     .call(yaxis)
     .call((g) => g.select(".domain").remove())
     .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
