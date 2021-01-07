@@ -138,11 +138,11 @@ function graph(stats, xfield, yfield, useTeamColors) {
   const padding = { left: 60, top: 40, right: 40, bottom: 40 };
 
   // scales
-  const x = d3
+  var x = d3
     .scaleLinear()
     .domain(d3.extent(stats, (s) => s[xfield]))
     .range([padding.left, width - padding.right]);
-  const y = d3
+  var y = d3
     .scaleLinear()
     .domain(d3.reverse(d3.extent(stats, (s) => s[yfield])))
     .range([padding.top, height - padding.bottom]);
@@ -151,10 +151,7 @@ function graph(stats, xfield, yfield, useTeamColors) {
   // https://observablehq.com/@d3/styled-axes
   // XXX: there will have to be some table from statistic -> tick formatting,
   // not sure we can (should?) work that out automatically
-  const xaxis = d3
-    .axisTop(x)
-    .tickSize(height)
-    .tickFormat((d) => d.toFixed(2).slice(1));
+  var xaxis = d3.axisTop(x).tickSize(height).tickFormat(d3.format(".2r"));
 
   const xaxisg = svg
     .append("g")
@@ -163,9 +160,9 @@ function graph(stats, xfield, yfield, useTeamColors) {
     .call(xaxis)
     .call((g) => g.select(".domain").remove())
     .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
-    .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", 15));
+    .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", -15));
 
-  const yaxis = d3.axisRight(y).tickSize(width);
+  const yaxis = d3.axisRight(y).tickSize(width).tickFormat(d3.format(".2r"));
 
   const yaxisg = svg
     .append("g")
@@ -247,6 +244,21 @@ function graph(stats, xfield, yfield, useTeamColors) {
 
       const duration = 1000;
 
+      xAxType = statMeta[xfield].type;
+      if (xAxType == "categorical") {
+        const domain = new Set(stats.map((p) => p[xfield]));
+        x = d3.scaleBand(domain, [padding.left, width - padding.right]);
+        xaxis = d3
+          .axisTop(x)
+          .tickSize(height)
+          .tickFormat((p) => {
+            console.log(p);
+            return p;
+          });
+        // XXX: this breaks all future changes - need to reset all the things
+        // after we exit this type
+      }
+
       // TODO: make this axis work for categorical variables
       xaxisg
         .transition()
@@ -257,7 +269,10 @@ function graph(stats, xfield, yfield, useTeamColors) {
         })
         .call((g) => g.select(".domain").remove())
         .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
-        .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", 15));
+        // this looks better with dx set to 15, but then is wong for categorical
+        // variables; TODO: update this value when categoricals are selected and
+        // remove it when unselected
+        .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", -15));
 
       // This is giving lots of <<Error: <text> attribute dy: Expected length,
       // "NaN".>> no idea what that means. For some reason only the bottom four
