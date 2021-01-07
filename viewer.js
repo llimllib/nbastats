@@ -179,18 +179,17 @@ function graph(stats, xfield, yfield, useTeamColors) {
   const xlabel = svg
     .append("text")
     .attr("class", "x label")
-    .attr("text-anchor", "middle")
-    .attr("x", width / 2)
+    .attr("text-anchor", "end")
+    .attr("x", width - 20)
     .attr("y", height - 5)
-    .text(statMeta[xfield].name);
+    .text("→" + statMeta[xfield].name);
   const ylabel = svg
     .append("text")
     .attr("class", "y label")
-    .attr("text-anchor", "middle")
+    .attr("text-anchor", "left")
     .attr("x", 10)
-    .attr("y", height / 2)
-    .attr("transform", `rotate(90,10,${height / 2})`) // https://stackoverflow.com/a/11257082
-    .text(statMeta[yfield].name);
+    .attr("y", 20)
+    .text("↑" + statMeta[yfield].name);
 
   // points
   // https://observablehq.com/@d3/scatterplot-tour
@@ -249,6 +248,9 @@ function graph(stats, xfield, yfield, useTeamColors) {
         .transition()
         .duration(duration)
         .call(xaxis)
+        .on("start", function () {
+          xaxisg.select(".domain").remove(); // https://stackoverflow.com/a/50254240/42559
+        })
         .call((g) => g.select(".domain").remove())
         .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
         .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", 15));
@@ -260,12 +262,15 @@ function graph(stats, xfield, yfield, useTeamColors) {
         .transition()
         .duration(duration)
         .call(yaxis)
+        .on("start", function () {
+          yaxisg.select(".domain").remove(); // https://stackoverflow.com/a/50254240/42559
+        })
         .call((g) => g.select(".domain").remove())
         .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
         .call((g) => g.selectAll(".tick text").attr("x", 4).attr("dy", -4));
 
-      xlabel.text(statMeta[xfield].name);
-      ylabel.text(statMeta[yfield].name);
+      xlabel.text("→" + statMeta[xfield].name);
+      ylabel.text("↑" + statMeta[yfield].name);
 
       // TODO: does this handle entries and exits?
       points
