@@ -97,6 +97,11 @@ function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
 
 // stats should be a list of player objects
 // TODO
+// * sometimes labels are wrong
+//   * ex: go to 2020, and Kemba's dot says Schröder
+//   * ex: go to x axis 2pt fg%, y axis 3pt fg%, and Tatum's dot says JaVale
+//   * possibly using the voronoi will fix this?
+// * tooltip should show more information
 // * don't show domain lines on transitions
 // * tooltip should display above the player label after transitions
 //   * steps to repro: do a transition, then hover over a player with a bottom
@@ -108,7 +113,6 @@ function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
 // * small multiples by team?
 // * customizable filter
 //   * user filter querying?
-// * nice transitions when you change the statistics
 // * teams instead of players
 // * axis formatting is broken - x axis always formats like a float.
 //   * use metadata do label axes
@@ -116,7 +120,6 @@ function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
 // * labels shouldn't hit the left edge of the graph
 // * labels sometimes overlap each other, or dots
 //   * collision detect after labelling?
-// * labels overlap axis label
 // * there are a lot of stats - how to give the user better control of them?
 //   * sorting, autocomplete? gloassary?
 // * view a set of players through years
