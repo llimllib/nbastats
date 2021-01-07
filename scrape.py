@@ -56,6 +56,16 @@ def getdata(year, datadir):
     )
 
 
+# TODO:
+# * download per36 and per100
+#    * caution: they have overlapping columns! so we can't just do the dumb
+#      shit we've done so far
+# * download team stats
+#   * https://www.basketball-reference.com/leagues/NBA_2021.html#all_opponent-stats-per_poss
+#   * esp ortg and drtg from "Miscellaneous Stats"
+# * download team logos
+#   * can base this off colors.py which has links to (most) teams' wiki pages
+#   * will be useful for creating team ortg/drtg graphs
 for year in range(2010, 2022):
     datadir = f"data/{year}"
     totals = f"data/{year}/totals.html"
@@ -66,6 +76,8 @@ for year in range(2010, 2022):
         getdata(year, datadir)
     elif year == 2021 and one_hour_old(totals):
         getdata(year, datadir)
+    else:
+        continue
 
     soup = BeautifulSoup(open(totals), "html.parser")
 
