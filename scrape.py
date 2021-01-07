@@ -71,108 +71,114 @@ def getdata(year, datadir):
     )
 
 
+def parse_team_stats(year):
+    datadir = f"data/{year}"
+
+    teamdata = {}
+
+    soup = BeautifulSoup(open(f"{datadir}/teams.html"), "html.parser")
+
+    # bbref keeps the table in a comment, and then uses javascript to
+    # actually put it on a page - pull out the table and parse it
+    team_stats_container = soup.find("div", id="all_team-stats-base")
+    team_stats = BeautifulSoup(
+        re.findall(r"<!--(.*?)-->", str(team_stats_container), re.M | re.S)[0],
+        "html.parser",
+    )
+    for team in team_stats.find_all("tr")[1:31]:
+        teamstats = {
+            t["data-stat"].replace("-", "_"): tryint(
+                "".join(str(c) for c in t.children)
+            )
+            for t in team.find_all("td")
+        }
+        name = BeautifulSoup(teamstats["team_name"], "html.parser").text
+        shortname = re.search("teams/(.*?)/", teamstats["team_name"]).group(1)
+
+        teamstats["name"] = name
+        teamstats["shortname"] = shortname
+
+        teamdata[shortname] = teamstats
+
+    # bbref keeps the table in a comment, and then uses javascript to
+    # actually put it on a page - pull out the table and parse it
+    misc_container = soup.find("div", id="all_misc_stats")
+    misc_stats = BeautifulSoup(
+        re.findall(r"<!--(.*?)-->", str(misc_container), re.M | re.S)[0], "html.parser",
+    )
+    for team in misc_stats.find_all("tr")[2:32]:
+        miscstats = {
+            t["data-stat"].replace("-", "_"): tryint(
+                "".join(str(c) for c in t.children)
+            )
+            for t in team.find_all("td")
+        }
+        name = BeautifulSoup(miscstats["team_name"], "html.parser").text
+        shortname = re.search("teams/(.*?)/", miscstats["team_name"]).group(1)
+
+        teamdata[shortname] = {**teamdata[shortname], **miscstats}
+
+    output = f"data/{year}/team_stats.json"
+    json.dump(teamdata, open(output, "w"))
+
+
 # TODO:
 # * process per36 and per100
 #    * caution: they have overlapping columns! so we can't just do the dumb
 #      shit we've done so far
+def parse_player_stats(year):
+    datadir = f"data/{year}"
+
+    players = {}
+
+    soup = BeautifulSoup(open(f"{datadir}/totals.html"), "html.parser")
+
+    for player in soup.find_all("tr", {"class": "full_table"}):
+        stats = {
+            t["data-stat"].replace("-", "_"): tryint(
+                "".join(str(c) for c in t.children)
+            )
+            for t in player.find_all("td")
+        }
+        stats["name"] = BeautifulSoup(stats["player"], "html.parser").text
+        stats["team"] = BeautifulSoup(stats["team_id"], "html.parser").text
+        players[stats["name"]] = stats
+
+    soup = BeautifulSoup(open(f"{datadir}/advanced.html"), "html.parser")
+    for player in soup.find_all("tr", {"class": "full_table"}):
+        advstats = {
+            t["data-stat"].replace("-", "_"): tryint(
+                "".join(str(c) for c in t.children)
+            )
+            for t in player.find_all("td")
+        }
+        name = BeautifulSoup(advstats["player"], "html.parser").text
+        players[name] = {**players[name], **advstats}
+
+    output = f"data/{year}/stats.json"
+    json.dump(list(players.values()), open(output, "w"))
+
+
+# TODO
 # * download team logos
 #   * can base this off colors.py which has links to (most) teams' wiki pages
 #   * will be useful for creating team ortg/drtg graphs
+# * add flag to force re-processing all files even if new data doesn't get downloaded
 def main():
     for year in range(2010, 2022):
         datadir = f"data/{year}"
-        totals = f"data/{year}/totals.html"
-        advanced = f"data/{year}/advanced.html"
-        teams = f"data/{year}/teams.html"
-        output = f"data/{year}/stats.json"
-        team_output = f"data/{year}/team_stats.json"
 
-        # TODO: add flag to force re-processing all files even if new data doesn't get downloaded
         if not isdir(datadir):
             getdata(year, datadir)
-        elif year == 2021 and one_hour_old(totals):
+        elif year == 2021 and one_hour_old(f"{datadir}/totals.html"):
             getdata(year, datadir)
         else:
             continue
 
         log(f"procesing {year} data")
 
-        soup = BeautifulSoup(open(totals), "html.parser")
-
-        players = {}
-
-        for player in soup.find_all("tr", {"class": "full_table"}):
-            stats = {
-                t["data-stat"].replace("-", "_"): tryint(
-                    "".join(str(c) for c in t.children)
-                )
-                for t in player.find_all("td")
-            }
-            stats["name"] = BeautifulSoup(stats["player"], "html.parser").text
-            stats["team"] = BeautifulSoup(stats["team_id"], "html.parser").text
-            players[stats["name"]] = stats
-
-        soup = BeautifulSoup(open(advanced), "html.parser")
-        for player in soup.find_all("tr", {"class": "full_table"}):
-            advstats = {
-                t["data-stat"].replace("-", "_"): tryint(
-                    "".join(str(c) for c in t.children)
-                )
-                for t in player.find_all("td")
-            }
-            name = BeautifulSoup(advstats["player"], "html.parser").text
-            players[name] = {**players[name], **advstats}
-
-        # write out player stats
-        json.dump(list(players.values()), open(output, "w"))
-
-        # parse team stats
-        teamdata = {}
-
-        soup = BeautifulSoup(open(teams), "html.parser")
-
-        # bbref keeps the table in a comment, and then uses javascript to
-        # actually put it on a page - pull out the table and parse it
-        team_stats_container = soup.find("div", id="all_team-stats-base")
-        team_stats = BeautifulSoup(
-            re.findall(r"<!--(.*?)-->", str(team_stats_container), re.M | re.S)[0],
-            "html.parser",
-        )
-        for team in team_stats.find_all("tr")[1:31]:
-            teamstats = {
-                t["data-stat"].replace("-", "_"): tryint(
-                    "".join(str(c) for c in t.children)
-                )
-                for t in team.find_all("td")
-            }
-            name = BeautifulSoup(teamstats["team_name"], "html.parser").text
-            shortname = re.search("teams/(.*?)/", teamstats["team_name"]).group(1)
-
-            teamstats["name"] = name
-            teamstats["shortname"] = shortname
-
-            teamdata[shortname] = teamstats
-
-        # bbref keeps the table in a comment, and then uses javascript to
-        # actually put it on a page - pull out the table and parse it
-        misc_container = soup.find("div", id="all_misc_stats")
-        misc_stats = BeautifulSoup(
-            re.findall(r"<!--(.*?)-->", str(misc_container), re.M | re.S)[0],
-            "html.parser",
-        )
-        for team in misc_stats.find_all("tr")[2:32]:
-            miscstats = {
-                t["data-stat"].replace("-", "_"): tryint(
-                    "".join(str(c) for c in t.children)
-                )
-                for t in team.find_all("td")
-            }
-            name = BeautifulSoup(miscstats["team_name"], "html.parser").text
-            shortname = re.search("teams/(.*?)/", miscstats["team_name"]).group(1)
-
-            teamdata[shortname] = {**teamdata[shortname], **miscstats}
-
-        json.dump(teamdata, open(team_output, "w"))
+        parse_player_stats(year)
+        parse_team_stats(year)
 
 
 if __name__ == "__main__":
