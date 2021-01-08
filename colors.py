@@ -40,9 +40,11 @@ teams = [
 
 teamcolors = {}
 
+wiki = "https://en.wikipedia.org"
+
 for wikiurl, name in teams:
     print(name)
-    res = requests.get(f"https://en.wikipedia.org/{wikiurl}").text
+    res = requests.get(f"{wiki}/{wikiurl}").text
     soup = Soup(res, "html.parser")
     try:
         colors = re.findall(
@@ -54,7 +56,25 @@ for wikiurl, name in teams:
             "#[A-F0-9]{6}", str(soup.find(text="Team colours").parent.parent)
         )
 
-    teamcolors[name] = colors
+    teamcolors[name] = {"colors": colors}
+
+    logo = soup.find_all(
+        lambda elt: "logo" in elt.attrs.get("title", "")
+        and "image" in elt.attrs.get("class", "")
+    )
+    assert len(logo) == 1
+
+    # the logo link on the team page goes to a page for the logo; get _that_
+    # page and find the full SVG link on it to download it
+    logopage = requests.get(f"{wiki}/{teamcolors[name]['logo']}")
+    logosoup = Soup(logopage.text, "html.parser")
+    href = (
+        logosoup.find("div", attrs={"class": "fullImageLink"}).find("a").attrs["href"]
+    )
+    logourl = f"https:{href}"
+    open(f"logos/{name}.svg", "w").write(requests.get(logourl).text)
+    teamcolors[name]["logo"] = logourl
+
 
 # manually saved off to colors.json
 print(json.dumps(teamcolors, indent=2))
