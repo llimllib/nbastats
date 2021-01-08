@@ -1,5 +1,13 @@
 $ = (s) => document.querySelector(s);
 
+const settings = {
+  padding: { left: 60, top: 40, right: 40, bottom: 40 },
+  width: 1024,
+  height: 768,
+  dotRadius: 6,
+  duration: 1000,
+};
+
 function hover(event, tooltip, stats, x, y, xfield, yfield) {
   const ptr = d3.pointer(event, this);
 
@@ -34,7 +42,7 @@ function hover(event, tooltip, stats, x, y, xfield, yfield) {
     .call(callout, `${closestPlayer.name}`);
 }
 
-function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
+function pointLabels(stats, svg, x, y, xfield, yfield) {
   // TODO figure out how to nicely transition labels
   d3.selectAll(".player_label").remove();
 
@@ -43,7 +51,12 @@ function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
     (p) => x(p[xfield]),
     (p) => y(p[yfield])
   );
-  const voronoi = delaunay.voronoi([-1, -1, width + 1, height + 1]);
+  const voronoi = delaunay.voronoi([
+    -1,
+    -1,
+    settings.width + 1,
+    settings.height + 1,
+  ]);
   const orient = {
     top: (text) => text.attr("text-anchor", "middle").attr("y", -8),
     right: (text) =>
@@ -95,6 +108,112 @@ function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
     .text((d, i) => d[0].name);
 }
 
+// scales(stats:object, xfield:string, yfield:string) -> [xscale, yscale]
+function scales(stats, xfield, yfield) {
+  xAxType = statMeta[xfield].type;
+  if (xAxType == "categorical") {
+    const domain = new Set(stats.map((p) => p[xfield]));
+    var x = d3.scaleBand(domain, [
+      settings.padding.left,
+      settings.width - settings.padding.right,
+    ]);
+  } else {
+    var x = d3
+      .scaleLinear()
+      .domain(d3.extent(stats, (s) => s[xfield]))
+      .range([settings.padding.left, settings.width - settings.padding.right]);
+  }
+
+  yAxType = statMeta[yfield].type;
+  if (yAxType == "categorical") {
+    const domain = new Set(stats.map((p) => p[yfield]));
+    var y = d3.scaleBand(domain, [
+      settings.padding.top,
+      settings.height - settings.padding.bottom,
+    ]);
+  } else {
+    var y = d3
+      .scaleLinear()
+      .domain(d3.reverse(d3.extent(stats, (s) => s[yfield])))
+      .range([settings.padding.top, settings.height - settings.padding.bottom]);
+  }
+
+  return [x, y];
+}
+
+// https://observablehq.com/@d3/styled-axes
+function axes(svg, stats, xscale, yscale) {
+  var xaxis = d3
+    .axisTop(xscale)
+    .tickSize(settings.height)
+    .tickFormat(d3.format(".2r"));
+
+  const xaxisg = svg
+    .append("g")
+    .attr("transform", `translate(0, ${settings.height - 20})`)
+    .attr("class", "xaxis")
+    .call(xaxis)
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
+    .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", -15));
+
+  const yaxis = d3
+    .axisRight(yscale)
+    .tickSize(settings.width)
+    .tickFormat(d3.format(".2r"));
+
+  const yaxisg = svg
+    .append("g")
+    .attr("transform", `translate(30, 0)`)
+    .attr("class", "yaxis")
+    .call(yaxis)
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
+    .call((g) => g.selectAll(".tick text").attr("dy", -4).attr("x", 4));
+
+  // return an update function
+  return function (stats, xfield, yfield, xscale, yscale) {
+    xAxType = statMeta[xfield].type;
+    if (xAxType == "categorical") {
+      xaxis.scale(xscale).tickFormat((p) => p);
+    } else {
+      xaxis.scale(xscale).tickFormat(d3.format(".2r"));
+    }
+
+    yAxType = statMeta[yfield].type;
+    if (yAxType == "categorical") {
+      yaxis.scale(yscale).tickFormat((p) => p);
+    } else {
+      yaxis.scale(yscale).tickFormat(d3.format(".2r"));
+    }
+
+    xaxisg
+      .transition()
+      .duration(settings.duration)
+      .call(xaxis)
+      .on("start", function () {
+        xaxisg.select(".domain").remove(); // https://stackoverflow.com/a/50254240/42559
+      })
+      .call((g) => g.select(".domain").remove())
+      .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
+      // this looks better with dx set to 15, but then is wong for categorical
+      // variables; TODO: update this value when categoricals are selected and
+      // remove it when unselected
+      .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", -15));
+
+    yaxisg
+      .transition()
+      .duration(settings.duration)
+      .call(yaxis)
+      .on("start", function () {
+        yaxisg.select(".domain").remove(); // https://stackoverflow.com/a/50254240/42559
+      })
+      .call((g) => g.select(".domain").remove())
+      .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
+      .call((g) => g.selectAll(".tick text").attr("x", 4).attr("dy", -4));
+  };
+}
+
 // stats should be a list of player objects
 // TODO
 // * organize things better
@@ -129,49 +248,8 @@ function pointLabels(stats, svg, height, width, x, y, xfield, yfield) {
 function graph(stats, xfield, yfield, useTeamColors) {
   const svg = d3.select("#canvas");
 
-  // XXX: these are hard-coded; scale them by browser width
-  const width = 1024;
-  const height = 768;
-
-  const dotRadius = 6;
-
-  const padding = { left: 60, top: 40, right: 40, bottom: 40 };
-
-  // scales
-  var x = d3
-    .scaleLinear()
-    .domain(d3.extent(stats, (s) => s[xfield]))
-    .range([padding.left, width - padding.right]);
-  var y = d3
-    .scaleLinear()
-    .domain(d3.reverse(d3.extent(stats, (s) => s[yfield])))
-    .range([padding.top, height - padding.bottom]);
-
-  // axes
-  // https://observablehq.com/@d3/styled-axes
-  // XXX: there will have to be some table from statistic -> tick formatting,
-  // not sure we can (should?) work that out automatically
-  var xaxis = d3.axisTop(x).tickSize(height).tickFormat(d3.format(".2r"));
-
-  const xaxisg = svg
-    .append("g")
-    .attr("transform", `translate(0, ${height - 20})`)
-    .attr("class", "xaxis")
-    .call(xaxis)
-    .call((g) => g.select(".domain").remove())
-    .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
-    .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", -15));
-
-  const yaxis = d3.axisRight(y).tickSize(width).tickFormat(d3.format(".2r"));
-
-  const yaxisg = svg
-    .append("g")
-    .attr("transform", `translate(30, 0)`)
-    .attr("class", "yaxis")
-    .call(yaxis)
-    .call((g) => g.select(".domain").remove())
-    .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
-    .call((g) => g.selectAll(".tick text").attr("dy", -4).attr("x", 4));
+  var [x, y] = scales(stats, xfield, yfield);
+  updateAxes = axes(svg, stats, x, y);
 
   // axis labels
   //
@@ -181,8 +259,8 @@ function graph(stats, xfield, yfield, useTeamColors) {
     .append("text")
     .attr("class", "x label")
     .attr("text-anchor", "end")
-    .attr("x", width - 20)
-    .attr("y", height - 5)
+    .attr("x", settings.width - 20)
+    .attr("y", settings.height - 5)
     .text("→" + statMeta[xfield].name);
   const ylabel = svg
     .append("text")
@@ -204,17 +282,20 @@ function graph(stats, xfield, yfield, useTeamColors) {
     points
       .append("circle")
       .attr("fill", (d) => teams[d.team].colors[0])
-      .attr("r", dotRadius);
+      .attr("r", settings.dotRadius);
     points
       .append("circle")
       .attr("fill", (d) => teams[d.team].colors[1])
-      .attr("r", dotRadius / 2);
+      .attr("r", settings.dotRadius / 2);
   } else {
-    points.append("circle").attr("fill", "#1f77b4").attr("r", dotRadius);
+    points
+      .append("circle")
+      .attr("fill", "#1f77b4")
+      .attr("r", settings.dotRadius);
   }
 
   // point labels
-  pointLabels(stats, svg, height, width, x, y, xfield, yfield);
+  pointLabels(stats, svg, x, y, xfield, yfield);
 
   // https://observablehq.com/@d3/line-chart-with-tooltip
   const tooltip = svg.append("g");
@@ -242,62 +323,39 @@ function graph(stats, xfield, yfield, useTeamColors) {
         return hover(evt, tooltip, stats, x, y, xfield, yfield);
       });
 
-      const duration = 1000;
-
-      xAxType = statMeta[xfield].type;
-      if (xAxType == "categorical") {
-        const domain = new Set(stats.map((p) => p[xfield]));
-        x = d3.scaleBand(domain, [padding.left, width - padding.right]);
-        xaxis = d3
-          .axisTop(x)
-          .tickSize(height)
-          .tickFormat((p) => {
-            console.log(p);
-            return p;
-          });
-        // XXX: this breaks all future changes - need to reset all the things
-        // after we exit this type
-      }
-
-      // TODO: make this axis work for categorical variables
-      xaxisg
-        .transition()
-        .duration(duration)
-        .call(xaxis)
-        .on("start", function () {
-          xaxisg.select(".domain").remove(); // https://stackoverflow.com/a/50254240/42559
-        })
-        .call((g) => g.select(".domain").remove())
-        .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
-        // this looks better with dx set to 15, but then is wong for categorical
-        // variables; TODO: update this value when categoricals are selected and
-        // remove it when unselected
-        .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", -15));
-
-      // This is giving lots of <<Error: <text> attribute dy: Expected length,
-      // "NaN".>> no idea what that means. For some reason only the bottom four
-      // ticks have a NaN for dy?
-      yaxisg
-        .transition()
-        .duration(duration)
-        .call(yaxis)
-        .on("start", function () {
-          yaxisg.select(".domain").remove(); // https://stackoverflow.com/a/50254240/42559
-        })
-        .call((g) => g.select(".domain").remove())
-        .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
-        .call((g) => g.selectAll(".tick text").attr("x", 4).attr("dy", -4));
+      [x, y] = scales(stats, xfield, yfield);
+      updateAxes(stats, xfield, yfield, x, y);
 
       xlabel.text("→" + statMeta[xfield].name);
       ylabel.text("↑" + statMeta[yfield].name);
 
+      // https://stackoverflow.com/a/20773846
+      function endall(transition, callback) {
+        if (typeof callback !== "function")
+          throw new Error("Wrong callback in endall");
+        if (transition.size() === 0) {
+          callback();
+        }
+        var n = 0;
+        transition
+          .each(function () {
+            ++n;
+          })
+          .on("end", function () {
+            if (!--n) callback.apply(this, arguments);
+          });
+      }
+
+      // remove the player labels before the transition, and re-add them at the
+      // end. Would be better to transition them (?)
+      d3.selectAll(".player_label").remove();
+
       // TODO: does this handle entries and exits?
       points
         .transition()
-        .duration(duration)
-        .attr("transform", (d) => `translate(${x(d[xfield])},${y(d[yfield])})`);
-
-      pointLabels(stats, svg, height, width, x, y, xfield, yfield);
+        .duration(settings.duration)
+        .attr("transform", (d) => `translate(${x(d[xfield])},${y(d[yfield])})`)
+        .call(endall, () => pointLabels(stats, svg, x, y, xfield, yfield));
     },
   });
 }
