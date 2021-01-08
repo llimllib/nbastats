@@ -5,7 +5,7 @@ const settings = {
   width: 1024,
   height: 768,
   dotRadius: 6,
-  duration: 1000,
+  duration: 750,
 };
 
 function hover(event, tooltip, stats, x, y, xfield, yfield) {
@@ -214,6 +214,101 @@ function axes(svg, stats, xscale, yscale) {
   };
 }
 
+// run a callback function after all objects being transitioned have been
+// transitioned
+//
+// https://stackoverflow.com/a/20773846
+function endall(transition, callback) {
+  if (typeof callback !== "function")
+    throw new Error("Wrong callback in endall");
+  if (transition.size() === 0) {
+    callback();
+  }
+  var n = 0;
+  transition
+    .each(function () {
+      ++n;
+    })
+    .on("end", function () {
+      if (!--n) callback.apply(this, arguments);
+    });
+}
+
+function points(svg, stats, xscale, yscale, xfield, yfield) {
+  useTeamColors = $("#teamcolors").checked;
+
+  // points
+  // https://observablehq.com/@d3/scatterplot-tour
+  const points = svg
+    .append("g")
+    .selectAll("circle")
+    .data(stats, (d) => d.name)
+    .join("g")
+    .attr(
+      "transform",
+      (d) => `translate(${xscale(d[xfield])},${yscale(d[yfield])})`
+    );
+  if (useTeamColors) {
+    points
+      .append("circle")
+      .attr("fill", (d) => teams[d.team].colors[0])
+      .attr("r", settings.dotRadius);
+    points
+      .append("circle")
+      .attr("fill", (d) => teams[d.team].colors[1])
+      .attr("r", settings.dotRadius / 2);
+  } else {
+    points
+      .append("circle")
+      .attr("fill", "#1f77b4")
+      .attr("r", settings.dotRadius);
+  }
+
+  return function (stats, xscale, yscale, xfield, yfield) {
+    // remove the player labels before the transition, and re-add them at the
+    // end. Would be better to transition them (?)
+    d3.selectAll(".player_label").remove();
+
+    // TODO: does this handle entries and exits?
+    points
+      .transition()
+      .duration(settings.duration)
+      .attr(
+        "transform",
+        (d) => `translate(${xscale(d[xfield])},${yscale(d[yfield])})`
+      )
+      .call(endall, () =>
+        pointLabels(stats, svg, xscale, yscale, xfield, yfield)
+      );
+  };
+}
+
+function axisLabels(svg, xfield, yfield) {
+  // axis labels
+  //
+  // I like the axis labels on health & wealth:
+  // https://observablehq.com/@mbostock/the-wealth-health-of-nations
+  const xlabel = svg
+    .append("text")
+    .attr("class", "x label")
+    .attr("text-anchor", "end")
+    .attr("x", settings.width - 20)
+    .attr("y", settings.height - 5)
+    .text("→" + statMeta[xfield].name);
+  const ylabel = svg
+    .append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "left")
+    .attr("x", 10)
+    .attr("y", 20)
+    .text("↑" + statMeta[yfield].name);
+
+  return function (xfield, yfield) {
+    xlabel.text("→" + statMeta[xfield].name);
+    ylabel.text("↑" + statMeta[yfield].name);
+  };
+}
+
 // stats should be a list of player objects
 // TODO
 // * organize things better
@@ -245,54 +340,13 @@ function axes(svg, stats, xscale, yscale) {
 //   * sorting, autocomplete? gloassary?
 // * view a set of players through years
 // * team view
-function graph(stats, xfield, yfield, useTeamColors) {
+function graph(stats, xfield, yfield) {
   const svg = d3.select("#canvas");
 
   var [x, y] = scales(stats, xfield, yfield);
   updateAxes = axes(svg, stats, x, y);
-
-  // axis labels
-  //
-  // I like the axis labels on health & wealth:
-  // https://observablehq.com/@mbostock/the-wealth-health-of-nations
-  const xlabel = svg
-    .append("text")
-    .attr("class", "x label")
-    .attr("text-anchor", "end")
-    .attr("x", settings.width - 20)
-    .attr("y", settings.height - 5)
-    .text("→" + statMeta[xfield].name);
-  const ylabel = svg
-    .append("text")
-    .attr("class", "y label")
-    .attr("text-anchor", "left")
-    .attr("x", 10)
-    .attr("y", 20)
-    .text("↑" + statMeta[yfield].name);
-
-  // points
-  // https://observablehq.com/@d3/scatterplot-tour
-  const points = svg
-    .append("g")
-    .selectAll("circle")
-    .data(stats, (d) => d.name)
-    .join("g")
-    .attr("transform", (d) => `translate(${x(d[xfield])},${y(d[yfield])})`);
-  if (useTeamColors) {
-    points
-      .append("circle")
-      .attr("fill", (d) => teams[d.team].colors[0])
-      .attr("r", settings.dotRadius);
-    points
-      .append("circle")
-      .attr("fill", (d) => teams[d.team].colors[1])
-      .attr("r", settings.dotRadius / 2);
-  } else {
-    points
-      .append("circle")
-      .attr("fill", "#1f77b4")
-      .attr("r", settings.dotRadius);
-  }
+  updateAxisLabels = axisLabels(svg, xfield, yfield);
+  updatePoints = points(svg, stats, x, y, xfield, yfield);
 
   // point labels
   pointLabels(stats, svg, x, y, xfield, yfield);
@@ -312,9 +366,6 @@ function graph(stats, xfield, yfield, useTeamColors) {
       y.domain(d3.reverse(d3.extent(stats, (s) => s[yfield])));
       x.domain(d3.extent(stats, (s) => s[xfield]));
 
-      // XXX think I need the axes too... let's see if we can get this to work
-      // at all first
-
       // If an event listener was previously registered for the same typename
       // on a selected element, the old listener is removed before the new
       // listener is added.
@@ -325,37 +376,8 @@ function graph(stats, xfield, yfield, useTeamColors) {
 
       [x, y] = scales(stats, xfield, yfield);
       updateAxes(stats, xfield, yfield, x, y);
-
-      xlabel.text("→" + statMeta[xfield].name);
-      ylabel.text("↑" + statMeta[yfield].name);
-
-      // https://stackoverflow.com/a/20773846
-      function endall(transition, callback) {
-        if (typeof callback !== "function")
-          throw new Error("Wrong callback in endall");
-        if (transition.size() === 0) {
-          callback();
-        }
-        var n = 0;
-        transition
-          .each(function () {
-            ++n;
-          })
-          .on("end", function () {
-            if (!--n) callback.apply(this, arguments);
-          });
-      }
-
-      // remove the player labels before the transition, and re-add them at the
-      // end. Would be better to transition them (?)
-      d3.selectAll(".player_label").remove();
-
-      // TODO: does this handle entries and exits?
-      points
-        .transition()
-        .duration(settings.duration)
-        .attr("transform", (d) => `translate(${x(d[xfield])},${y(d[yfield])})`)
-        .call(endall, () => pointLabels(stats, svg, x, y, xfield, yfield));
+      updateAxisLabels(xfield, yfield);
+      updatePoints(stats, x, y, xfield, yfield);
     },
   });
 }
@@ -753,7 +775,7 @@ async function changeYear(evt) {
   const yfield = d3.select("#staty").node().value;
 
   d3.selectAll("#canvas").html("");
-  const svg = graph(gstats, xfield, yfield, $("#teamcolors").checked);
+  const svg = graph(gstats, xfield, yfield);
 }
 
 function changeUseTeamColors(evt) {
@@ -765,7 +787,7 @@ function changeUseTeamColors(evt) {
   const yfield = d3.select("#staty").node().value;
 
   d3.selectAll("#canvas").html("");
-  const svg = graph(gstats, xfield, yfield, $("#teamcolors").checked);
+  const svg = graph(gstats, xfield, yfield);
 }
 
 window.addEventListener("DOMContentLoaded", async (evt) => {
@@ -780,7 +802,7 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
   const bar = d3.quantile(stats, 0.66, (p) => p.fga);
   const gstats = stats.filter((x) => x.fga > bar);
 
-  const svg = graph(gstats, "ts_pct", "usg_pct", $("#teamcolors").checked);
+  const svg = graph(gstats, "ts_pct", "usg_pct");
   // TODO: get the values from the select boxes; this makes it easier to test though
   $("#draw").addEventListener("click", () =>
     svg.update(
