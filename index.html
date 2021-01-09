@@ -34,5 +34,15 @@
         <label for="teamcolors">Team Colors</label><input type="checkbox" id="teamcolors" checked></input>
       </span>
     </div>
+    <div style="margin-top: 20px">
+      <!-- value="quantile(player, 'fga', 66)" -->
+      filter: <input type="text"
+        id="filter"
+        value="player.team=='BOS'"
+        style="width: 500px"></input>
+      <span style="margin-left: 40px">
+        <button id="applyFilter">filter</button>
+      </span>
+    </div>
   </body>
 </html>
