@@ -5,7 +5,7 @@ push:
 	-git branch -D gh-pages
 	git checkout -b gh-pages
 	git push -f -u origin gh-pages
-	git checkout master
+	git checkout main
 
 lint:
 	jshint viewer.js
