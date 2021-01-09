@@ -787,15 +787,11 @@ async function changeYear(evt) {
   const res = await fetch(`./data/${evt.target.value}/stats.json`);
   window.stats = await res.json();
 
-  // TODO: how to handle the filter field here?
-  const bar = d3.quantile(stats, 0.66, (p) => p.fga);
-  const gstats = stats.filter((x) => x.fga > bar);
-
   const xfield = d3.select("#statx").node().value;
   const yfield = d3.select("#staty").node().value;
 
   d3.selectAll("#canvas").html("");
-  const svg = graph(gstats, xfield, yfield);
+  const svg = graph(applyFilter(window.stats), xfield, yfield);
 }
 
 function changeUseTeamColors(evt, activeStats) {
@@ -803,7 +799,7 @@ function changeUseTeamColors(evt, activeStats) {
   const yfield = d3.select("#staty").node().value;
 
   d3.selectAll("#canvas").html("");
-  const svg = graph(activeStats, xfield, yfield);
+  const svg = graph(applyFilter(window.stats), xfield, yfield);
 }
 
 // return a function (player, field, n) -> bool that will return true if a
@@ -814,22 +810,24 @@ function makeQuantiler(stats) {
   };
 }
 
-window.addEventListener("DOMContentLoaded", async (evt) => {
-  const res = await fetch("./data/2021/stats.json");
-  window.stats = await res.json();
-
-  prepare();
-
+function applyFilter(stats) {
   quantile = makeQuantiler(stats);
 
   // example filters:
   // player.usg_pct > 26 && player.fga > 80
   // ['BOS', 'MIA', 'BRK'].indexOf(player.team) != -1 && player.fga > 30
   // player.team == 'BOS'
-  const filter = "quantile(player, 'fga', 66)";
-  var activeStats = stats.filter((player) => eval(filter));
+  activeStats = stats.filter((player) => eval($("#filter").value));
+  return activeStats;
+}
 
-  const svg = graph(activeStats, "ts_pct", "usg_pct");
+window.addEventListener("DOMContentLoaded", async (evt) => {
+  const res = await fetch("./data/2021/stats.json");
+  window.stats = await res.json();
+
+  prepare();
+
+  const svg = graph(applyFilter(window.stats), "ts_pct", "usg_pct");
   // TODO: get the values from the select boxes; this makes it easier to test though
   $("#draw").addEventListener("click", () =>
     svg.update(
@@ -840,12 +838,11 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
   );
   $("#yearChooser").addEventListener("change", changeYear);
   $("#teamcolors").addEventListener("change", (evt) =>
-    changeUseTeamColors(evt, activeStats)
+    changeUseTeamColors(evt)
   );
   $("#applyFilter").addEventListener("click", () => {
-    activeStats = stats.filter((player) => eval($("#filter").value));
     svg.update(
-      activeStats,
+      applyFilter(window.stats),
       d3.select("#statx").node().value,
       d3.select("#staty").node().value
     );
