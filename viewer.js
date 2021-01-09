@@ -33,7 +33,12 @@ function hover(event, tooltip, stats, x, y, xfield, yfield) {
       `translate(${x(closestPlayer[xfield])},${y(closestPlayer[yfield])})`
     )
     // TODO: add stats to callout
-    .call(callout, `${closestPlayer.name}`);
+    .call(
+      callout,
+      `${closestPlayer.name} ${closestPlayer.team}
+${statMeta[xfield].name}: ${closestPlayer[xfield]}
+${statMeta[yfield].name}: ${closestPlayer[yfield]}`
+    );
 }
 
 function pointLabels(stats, svg, x, y, xfield, yfield) {

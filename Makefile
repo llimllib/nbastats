@@ -1,7 +1,7 @@
 serve:
 	devd -ol .
 
-push:
+publish:
 	-git branch -D gh-pages
 	git checkout -b gh-pages
 	git push -f -u origin gh-pages
@@ -13,4 +13,4 @@ lint:
 update:
 	./scrape.py
 
-.PHONY: serve push lint update
+.PHONY: serve publish lint update
