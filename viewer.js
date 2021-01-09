@@ -13,13 +13,7 @@ function hover(event, tooltip, stats, x, y, xfield, yfield) {
 
   // this is an absolutely dumb way (linear search) to find the closest
   // player, but it is not a huge array so it may not be prohibitive
-  //
-  // it seems plenty fast enough but ATM it's returning ~50% of the time
-  // terrible results
-  //
-  // the problem was that I was doing the calculation in stat coordinate
-  // space instead of screen coordinate space! the y axis has a much larger
-  // domain than the x axis. Fixed once I converted to screen space
+  // TODO: use the voronoi I calculate anyway to handle the hover
   var closest = Number.MAX_VALUE;
   var closestPlayer;
   stats.forEach((player) => {
@@ -43,9 +37,6 @@ function hover(event, tooltip, stats, x, y, xfield, yfield) {
 }
 
 function pointLabels(stats, svg, x, y, xfield, yfield) {
-  // TODO figure out how to nicely transition labels
-  d3.selectAll(".player_label").remove();
-
   const delaunay = d3.Delaunay.from(
     stats,
     (p) => x(p[xfield]),
@@ -237,11 +228,12 @@ function endall(transition, callback) {
 function points(svg, stats, xscale, yscale, xfield, yfield) {
   useTeamColors = $("#teamcolors").checked;
 
+  var container = svg.append("g").attr("class", "points");
+
   // points
   // https://observablehq.com/@d3/scatterplot-tour
-  const points = svg
-    .append("g")
-    .selectAll("circle")
+  var points = container
+    .selectAll("g")
     .data(stats, (d) => d.name)
     .join("g")
     .attr(
@@ -265,20 +257,50 @@ function points(svg, stats, xscale, yscale, xfield, yfield) {
   }
 
   return function (stats, xscale, yscale, xfield, yfield) {
-    // remove the player labels before the transition, and re-add them at the
-    // end. Would be better to transition them (?)
+    useTeamColors = $("#teamcolors").checked;
     d3.selectAll(".player_label").remove();
 
     // TODO: does this handle entries and exits?
-    points
-      .transition()
-      .duration(settings.duration)
-      .attr(
-        "transform",
-        (d) => `translate(${xscale(d[xfield])},${yscale(d[yfield])})`
-      )
-      .call(endall, () =>
-        pointLabels(stats, svg, xscale, yscale, xfield, yfield)
+    container
+      .selectAll("g")
+      .data(stats, (d) => d.name)
+      .join(
+        (enter) => {
+          g = enter
+            .append("g")
+            .attr(
+              "transform",
+              (d) => `translate(${xscale(d[xfield])},${yscale(d[yfield])})`
+            );
+          if (useTeamColors) {
+            g.append("circle")
+              .attr("fill", (d) => teams[d.team].colors[0])
+              .attr("r", settings.dotRadius);
+            g.append("circle")
+              .attr("fill", (d) => teams[d.team].colors[1])
+              .attr("r", settings.dotRadius / 2);
+          } else {
+            g.append("circle")
+              .attr("fill", "#1f77b4")
+              .attr("r", settings.dotRadius);
+          }
+          return g;
+        },
+        (update) =>
+          update.call((update) =>
+            update
+              .transition()
+              .attr(
+                "transform",
+                (d) => `translate(${xscale(d[xfield])},${yscale(d[yfield])})`
+              )
+              .duration(settings.duration)
+
+              .call(endall, () =>
+                pointLabels(stats, svg, xscale, yscale, xfield, yfield)
+              )
+          ),
+        (exit) => exit.remove()
       );
   };
 }
@@ -311,8 +333,6 @@ function axisLabels(svg, xfield, yfield) {
 
 // stats should be a list of player objects
 // TODO
-// * organize things better
-//   * updateAxis, updatePoints, etc?
 // * sometimes labels are wrong
 //   * ex: go to 2020, and Kemba's dot says Schröder
 //   * ex: go to x axis 2pt fg%, y axis 3pt fg%, and Tatum's dot says JaVale
@@ -767,7 +787,7 @@ async function changeYear(evt) {
   const res = await fetch(`./data/${evt.target.value}/stats.json`);
   window.stats = await res.json();
 
-  // TODO: configurable
+  // TODO: how to handle the filter field here?
   const bar = d3.quantile(stats, 0.66, (p) => p.fga);
   const gstats = stats.filter((x) => x.fga > bar);
 
@@ -778,16 +798,20 @@ async function changeYear(evt) {
   const svg = graph(gstats, xfield, yfield);
 }
 
-function changeUseTeamColors(evt) {
-  // TODO: configurable
-  const bar = d3.quantile(stats, 0.66, (p) => p.fga);
-  const gstats = stats.filter((x) => x.fga > bar);
-
+function changeUseTeamColors(evt, activeStats) {
   const xfield = d3.select("#statx").node().value;
   const yfield = d3.select("#staty").node().value;
 
   d3.selectAll("#canvas").html("");
-  const svg = graph(gstats, xfield, yfield);
+  const svg = graph(activeStats, xfield, yfield);
+}
+
+// return a function (player, field, n) -> bool that will return true if a
+// player is above the nth quantile in the given field and false otherwise
+function makeQuantiler(stats) {
+  return function (player, field, n) {
+    return player[field] > d3.quantile(stats, n / 100, (p) => p[field]);
+  };
 }
 
 window.addEventListener("DOMContentLoaded", async (evt) => {
@@ -796,21 +820,29 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
 
   prepare();
 
-  // TODO configurable.
-  //
-  // right now, grab the top 2/3 of the league by fga
-  const bar = d3.quantile(stats, 0.66, (p) => p.fga);
-  const gstats = stats.filter((x) => x.fga > bar);
+  quantile = makeQuantiler(stats);
+  const filter = "quantile(player, 'fga', 66)";
+  var activeStats = stats.filter((player) => eval(filter));
 
-  const svg = graph(gstats, "ts_pct", "usg_pct");
+  const svg = graph(activeStats, "ts_pct", "usg_pct");
   // TODO: get the values from the select boxes; this makes it easier to test though
   $("#draw").addEventListener("click", () =>
     svg.update(
-      gstats,
+      activeStats,
       d3.select("#statx").node().value,
       d3.select("#staty").node().value
     )
   );
   $("#yearChooser").addEventListener("change", changeYear);
-  $("#teamcolors").addEventListener("change", changeUseTeamColors);
+  $("#teamcolors").addEventListener("change", (evt) =>
+    changeUseTeamColors(evt, activestats)
+  );
+  $("#applyFilter").addEventListener("click", () => {
+    activeStats = stats.filter((player) => eval($("#filter").value));
+    svg.update(
+      activeStats,
+      d3.select("#statx").node().value,
+      d3.select("#staty").node().value
+    );
+  });
 });
