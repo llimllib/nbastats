@@ -266,12 +266,7 @@ function points(svg, stats, xscale, yscale, xfield, yfield) {
       .data(stats, (d) => d.name)
       .join(
         (enter) => {
-          g = enter
-            .append("g")
-            .attr(
-              "transform",
-              (d) => `translate(${xscale(d[xfield])},${yscale(d[yfield])})`
-            );
+          var g = enter.append("g");
           if (useTeamColors) {
             g.append("circle")
               .attr("fill", (d) => teams[d.team].colors[0])
@@ -284,6 +279,15 @@ function points(svg, stats, xscale, yscale, xfield, yfield) {
               .attr("fill", "#1f77b4")
               .attr("r", settings.dotRadius);
           }
+          g.call((enter) => {
+            enter
+              .transition()
+              .duration(settings.duration)
+              .attr(
+                "transform",
+                (d) => `translate(${xscale(d[xfield])},${yscale(d[yfield])})`
+              );
+          });
           return g;
         },
         (update) =>
