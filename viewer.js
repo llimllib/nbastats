@@ -821,6 +821,11 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
   prepare();
 
   quantile = makeQuantiler(stats);
+
+  // example filters:
+  // player.usg_pct > 26 && player.fga > 80
+  // ['BOS', 'MIA', 'BRK'].indexOf(player.team) != -1 && player.fga > 30
+  // player.team == 'BOS'
   const filter = "quantile(player, 'fga', 66)";
   var activeStats = stats.filter((player) => eval(filter));
 
@@ -835,7 +840,7 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
   );
   $("#yearChooser").addEventListener("change", changeYear);
   $("#teamcolors").addEventListener("change", (evt) =>
-    changeUseTeamColors(evt, activestats)
+    changeUseTeamColors(evt, activeStats)
   );
   $("#applyFilter").addEventListener("click", () => {
     activeStats = stats.filter((player) => eval($("#filter").value));
