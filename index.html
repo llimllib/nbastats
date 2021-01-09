@@ -3,6 +3,11 @@
     <!-- vendor this? -->
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="viewer.js"></script>
+<style>
+pre {
+  margin: 0px;
+}
+</style>
   </head>
   <body>
     <div>
@@ -41,6 +46,14 @@
         style="width: 500px"></input>
       <span style="margin-left: 40px">
         <button id="applyFilter">filter</button>
+        <p>
+        The filter syntax is a work in progress, and I'll add some UI eventually, but here's some you can try:
+        <ul>
+          <li><pre>player.usg_pct > 26 && player.fga > 80</pre></li>
+          <li><pre>['BOS', 'MIA', 'BRK'].indexOf(player.team) != -1 && player.fga > 30</pre></li>
+          <li><pre>player.team == 'BOS'</pre></li>
+          <li><pre>quantile(player, 'fga', 80) || quantile(player, 'trb', 80)</pre></li>
+        </ul>
       </span>
     </div>
   </body>
