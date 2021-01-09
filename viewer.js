@@ -333,33 +333,23 @@ function axisLabels(svg, xfield, yfield) {
 
 // stats should be a list of player objects
 // TODO
-// * sometimes labels are wrong
-//   * ex: go to 2020, and Kemba's dot says Schröder
-//   * ex: go to x axis 2pt fg%, y axis 3pt fg%, and Tatum's dot says JaVale
-//   * possibly using the voronoi will fix this?
 // * tooltip should show more information
-// * don't show domain lines on transitions
 // * tooltip should display above the player label after transitions
 //   * steps to repro: do a transition, then hover over a player with a bottom
 //     label
 // * permalinks
+// * select multiple years
+//   * view a set of players through years
 // * use the voronoi we already have to handle the tooltip selection
 // * nice transitions between years
 // * highlight a player or particular set of players
+//   * something like, one dot stays lit and the others go grey
 // * small multiples by team?
-// * customizable filter
-//   * user filter querying?
 // * teams instead of players
-// * axis formatting is broken - x axis always formats like a float.
-//   * use metadata do label axes
-// * label transitions
-// * labels shouldn't hit the left edge of the graph
 // * labels sometimes overlap each other, or dots
 //   * collision detect after labelling?
 // * there are a lot of stats - how to give the user better control of them?
-//   * sorting, autocomplete? gloassary?
-// * view a set of players through years
-// * team view
+//   * sorting, autocomplete? glossary?
 function graph(stats, xfield, yfield) {
   const svg = d3.select("#canvas");
 
@@ -503,51 +493,51 @@ statMeta = {
     type: "ordinal",
   },
   ft: {
-    name: "",
+    name: "Free Throws Made",
     type: "ordinal",
   },
   fta: {
-    name: "",
+    name: "Free Throw Attempts",
     type: "ordinal",
   },
   ft_pct: {
-    name: "",
+    name: "Free Throw %",
     type: "ordinal",
   },
   orb: {
-    name: "",
+    name: "Offensive Rebounds",
     type: "ordinal",
   },
   drb: {
-    name: "",
+    name: "Defensive Rebounds",
     type: "ordinal",
   },
   trb: {
-    name: "",
+    name: "Total Rebounds",
     type: "ordinal",
   },
   ast: {
-    name: "",
+    name: "Assists",
     type: "ordinal",
   },
   stl: {
-    name: "",
+    name: "Steals",
     type: "ordinal",
   },
   blk: {
-    name: "",
+    name: "Blocks",
     type: "ordinal",
   },
   tov: {
-    name: "",
+    name: "Turnovers",
     type: "ordinal",
   },
   pf: {
-    name: "",
+    name: "Personal Fouls",
     type: "ordinal",
   },
   pts: {
-    name: "",
+    name: "Points",
     type: "ordinal",
   },
   name: {
@@ -817,6 +807,7 @@ function applyFilter(stats) {
   // player.usg_pct > 26 && player.fga > 80
   // ['BOS', 'MIA', 'BRK'].indexOf(player.team) != -1 && player.fga > 30
   // player.team == 'BOS'
+  // quantile(player, 'fga', 80) || quantile(player, 'trb', 80)
   activeStats = stats.filter((player) => eval($("#filter").value));
   return activeStats;
 }
