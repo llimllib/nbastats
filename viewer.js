@@ -35,73 +35,125 @@ function hover(event, tooltip, stats, x, y, xfield, yfield) {
     // TODO: add stats to callout
     .call(
       callout,
-      `${closestPlayer.name} ${closestPlayer.team}
+      `${closestPlayer.name}
+${closestPlayer.team}
 ${statMeta[xfield].name}: ${closestPlayer[xfield]}
 ${statMeta[yfield].name}: ${closestPlayer[yfield]}`
     );
 }
 
-function pointLabels(stats, svg, x, y, xfield, yfield) {
-  const delaunay = d3.Delaunay.from(
+const orient = {
+  top: (text) => text.attr("text-anchor", "middle").attr("y", -8),
+  right: (text) =>
+    text.attr("text-anchor", "start").attr("dy", "0.35em").attr("x", 8),
+  bottom: (text) =>
+    text.attr("text-anchor", "middle").attr("dy", "0.71em").attr("y", 8),
+  left: (text) =>
+    text.attr("text-anchor", "end").attr("dy", "0.35em").attr("x", -8),
+};
+
+function orientText(voronoi, xscale, yscale, xfield, yfield) {
+  return function ([player, cell]) {
+    const [cx, cy] = d3.polygonCentroid(cell);
+    const angle =
+      (Math.round(
+        (Math.atan2(cy - yscale(player[yfield]), cx - xscale(player[xfield])) /
+          Math.PI) *
+          2
+      ) +
+        4) %
+      4;
+    d3.select(this).call(
+      angle === 0
+        ? orient.right
+        : angle === 3
+        ? orient.top
+        : angle === 1
+        ? orient.bottom
+        : orient.left
+    );
+  };
+}
+
+function pointLabels(svg, stats, xscale, yscale, xfield, yfield) {
+  var delaunay = d3.Delaunay.from(
     stats,
-    (p) => x(p[xfield]),
-    (p) => y(p[yfield])
+    (p) => xscale(p[xfield]),
+    (p) => yscale(p[yfield])
   );
-  const voronoi = delaunay.voronoi([
+  var voronoi = delaunay.voronoi([
     -1,
     -1,
     settings.width + 1,
     settings.height + 1,
   ]);
-  const orient = {
-    top: (text) => text.attr("text-anchor", "middle").attr("y", -8),
-    right: (text) =>
-      text.attr("text-anchor", "start").attr("dy", "0.35em").attr("x", 8),
-    bottom: (text) =>
-      text.attr("text-anchor", "middle").attr("dy", "0.71em").attr("y", 8),
-    left: (text) =>
-      text.attr("text-anchor", "end").attr("dy", "0.35em").attr("x", -8),
-  };
 
-  const cells = stats.map((d, i) => [d, voronoi.cellPolygon(i)]);
+  var orienter = orientText(voronoi, xscale, yscale, xfield, yfield);
+
+  var cells = stats.map((d, i) => [d, voronoi.cellPolygon(i)]);
 
   // for some reason, I'm getting exactly one player with an empty cell...
   // their stats and x and y appear totally normally, so I have no idea why.
   // just remove the empty player. this is a hack FIXME
-  const hack_cells = cells.filter(([_, c]) => c);
+  var hack_cells = cells.filter(([_, c]) => c);
 
-  svg
+  const container = svg
     .append("g")
-    .style("font", "10px sans-serif")
+    .attr("class", "labels")
+    .style("font", "10px sans-serif");
+
+  const labels = container
     .selectAll("text")
-    .data(hack_cells, (d) => d[0].name)
+    .data(hack_cells, ([p, _]) => p.name)
     .join("text")
-    .each(function ([player, cell]) {
-      const [cx, cy] = d3.polygonCentroid(cell);
-      const angle =
-        (Math.round(
-          (Math.atan2(cy - y(player[yfield]), cx - x(player[xfield])) /
-            Math.PI) *
-            2
-        ) +
-          4) %
-        4;
-      d3.select(this).call(
-        angle === 0
-          ? orient.right
-          : angle === 3
-          ? orient.top
-          : angle === 1
-          ? orient.bottom
-          : orient.left
-      );
-    })
-    .attr("transform", ([d]) => `translate(${x(d[xfield])},${y(d[yfield])})`)
+    .each(orienter)
+    .attr(
+      "transform",
+      ([p, _]) => `translate(${xscale(p[xfield])},${yscale(p[yfield])})`
+    )
     .attr("display", ([, cell]) =>
       -d3.polygonArea(cell) > 3000 ? null : "none"
     )
-    .attr("class", "player_label")
-    .text((d, i) => d[0].name);
+    .text(([p, _]) => p.name);
+
+  return function (stats, xscale, yscale, xfield, yfield) {
+    var delaunay = d3.Delaunay.from(
+      stats,
+      (p) => xscale(p[xfield]),
+      (p) => yscale(p[yfield])
+    );
+    var voronoi = delaunay.voronoi([
+      -1,
+      -1,
+      settings.width + 1,
+      settings.height + 1,
+    ]);
+
+    var orienter = orientText(voronoi, xscale, yscale, xfield, yfield);
+
+    var cells = stats.map((d, i) => [d, voronoi.cellPolygon(i)]);
+
+    // for some reason, I'm getting exactly one player with an empty cell...
+    // their stats and x and y appear totally normally, so I have no idea why.
+    // just remove the empty player. this is a hack FIXME
+    var hack_cells = cells.filter(([_, c]) => c);
+
+    container
+      .selectAll("text")
+      .data(hack_cells, ([p, _]) => p.name)
+      .join("text")
+      .each(orienter)
+      .transition()
+      .duration(settings.duration)
+      .attr(
+        "transform",
+        ([p, _]) => `translate(${xscale(p[xfield])},${yscale(p[yfield])})`
+      )
+      .attr("display", ([, cell]) =>
+        -d3.polygonArea(cell) > 3000 ? null : "none"
+      )
+      .text(([p, _]) => p.name);
+  };
 }
 
 // scales(stats:object, xfield:string, yfield:string) -> [xscale, yscale]
@@ -210,34 +262,14 @@ function axes(svg, stats, xscale, yscale) {
   };
 }
 
-// run a callback function after all objects being transitioned have been
-// transitioned
-//
-// https://stackoverflow.com/a/20773846
-function endall(transition, callback) {
-  if (typeof callback !== "function")
-    throw new Error("Wrong callback in endall");
-  if (transition.size() === 0) {
-    callback();
-  }
-  var n = 0;
-  transition
-    .each(function () {
-      ++n;
-    })
-    .on("end", function () {
-      if (!--n) callback.apply(this, arguments);
-    });
-}
-
 function points(svg, stats, xscale, yscale, xfield, yfield) {
-  useTeamColors = $("#teamcolors").checked;
+  var useTeamColors = $("#teamcolors").checked;
 
-  var container = svg.append("g").attr("class", "points");
+  const container = svg.append("g").attr("class", "points");
 
   // points
   // https://observablehq.com/@d3/scatterplot-tour
-  var points = container
+  const points = container
     .selectAll("g")
     .data(stats, (d) => d.name)
     .join("g")
@@ -304,10 +336,6 @@ function points(svg, stats, xscale, yscale, xfield, yfield) {
                 (d) => `translate(${xscale(d[xfield])},${yscale(d[yfield])})`
               )
               .duration(settings.duration)
-
-              .call(endall, () =>
-                pointLabels(stats, svg, xscale, yscale, xfield, yfield)
-              )
           ),
         (exit) => exit.remove()
       );
@@ -342,7 +370,6 @@ function axisLabels(svg, xfield, yfield) {
 
 // stats should be a list of player objects
 // TODO
-// * tooltip should show more information
 // * tooltip should display above the player label after transitions
 //   * steps to repro: do a transition, then hover over a player with a bottom
 //     label
@@ -359,6 +386,9 @@ function axisLabels(svg, xfield, yfield) {
 //   * collision detect after labelling?
 // * there are a lot of stats - how to give the user better control of them?
 //   * sorting, autocomplete? glossary?
+// * UI for selecting teams
+// * ability to customize x and y domains
+// * ability to customize dot size, or use it to represent a variable
 function graph(stats, xfield, yfield) {
   const svg = d3.select("#canvas");
 
@@ -366,12 +396,10 @@ function graph(stats, xfield, yfield) {
   updateAxes = axes(svg, stats, x, y);
   updateAxisLabels = axisLabels(svg, xfield, yfield);
   updatePoints = points(svg, stats, x, y, xfield, yfield);
-
-  // point labels
-  pointLabels(stats, svg, x, y, xfield, yfield);
+  updateLabels = pointLabels(svg, stats, x, y, xfield, yfield);
 
   // https://observablehq.com/@d3/line-chart-with-tooltip
-  const tooltip = svg.append("g");
+  var tooltip = svg.append("g").attr("class", "tooltip");
 
   svg.on("touchmove mousemove", (evt) =>
     hover(evt, tooltip, stats, x, y, xfield, yfield)
@@ -397,6 +425,12 @@ function graph(stats, xfield, yfield) {
       updateAxes(stats, xfield, yfield, x, y);
       updateAxisLabels(xfield, yfield);
       updatePoints(stats, x, y, xfield, yfield);
+      updateLabels(stats, x, y, xfield, yfield);
+
+      // remove the tooltip and redraw it; otherwise it won't properly appear
+      // above everything else. SVG has no z-order; last drawn thing wins
+      tooltip.remove();
+      tooltip = svg.append("g").attr("class", "tooltip");
     },
   });
 }
