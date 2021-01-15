@@ -366,8 +366,9 @@ function axisLabels(svg, xfield, yfield) {
 // * handle players that are coincident better
 //   * right now we just have to ensure we ignore null cells anywhere they're used
 //   * what even is the right thing to do? I dunno
-//  * custom graph resolutions
 //  * sometimes labels are overlapping the circles
+//  * the tooltip sometimes goes off the bottom, it should appear above the dot
+//    when it's low
 function graph(stats, xfield, yfield) {
   const svg = d3.select("#canvas");
 
@@ -823,7 +824,7 @@ function changeUseTeamColors(evt, activeStats) {
   const yfield = d3.select("#staty").node().value;
 
   d3.selectAll("#canvas").html("");
-  const svg = graph(applyFilter(window.stats), xfield, yfield);
+  graph(applyFilter(window.stats), xfield, yfield);
 }
 
 // return a function (player, field, n) -> bool that will return true if a
@@ -846,9 +847,23 @@ function applyFilter(stats) {
   return activeStats;
 }
 
+function updateSize(evt) {
+  settings.width = $("#settings-width").value;
+  settings.height = $("#settings-height").value;
+
+  const xfield = d3.select("#statx").node().value;
+  const yfield = d3.select("#staty").node().value;
+
+  d3.selectAll("#canvas").html("");
+  graph(applyFilter(window.stats), xfield, yfield);
+}
+
 window.addEventListener("DOMContentLoaded", async (evt) => {
   const res = await fetch("./data/2021/stats.json");
   window.stats = await res.json();
+
+  $("#settings-width").value = settings.width;
+  $("#settings-height").value = settings.height;
 
   prepare();
 
@@ -861,6 +876,8 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
       d3.select("#staty").node().value
     )
   );
+  $("#settings-width").addEventListener("change", updateSize);
+  $("#settings-height").addEventListener("change", updateSize);
   $("#yearChooser").addEventListener("change", changeYear);
   $("#teamcolors").addEventListener("change", (evt) =>
     changeUseTeamColors(evt)
