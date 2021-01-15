@@ -39,6 +39,12 @@ const orient = {
 
 function orientText(xscale, yscale, xfield, yfield) {
   return function ([player, cell]) {
+    // if two players have the same stats on the selected dimension, the
+    // voronoi cell will be null. Skip this player for now - do something more
+    // intelligent with coincident players later
+    if (!cell) {
+      return;
+    }
     const [cx, cy] = d3.polygonCentroid(cell);
     const angle =
       (Math.round(
@@ -75,13 +81,7 @@ function calcVoronoi(stats, xscale, yscale, xfield, yfield) {
 
   var cells = stats.map((d, i) => [d, voronoi.cellPolygon(i)]);
 
-  // If two or more points are completely coincident, they get null
-  // cells. In the future, we should deal with this situation in a
-  // reasonable way, but for now we're going to punt and ust filter them
-  // out.
-  var nonempty_cells = cells.filter(([_, c]) => c);
-
-  return [delaunay, nonempty_cells];
+  return [delaunay, cells];
 }
 
 function pointLabels(svg, stats, xscale, yscale, xfield, yfield, cells) {
@@ -102,7 +102,7 @@ function pointLabels(svg, stats, xscale, yscale, xfield, yfield, cells) {
       ([p, _]) => `translate(${xscale(p[xfield])},${yscale(p[yfield])})`
     )
     .attr("display", ([, cell]) =>
-      -d3.polygonArea(cell) > 3000 ? null : "none"
+      !cell || -d3.polygonArea(cell) > 3000 ? null : "none"
     )
     .text(([p, _]) => p.name);
 
@@ -370,6 +370,10 @@ function axisLabels(svg, xfield, yfield) {
 // * UI for selecting teams
 // * ability to customize x and y domains
 // * ability to customize dot size, or use it to represent a variable
+// * handle players that are coincident better
+//   * right now we just have to ensure we ignore null cells anywhere they're used
+//   * what even is the right thing to do? I dunno
+//  * custom graph resolutions
 function graph(stats, xfield, yfield) {
   const svg = d3.select("#canvas");
 
