@@ -8,31 +8,16 @@ const settings = {
   duration: 750,
 };
 
-function hover(event, tooltip, stats, x, y, xfield, yfield) {
-  const ptr = d3.pointer(event, this);
+function hover(event, tooltip, stats, x, y, xfield, yfield, delaunay, cells) {
+  const [mx, my] = d3.pointer(event, this);
 
-  // this is an absolutely dumb way (linear search) to find the closest
-  // player, but it is not a huge array so it may not be prohibitive
-  // TODO: use the voronoi I calculate anyway to handle the hover
-  var closest = Number.MAX_VALUE;
-  var closestPlayer;
-  stats.forEach((player) => {
-    // euclidean distance -> √((x₀-x₁)² + (y₀-y₁)²)
-    var distance = Math.sqrt(
-      Math.pow(x(player[xfield]) - ptr[0], 2) +
-        Math.pow(y(player[yfield]) - ptr[1], 2)
-    );
-    if (distance < closest) {
-      closest = distance;
-      closestPlayer = player;
-    }
-  });
+  nearest = delaunay.find(mx, my);
+  closestPlayer = cells[nearest][0];
   tooltip
     .attr(
       "transform",
       `translate(${x(closestPlayer[xfield])},${y(closestPlayer[yfield])})`
     )
-    // TODO: add stats to callout
     .call(
       callout,
       `${closestPlayer.name}
@@ -52,7 +37,7 @@ const orient = {
     text.attr("text-anchor", "end").attr("dy", "0.35em").attr("x", -8),
 };
 
-function orientText(voronoi, xscale, yscale, xfield, yfield) {
+function orientText(xscale, yscale, xfield, yfield) {
   return function ([player, cell]) {
     const [cx, cy] = d3.polygonCentroid(cell);
     const angle =
@@ -75,27 +60,32 @@ function orientText(voronoi, xscale, yscale, xfield, yfield) {
   };
 }
 
-function pointLabels(svg, stats, xscale, yscale, xfield, yfield) {
-  var delaunay = d3.Delaunay.from(
+function calcVoronoi(stats, xscale, yscale, xfield, yfield) {
+  const delaunay = d3.Delaunay.from(
     stats,
     (p) => xscale(p[xfield]),
     (p) => yscale(p[yfield])
   );
-  var voronoi = delaunay.voronoi([
+  const voronoi = delaunay.voronoi([
     -1,
     -1,
     settings.width + 1,
     settings.height + 1,
   ]);
 
-  var orienter = orientText(voronoi, xscale, yscale, xfield, yfield);
-
   var cells = stats.map((d, i) => [d, voronoi.cellPolygon(i)]);
 
-  // for some reason, I'm getting exactly one player with an empty cell...
-  // their stats and x and y appear totally normally, so I have no idea why.
-  // just remove the empty player. this is a hack FIXME
-  var hack_cells = cells.filter(([_, c]) => c);
+  // If two or more points are completely coincident, they get null
+  // cells. In the future, we should deal with this situation in a
+  // reasonable way, but for now we're going to punt and ust filter them
+  // out.
+  var nonempty_cells = cells.filter(([_, c]) => c);
+
+  return [delaunay, nonempty_cells];
+}
+
+function pointLabels(svg, stats, xscale, yscale, xfield, yfield, cells) {
+  var orienter = orientText(xscale, yscale, xfield, yfield);
 
   const container = svg
     .append("g")
@@ -104,7 +94,7 @@ function pointLabels(svg, stats, xscale, yscale, xfield, yfield) {
 
   const labels = container
     .selectAll("text")
-    .data(hack_cells, ([p, _]) => p.name)
+    .data(cells, ([p, _]) => p.name)
     .join("text")
     .each(orienter)
     .attr(
@@ -116,20 +106,8 @@ function pointLabels(svg, stats, xscale, yscale, xfield, yfield) {
     )
     .text(([p, _]) => p.name);
 
-  return function (stats, xscale, yscale, xfield, yfield) {
-    var delaunay = d3.Delaunay.from(
-      stats,
-      (p) => xscale(p[xfield]),
-      (p) => yscale(p[yfield])
-    );
-    var voronoi = delaunay.voronoi([
-      -1,
-      -1,
-      settings.width + 1,
-      settings.height + 1,
-    ]);
-
-    var orienter = orientText(voronoi, xscale, yscale, xfield, yfield);
+  return function (stats, xscale, yscale, xfield, yfield, cells) {
+    var orienter = orientText(xscale, yscale, xfield, yfield);
 
     var cells = stats.map((d, i) => [d, voronoi.cellPolygon(i)]);
 
@@ -138,13 +116,15 @@ function pointLabels(svg, stats, xscale, yscale, xfield, yfield) {
     // just remove the empty player. this is a hack FIXME
     var hack_cells = cells.filter(([_, c]) => c);
 
+    // TODO the label immediately changes orientation instead of
+    // transitioning nicely, though it does move with the point
     container
       .selectAll("text")
-      .data(hack_cells, ([p, _]) => p.name)
+      .data(cells, ([p, _]) => p.name)
       .join("text")
-      .each(orienter)
       .transition()
       .duration(settings.duration)
+      .each(orienter)
       .attr(
         "transform",
         ([p, _]) => `translate(${xscale(p[xfield])},${yscale(p[yfield])})`
@@ -273,6 +253,7 @@ function points(svg, stats, xscale, yscale, xfield, yfield) {
     .selectAll("g")
     .data(stats, (d) => d.name)
     .join("g")
+    .attr("data-player-name", (d) => d.name)
     .attr(
       "transform",
       (d) => `translate(${xscale(d[xfield])},${yscale(d[yfield])})`
@@ -393,16 +374,17 @@ function graph(stats, xfield, yfield) {
   const svg = d3.select("#canvas");
 
   var [x, y] = scales(stats, xfield, yfield);
+  var [delaunay, voronoiCells] = calcVoronoi(stats, x, y, xfield, yfield);
   updateAxes = axes(svg, stats, x, y);
   updateAxisLabels = axisLabels(svg, xfield, yfield);
   updatePoints = points(svg, stats, x, y, xfield, yfield);
-  updateLabels = pointLabels(svg, stats, x, y, xfield, yfield);
+  updateLabels = pointLabels(svg, stats, x, y, xfield, yfield, voronoiCells);
 
   // https://observablehq.com/@d3/line-chart-with-tooltip
   var tooltip = svg.append("g").attr("class", "tooltip");
 
   svg.on("touchmove mousemove", (evt) =>
-    hover(evt, tooltip, stats, x, y, xfield, yfield)
+    hover(evt, tooltip, stats, x, y, xfield, yfield, delaunay, voronoiCells)
   );
 
   svg.on("touchend mouseleave", () => tooltip.call(callout, null));
@@ -413,19 +395,30 @@ function graph(stats, xfield, yfield) {
       y.domain(d3.reverse(d3.extent(stats, (s) => s[yfield])));
       x.domain(d3.extent(stats, (s) => s[xfield]));
 
+      [x, y] = scales(stats, xfield, yfield);
+      [delaunay, voronoiCells] = calcVoronoi(stats, x, y, xfield, yfield);
+      updateAxes(stats, xfield, yfield, x, y);
+      updateAxisLabels(xfield, yfield);
+      updatePoints(stats, x, y, xfield, yfield);
+      updateLabels(stats, x, y, xfield, yfield, voronoiCells);
+
       // If an event listener was previously registered for the same typename
       // on a selected element, the old listener is removed before the new
       // listener is added.
       // https://github.com/d3/d3-selection/blob/v2.0.0/README.md#selection_on
       svg.on("touchmove mousemove", (evt) => {
-        return hover(evt, tooltip, stats, x, y, xfield, yfield);
+        return hover(
+          evt,
+          tooltip,
+          stats,
+          x,
+          y,
+          xfield,
+          yfield,
+          delaunay,
+          voronoiCells
+        );
       });
-
-      [x, y] = scales(stats, xfield, yfield);
-      updateAxes(stats, xfield, yfield, x, y);
-      updateAxisLabels(xfield, yfield);
-      updatePoints(stats, x, y, xfield, yfield);
-      updateLabels(stats, x, y, xfield, yfield);
 
       // remove the tooltip and redraw it; otherwise it won't properly appear
       // above everything else. SVG has no z-order; last drawn thing wins
