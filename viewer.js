@@ -347,10 +347,9 @@ function axisLabels(svg, xfield, yfield) {
 // * tooltip should display above the player label after transitions
 //   * steps to repro: do a transition, then hover over a player with a bottom
 //     label
-// * permalinks
+// * permalinks to a graph with a given filter/year/resolution/etc
 // * select multiple years
 //   * view a set of players through years
-// * use the voronoi we already have to handle the tooltip selection
 // * nice transitions between years
 // * highlight a player or particular set of players
 //   * something like, one dot stays lit and the others go grey
@@ -360,7 +359,7 @@ function axisLabels(svg, xfield, yfield) {
 //   * collision detect after labelling?
 // * there are a lot of stats - how to give the user better control of them?
 //   * sorting, autocomplete? glossary?
-// * UI for selecting teams
+// * UI for selecting players only on particular teams
 // * ability to customize x and y domains
 // * ability to customize dot size, or use it to represent a variable
 // * handle players that are coincident better
