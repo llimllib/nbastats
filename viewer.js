@@ -5,6 +5,8 @@ const settings = {
   width: 1024,
   height: 768,
   dotRadius: 6,
+  radiusMax: 16,
+  radiusMin: 4,
   duration: 750,
 };
 
@@ -235,10 +237,21 @@ function axes(svg, stats, xscale, yscale) {
   };
 }
 
-function points(svg, stats, xscale, yscale, xfield, yfield) {
+function points(svg, stats, xscale, yscale, xfield, yfield, radius) {
   var useTeamColors = $("#teamcolors").checked;
 
   const container = svg.append("g").attr("class", "points");
+
+  var radiusScale;
+  if (!isNaN(radius)) {
+    // if radius is a number, the scale is just a constant
+    radiusScale = (_) => parseFloat(radius);
+  } else {
+    radiusScale = d3
+      .scaleLinear()
+      .domain(d3.extent(stats, (s) => s[radius]))
+      .range([settings.radiusMax, settings.radiusMin]);
+  }
 
   // points
   // https://observablehq.com/@d3/scatterplot-tour
@@ -255,21 +268,32 @@ function points(svg, stats, xscale, yscale, xfield, yfield) {
     points
       .append("circle")
       .attr("fill", (d) => teams[d.team].colors[0])
-      .attr("r", settings.dotRadius);
+      .attr("r", (d) => radiusScale(d[radius]));
     points
       .append("circle")
       .attr("fill", (d) => teams[d.team].colors[1])
-      .attr("r", settings.dotRadius / 2);
+      .attr("r", (d) => radiusScale(d[radius]) / 2);
   } else {
     points
       .append("circle")
       .attr("fill", "#1f77b4")
-      .attr("r", settings.dotRadius);
+      .attr("r", (d) => radiusScale(d[radius]));
   }
 
-  return function (stats, xscale, yscale, xfield, yfield) {
+  return function (stats, xscale, yscale, xfield, yfield, radius) {
     useTeamColors = $("#teamcolors").checked;
     d3.selectAll(".player_label").remove();
+
+    var radiusScale;
+    if (!isNaN(radius)) {
+      // if radius is a number, the scale is just a constant
+      radiusScale = (_) => parseFloat(radius);
+    } else {
+      radiusScale = d3
+        .scaleLinear()
+        .domain(d3.extent(stats, (s) => s[radius]))
+        .range([settings.radiusMax, settings.radiusMin]);
+    }
 
     // TODO: does this handle entries and exits?
     container
@@ -281,14 +305,14 @@ function points(svg, stats, xscale, yscale, xfield, yfield) {
           if (useTeamColors) {
             g.append("circle")
               .attr("fill", (d) => teams[d.team].colors[0])
-              .attr("r", settings.dotRadius);
+              .attr("r", (d) => radiusScale(d[radius]));
             g.append("circle")
               .attr("fill", (d) => teams[d.team].colors[1])
-              .attr("r", settings.dotRadius / 2);
+              .attr("r", (d) => radiusScale(d[radius]) / 2);
           } else {
             g.append("circle")
               .attr("fill", "#1f77b4")
-              .attr("r", settings.dotRadius);
+              .attr("r", (d) => radiusScale(d[radius]));
           }
           g.call((enter) => {
             enter
@@ -302,6 +326,10 @@ function points(svg, stats, xscale, yscale, xfield, yfield) {
           return g;
         },
         (update) =>
+          // XXX: the problem here is that we need to update the radius of the
+          // two circles inside the g, and I don't really know how to do that. I
+          // think it's important that the sizes transition nicely instead of
+          // jump to smaller?
           update.call((update) =>
             update
               .transition()
@@ -368,14 +396,14 @@ function axisLabels(svg, xfield, yfield) {
 //  * sometimes labels are overlapping the circles
 //  * the tooltip sometimes goes off the bottom, it should appear above the dot
 //    when it's low
-function graph(stats, xfield, yfield) {
+function graph(stats, xfield, yfield, radius) {
   const svg = d3.select("#canvas");
 
   var [x, y] = scales(stats, xfield, yfield);
   var [delaunay, voronoiCells] = calcVoronoi(stats, x, y, xfield, yfield);
   updateAxes = axes(svg, stats, x, y);
   updateAxisLabels = axisLabels(svg, xfield, yfield);
-  updatePoints = points(svg, stats, x, y, xfield, yfield);
+  updatePoints = points(svg, stats, x, y, xfield, yfield, radius);
   updateLabels = pointLabels(svg, stats, x, y, xfield, yfield, voronoiCells);
 
   // https://observablehq.com/@d3/line-chart-with-tooltip
@@ -389,7 +417,7 @@ function graph(stats, xfield, yfield) {
 
   // https://observablehq.com/@d3/dot-plot
   return Object.assign(svg.node(), {
-    update(stats, xfield, yfield) {
+    update(stats, xfield, yfield, radius) {
       y.domain(d3.reverse(d3.extent(stats, (s) => s[yfield])));
       x.domain(d3.extent(stats, (s) => s[xfield]));
 
@@ -397,7 +425,7 @@ function graph(stats, xfield, yfield) {
       [delaunay, voronoiCells] = calcVoronoi(stats, x, y, xfield, yfield);
       updateAxes(stats, xfield, yfield, x, y);
       updateAxisLabels(xfield, yfield);
-      updatePoints(stats, x, y, xfield, yfield);
+      updatePoints(stats, x, y, xfield, yfield, radius);
       updateLabels(stats, x, y, xfield, yfield, voronoiCells);
 
       // If an event listener was previously registered for the same typename
@@ -802,6 +830,11 @@ function prepare() {
       .attr("value", key)
       .attr("id", `staty_${key}`)
       .text(meta.name);
+    d3.select("#radius")
+      .append("option")
+      .attr("value", key)
+      .attr("id", `staty_${key}`)
+      .text(meta.name);
   });
   d3.select("#statx_ts_pct").attr("selected", true);
   d3.select("#staty_usg_pct").attr("selected", true);
@@ -811,19 +844,21 @@ async function changeYear(evt) {
   const res = await fetch(`./data/${evt.target.value}/stats.json`);
   window.stats = await res.json();
 
-  const xfield = d3.select("#statx").node().value;
-  const yfield = d3.select("#staty").node().value;
+  const xfield = $("#statx").value;
+  const yfield = $("#staty").value;
+  const radius = $("#radius").value;
 
   d3.selectAll("#canvas").html("");
-  const svg = graph(applyFilter(window.stats), xfield, yfield);
+  const svg = graph(applyFilter(window.stats), xfield, yfield, radius);
 }
 
 function changeUseTeamColors(evt, activeStats) {
-  const xfield = d3.select("#statx").node().value;
-  const yfield = d3.select("#staty").node().value;
+  const xfield = $("#statx").value;
+  const yfield = $("#staty").value;
+  const radius = $("#radius").value;
 
   d3.selectAll("#canvas").html("");
-  graph(applyFilter(window.stats), xfield, yfield);
+  graph(applyFilter(window.stats), xfield, yfield, radius);
 }
 
 // return a function (player, field, n) -> bool that will return true if a
@@ -850,8 +885,9 @@ function updateSize(evt) {
   settings.width = $("#settings-width").value;
   settings.height = $("#settings-height").value;
 
-  const xfield = d3.select("#statx").node().value;
-  const yfield = d3.select("#staty").node().value;
+  const xfield = $("#statx").value;
+  const yfield = $("#staty").value;
+  const radius = $("#radius").value;
 
   d3.selectAll("#canvas").html("");
   graph(applyFilter(window.stats), xfield, yfield);
@@ -866,13 +902,19 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
 
   prepare();
 
-  const svg = graph(applyFilter(window.stats), "ts_pct", "usg_pct");
+  const svg = graph(
+    applyFilter(window.stats),
+    "ts_pct",
+    "usg_pct",
+    $("#radius").value
+  );
   // TODO: get the values from the select boxes; this makes it easier to test though
   $("#draw").addEventListener("click", () =>
     svg.update(
       activeStats,
-      d3.select("#statx").node().value,
-      d3.select("#staty").node().value
+      $("#statx").value,
+      $("#staty").value,
+      $("#radius").value
     )
   );
   $("#settings-width").addEventListener("change", updateSize);
@@ -884,8 +926,9 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
   $("#applyFilter").addEventListener("click", () => {
     svg.update(
       applyFilter(window.stats),
-      d3.select("#statx").node().value,
-      d3.select("#staty").node().value
+      $("#statx").value,
+      $("#staty").value,
+      $("#radius").value
     );
   });
 });
