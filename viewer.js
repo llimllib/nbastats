@@ -109,13 +109,6 @@ function pointLabels(svg, stats, xscale, yscale, xfield, yfield, cells) {
   return function (stats, xscale, yscale, xfield, yfield, cells) {
     var orienter = orientText(xscale, yscale, xfield, yfield);
 
-    var cells = stats.map((d, i) => [d, voronoi.cellPolygon(i)]);
-
-    // for some reason, I'm getting exactly one player with an empty cell...
-    // their stats and x and y appear totally normally, so I have no idea why.
-    // just remove the empty player. this is a hack FIXME
-    var hack_cells = cells.filter(([_, c]) => c);
-
     // TODO the label immediately changes orientation instead of
     // transitioning nicely, though it does move with the point
     container
@@ -374,6 +367,7 @@ function axisLabels(svg, xfield, yfield) {
 //   * right now we just have to ensure we ignore null cells anywhere they're used
 //   * what even is the right thing to do? I dunno
 //  * custom graph resolutions
+//  * sometimes labels are overlapping the circles
 function graph(stats, xfield, yfield) {
   const svg = d3.select("#canvas");
 
