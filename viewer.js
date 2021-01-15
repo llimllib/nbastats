@@ -123,7 +123,7 @@ function pointLabels(svg, stats, xscale, yscale, xfield, yfield, cells) {
         ([p, _]) => `translate(${xscale(p[xfield])},${yscale(p[yfield])})`
       )
       .attr("display", ([, cell]) =>
-        -d3.polygonArea(cell) > 3000 ? null : "none"
+        !cell || -d3.polygonArea(cell) > 3000 ? null : "none"
       )
       .text(([p, _]) => p.name);
   };
