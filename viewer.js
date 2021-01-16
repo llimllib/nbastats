@@ -61,7 +61,7 @@ function orientText(xscale, yscale, rscale, xfield, yfield, rfield) {
       ) +
         4) %
       4;
-    const r = rscale(player[rfield]);
+    const r = rscale(player[rfield]) * 1.1;
     d3.select(this).call(
       angle === 0
         ? orient("right", r)
