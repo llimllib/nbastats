@@ -5,8 +5,8 @@ const settings = {
   width: 1024,
   height: 768,
   dotRadius: 6,
-  radiusMax: 16,
-  radiusMin: 4,
+  maxRadius: 16,
+  minRadius: 4,
   duration: 750,
 };
 
@@ -29,17 +29,22 @@ ${statMeta[yfield].name}: ${closestPlayer[yfield]}`
     );
 }
 
-const orient = {
-  top: (text) => text.attr("text-anchor", "middle").attr("y", -8),
-  right: (text) =>
-    text.attr("text-anchor", "start").attr("dy", "0.35em").attr("x", 8),
-  bottom: (text) =>
-    text.attr("text-anchor", "middle").attr("dy", "0.71em").attr("y", 8),
-  left: (text) =>
-    text.attr("text-anchor", "end").attr("dy", "0.35em").attr("x", -8),
-};
+function orient(pos, r) {
+  if (pos == "top") {
+    return (text) => text.attr("text-anchor", "middle").attr("y", -r);
+  } else if (pos == "right") {
+    return (text) =>
+      text.attr("text-anchor", "start").attr("dy", "0.35em").attr("x", r);
+  } else if (pos == "bottom") {
+    return (text) =>
+      text.attr("text-anchor", "middle").attr("dy", "0.71em").attr("y", r);
+  } else if (pos == "left") {
+    return (text) =>
+      text.attr("text-anchor", "end").attr("dy", "0.35em").attr("x", -r);
+  }
+}
 
-function orientText(xscale, yscale, xfield, yfield) {
+function orientText(xscale, yscale, rscale, xfield, yfield, rfield) {
   return function ([player, cell]) {
     // if two players have the same stats on the selected dimension, the
     // voronoi cell will be null. Skip this player for now - do something more
@@ -56,14 +61,15 @@ function orientText(xscale, yscale, xfield, yfield) {
       ) +
         4) %
       4;
+    const r = rscale(player[rfield]);
     d3.select(this).call(
       angle === 0
-        ? orient.right
+        ? orient("right", r)
         : angle === 3
-        ? orient.top
+        ? orient("top", r)
         : angle === 1
-        ? orient.bottom
-        : orient.left
+        ? orient("bottom", r)
+        : orient("left", r)
     );
   };
 }
@@ -86,8 +92,18 @@ function calcVoronoi(stats, xscale, yscale, xfield, yfield) {
   return [delaunay, cells];
 }
 
-function pointLabels(svg, stats, xscale, yscale, xfield, yfield, cells) {
-  var orienter = orientText(xscale, yscale, xfield, yfield);
+function pointLabels(
+  svg,
+  stats,
+  xscale,
+  yscale,
+  rscale,
+  xfield,
+  yfield,
+  rfield,
+  cells
+) {
+  var orienter = orientText(xscale, yscale, rscale, xfield, yfield, rfield);
 
   const container = svg
     .append("g")
@@ -108,8 +124,17 @@ function pointLabels(svg, stats, xscale, yscale, xfield, yfield, cells) {
     )
     .text(([p, _]) => p.name);
 
-  return function (stats, xscale, yscale, xfield, yfield, cells) {
-    var orienter = orientText(xscale, yscale, xfield, yfield);
+  return function (
+    stats,
+    xscale,
+    yscale,
+    rscale,
+    xfield,
+    yfield,
+    rfield,
+    cells
+  ) {
+    var orienter = orientText(xscale, yscale, rscale, xfield, yfield, rfield);
 
     // TODO the label immediately changes orientation instead of
     // transitioning nicely, though it does move with the point
@@ -131,8 +156,7 @@ function pointLabels(svg, stats, xscale, yscale, xfield, yfield, cells) {
   };
 }
 
-// scales(stats:object, xfield:string, yfield:string) -> [xscale, yscale]
-function scales(stats, xfield, yfield) {
+function scales(stats, xfield, yfield, rfield) {
   xAxType = statMeta[xfield].type;
   if (xAxType == "categorical") {
     const domain = new Set(stats.map((p) => p[xfield]));
@@ -161,7 +185,18 @@ function scales(stats, xfield, yfield) {
       .range([settings.padding.top, settings.height - settings.padding.bottom]);
   }
 
-  return [x, y];
+  var r;
+  if (!isNaN(rfield)) {
+    // if radius is a number, the scale is just a constant
+    r = (_) => parseFloat(rfield);
+  } else {
+    r = d3
+      .scaleLinear()
+      .domain(d3.extent(stats, (s) => s[rfield]))
+      .range([settings.minRadius, settings.maxRadius]);
+  }
+
+  return [x, y, r];
 }
 
 // https://observablehq.com/@d3/styled-axes
@@ -237,21 +272,10 @@ function axes(svg, stats, xscale, yscale) {
   };
 }
 
-function points(svg, stats, xscale, yscale, xfield, yfield, radius) {
+function points(svg, stats, xscale, yscale, rscale, xfield, yfield, rfield) {
   var useTeamColors = $("#teamcolors").checked;
 
   const container = svg.append("g").attr("class", "points");
-
-  var radiusScale;
-  if (!isNaN(radius)) {
-    // if radius is a number, the scale is just a constant
-    radiusScale = (_) => parseFloat(radius);
-  } else {
-    radiusScale = d3
-      .scaleLinear()
-      .domain(d3.extent(stats, (s) => s[radius]))
-      .range([settings.radiusMax, settings.radiusMin]);
-  }
 
   // points
   // https://observablehq.com/@d3/scatterplot-tour
@@ -267,33 +291,25 @@ function points(svg, stats, xscale, yscale, xfield, yfield, radius) {
   if (useTeamColors) {
     points
       .append("circle")
+      .attr("class", "outer")
       .attr("fill", (d) => teams[d.team].colors[0])
-      .attr("r", (d) => radiusScale(d[radius]));
+      .attr("r", (d) => rscale(d[rfield]));
     points
       .append("circle")
+      .attr("class", "inner")
       .attr("fill", (d) => teams[d.team].colors[1])
-      .attr("r", (d) => radiusScale(d[radius]) / 2);
+      .attr("r", (d) => rscale(d[rfield]) / 2);
   } else {
     points
       .append("circle")
+      .attr("class", "outer")
       .attr("fill", "#1f77b4")
-      .attr("r", (d) => radiusScale(d[radius]));
+      .attr("r", (d) => rscale(d[radius]));
   }
 
-  return function (stats, xscale, yscale, xfield, yfield, radius) {
+  return function (stats, xscale, yscale, rscale, xfield, yfield, rfield) {
     useTeamColors = $("#teamcolors").checked;
     d3.selectAll(".player_label").remove();
-
-    var radiusScale;
-    if (!isNaN(radius)) {
-      // if radius is a number, the scale is just a constant
-      radiusScale = (_) => parseFloat(radius);
-    } else {
-      radiusScale = d3
-        .scaleLinear()
-        .domain(d3.extent(stats, (s) => s[radius]))
-        .range([settings.radiusMax, settings.radiusMin]);
-    }
 
     // TODO: does this handle entries and exits?
     container
@@ -304,15 +320,18 @@ function points(svg, stats, xscale, yscale, xfield, yfield, radius) {
           var g = enter.append("g");
           if (useTeamColors) {
             g.append("circle")
+              .attr("class", "outer")
               .attr("fill", (d) => teams[d.team].colors[0])
-              .attr("r", (d) => radiusScale(d[radius]));
+              .attr("r", (d) => rscale(d[rfield]));
             g.append("circle")
+              .attr("class", "inner")
               .attr("fill", (d) => teams[d.team].colors[1])
-              .attr("r", (d) => radiusScale(d[radius]) / 2);
+              .attr("r", (d) => rscale(d[rfield]) / 2);
           } else {
             g.append("circle")
+              .attr("class", "outer")
               .attr("fill", "#1f77b4")
-              .attr("r", (d) => radiusScale(d[radius]));
+              .attr("r", (d) => rscale(d[rfield]));
           }
           g.call((enter) => {
             enter
@@ -332,6 +351,18 @@ function points(svg, stats, xscale, yscale, xfield, yfield, radius) {
           // jump to smaller?
           update.call((update) =>
             update
+              .each((p, i, ns) => {
+                d3.select(ns[i])
+                  .select("circle.outer")
+                  .transition()
+                  .duration(settings.duration)
+                  .attr("r", (d) => rscale(d[rfield]));
+                d3.select(ns[i])
+                  .select("circle.inner")
+                  .transition()
+                  .duration(settings.duration)
+                  .attr("r", (d) => rscale(d[rfield]) / 2);
+              })
               .transition()
               .attr(
                 "transform",
@@ -372,6 +403,13 @@ function axisLabels(svg, xfield, yfield) {
 
 // stats should be a list of player objects
 // TODO
+// * organize all the inputs
+//   * sections?
+//   * ability to open and close sections?
+//   * what's a comparable UI?
+//     * alt: fuck it it's my UI I'll do what I like
+// * remove draw button and just optimistically redraw?
+// * show UI indication of legal filters
 // * tooltip should display above the player label after transitions
 //   * steps to repro: do a transition, then hover over a player with a bottom
 //     label
@@ -396,15 +434,32 @@ function axisLabels(svg, xfield, yfield) {
 //  * sometimes labels are overlapping the circles
 //  * the tooltip sometimes goes off the bottom, it should appear above the dot
 //    when it's low
-function graph(stats, xfield, yfield, radius) {
+//  * would be cool to be able to set a linear or log scale
+//    * right now we just choose linear by default but for example, if you
+//      choose FT% as the circle size, you see that Andre Drummond looks tiny and
+//      everybody else looks huge.
+//    * if it were a log scale, the good shooters would jump out at you
+// * should I thread a single transition object through all the transitions?
+// * group up scales and fieldnames
+function graph(stats, xfield, yfield, rfield) {
   const svg = d3.select("#canvas");
 
-  var [x, y] = scales(stats, xfield, yfield);
+  var [x, y, r] = scales(stats, xfield, yfield, rfield);
   var [delaunay, voronoiCells] = calcVoronoi(stats, x, y, xfield, yfield);
   updateAxes = axes(svg, stats, x, y);
   updateAxisLabels = axisLabels(svg, xfield, yfield);
-  updatePoints = points(svg, stats, x, y, xfield, yfield, radius);
-  updateLabels = pointLabels(svg, stats, x, y, xfield, yfield, voronoiCells);
+  updatePoints = points(svg, stats, x, y, r, xfield, yfield, rfield);
+  updateLabels = pointLabels(
+    svg,
+    stats,
+    x,
+    y,
+    r,
+    xfield,
+    yfield,
+    rfield,
+    voronoiCells
+  );
 
   // https://observablehq.com/@d3/line-chart-with-tooltip
   var tooltip = svg.append("g").attr("class", "tooltip");
@@ -417,16 +472,16 @@ function graph(stats, xfield, yfield, radius) {
 
   // https://observablehq.com/@d3/dot-plot
   return Object.assign(svg.node(), {
-    update(stats, xfield, yfield, radius) {
+    update(stats, xfield, yfield, rfield) {
       y.domain(d3.reverse(d3.extent(stats, (s) => s[yfield])));
       x.domain(d3.extent(stats, (s) => s[xfield]));
 
-      [x, y] = scales(stats, xfield, yfield);
+      [x, y, r] = scales(stats, xfield, yfield, rfield);
       [delaunay, voronoiCells] = calcVoronoi(stats, x, y, xfield, yfield);
       updateAxes(stats, xfield, yfield, x, y);
       updateAxisLabels(xfield, yfield);
-      updatePoints(stats, x, y, xfield, yfield, radius);
-      updateLabels(stats, x, y, xfield, yfield, voronoiCells);
+      updatePoints(stats, x, y, r, xfield, yfield, rfield);
+      updateLabels(stats, x, y, r, xfield, yfield, rfield, voronoiCells);
 
       // If an event listener was previously registered for the same typename
       // on a selected element, the old listener is removed before the new
@@ -830,11 +885,14 @@ function prepare() {
       .attr("value", key)
       .attr("id", `staty_${key}`)
       .text(meta.name);
-    d3.select("#radius")
-      .append("option")
-      .attr("value", key)
-      .attr("id", `staty_${key}`)
-      .text(meta.name);
+    // TODO: only append fields to radius that make sense... float only maybe?
+    if (["float", "ordinal"].indexOf(meta.type) != -1) {
+      d3.select("#radius")
+        .append("option")
+        .attr("value", key)
+        .attr("id", `staty_${key}`)
+        .text(meta.name);
+    }
   });
   d3.select("#statx_ts_pct").attr("selected", true);
   d3.select("#staty_usg_pct").attr("selected", true);
@@ -846,19 +904,19 @@ async function changeYear(evt) {
 
   const xfield = $("#statx").value;
   const yfield = $("#staty").value;
-  const radius = $("#radius").value;
+  const rfield = $("#radius").value;
 
   d3.selectAll("#canvas").html("");
-  const svg = graph(applyFilter(window.stats), xfield, yfield, radius);
+  const svg = graph(applyFilter(window.stats), xfield, yfield, rfield);
 }
 
 function changeUseTeamColors(evt, activeStats) {
   const xfield = $("#statx").value;
   const yfield = $("#staty").value;
-  const radius = $("#radius").value;
+  const rfield = $("#radius").value;
 
   d3.selectAll("#canvas").html("");
-  graph(applyFilter(window.stats), xfield, yfield, radius);
+  graph(applyFilter(window.stats), xfield, yfield, rfield);
 }
 
 // return a function (player, field, n) -> bool that will return true if a
@@ -881,16 +939,18 @@ function applyFilter(stats) {
   return activeStats;
 }
 
-function updateSize(evt) {
+function updateSettings(evt) {
   settings.width = $("#settings-width").value;
   settings.height = $("#settings-height").value;
+  settings.minRadius = $("#settings-min-radius").value;
+  settings.maxRadius = $("#settings-max-radius").value;
 
   const xfield = $("#statx").value;
   const yfield = $("#staty").value;
-  const radius = $("#radius").value;
+  const rfield = $("#radius").value;
 
   d3.selectAll("#canvas").html("");
-  graph(applyFilter(window.stats), xfield, yfield);
+  graph(applyFilter(window.stats), xfield, yfield, rfield);
 }
 
 window.addEventListener("DOMContentLoaded", async (evt) => {
@@ -899,6 +959,8 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
 
   $("#settings-width").value = settings.width;
   $("#settings-height").value = settings.height;
+  $("#settings-min-radius").value = settings.minRadius;
+  $("#settings-max-radius").value = settings.maxRadius;
 
   prepare();
 
@@ -917,8 +979,10 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
       $("#radius").value
     )
   );
-  $("#settings-width").addEventListener("change", updateSize);
-  $("#settings-height").addEventListener("change", updateSize);
+  $("#settings-width").addEventListener("change", updateSettings);
+  $("#settings-height").addEventListener("change", updateSettings);
+  $("#settings-min-radius").addEventListener("change", updateSettings);
+  $("#settings-max-radius").addEventListener("change", updateSettings);
   $("#yearChooser").addEventListener("change", changeYear);
   $("#teamcolors").addEventListener("change", (evt) =>
     changeUseTeamColors(evt)
