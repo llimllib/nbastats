@@ -10,7 +10,7 @@ const settings = {
   duration: 750,
 };
 
-function hover(event, tooltip, stats, x, y, xfield, yfield, delaunay, cells) {
+function hover(event, tooltip, stats, scales, fields, delaunay, cells) {
   const [mx, my] = d3.pointer(event, this);
 
   nearest = delaunay.find(mx, my);
@@ -18,14 +18,16 @@ function hover(event, tooltip, stats, x, y, xfield, yfield, delaunay, cells) {
   tooltip
     .attr(
       "transform",
-      `translate(${x(closestPlayer[xfield])},${y(closestPlayer[yfield])})`
+      `translate(${scales.x(closestPlayer[fields.x])},${scales.y(
+        closestPlayer[fields.y]
+      )})`
     )
     .call(
       callout,
       `${closestPlayer.name}
 ${closestPlayer.team}
-${statMeta[xfield].name}: ${closestPlayer[xfield]}
-${statMeta[yfield].name}: ${closestPlayer[yfield]}`
+${statMeta[fields.x].name}: ${closestPlayer[fields.x]}
+${statMeta[fields.y].name}: ${closestPlayer[fields.y]}`
     );
 }
 
@@ -44,7 +46,7 @@ function orient(pos, r) {
   }
 }
 
-function orientText(xscale, yscale, rscale, xfield, yfield, rfield) {
+function orientText(scales, fields) {
   return function ([player, cell]) {
     // if two players have the same stats on the selected dimension, the
     // voronoi cell will be null. Skip this player for now - do something more
@@ -55,13 +57,16 @@ function orientText(xscale, yscale, rscale, xfield, yfield, rfield) {
     const [cx, cy] = d3.polygonCentroid(cell);
     const angle =
       (Math.round(
-        (Math.atan2(cy - yscale(player[yfield]), cx - xscale(player[xfield])) /
+        (Math.atan2(
+          cy - scales.y(player[fields.y]),
+          cx - scales.x(player[fields.x])
+        ) /
           Math.PI) *
           2
       ) +
         4) %
       4;
-    const r = rscale(player[rfield]) * 1.1;
+    const r = scales.r(player[fields.r]) * 1.1;
     d3.select(this).call(
       angle === 0
         ? orient("right", r)
@@ -74,11 +79,11 @@ function orientText(xscale, yscale, rscale, xfield, yfield, rfield) {
   };
 }
 
-function calcVoronoi(stats, xscale, yscale, xfield, yfield) {
+function calcVoronoi(stats, scales, fields) {
   const delaunay = d3.Delaunay.from(
     stats,
-    (p) => xscale(p[xfield]),
-    (p) => yscale(p[yfield])
+    (p) => scales.x(p[fields.x]),
+    (p) => scales.y(p[fields.y])
   );
   const voronoi = delaunay.voronoi([
     -1,
@@ -92,18 +97,8 @@ function calcVoronoi(stats, xscale, yscale, xfield, yfield) {
   return [delaunay, cells];
 }
 
-function pointLabels(
-  svg,
-  stats,
-  xscale,
-  yscale,
-  rscale,
-  xfield,
-  yfield,
-  rfield,
-  cells
-) {
-  var orienter = orientText(xscale, yscale, rscale, xfield, yfield, rfield);
+function pointLabels(svg, stats, scales, fields, cells) {
+  var orienter = orientText(scales, fields);
 
   const container = svg
     .append("g")
@@ -117,24 +112,15 @@ function pointLabels(
     .each(orienter)
     .attr(
       "transform",
-      ([p, _]) => `translate(${xscale(p[xfield])},${yscale(p[yfield])})`
+      ([p, _]) => `translate(${scales.x(p[fields.x])},${scales.y(p[fields.y])})`
     )
     .attr("display", ([, cell]) =>
       !cell || -d3.polygonArea(cell) > 3000 ? null : "none"
     )
     .text(([p, _]) => p.name);
 
-  return function (
-    stats,
-    xscale,
-    yscale,
-    rscale,
-    xfield,
-    yfield,
-    rfield,
-    cells
-  ) {
-    var orienter = orientText(xscale, yscale, rscale, xfield, yfield, rfield);
+  return function (stats, scales, fields, cells) {
+    var orienter = orientText(scales, fields);
 
     // TODO the label immediately changes orientation instead of
     // transitioning nicely, though it does move with the point
@@ -147,7 +133,8 @@ function pointLabels(
       .each(orienter)
       .attr(
         "transform",
-        ([p, _]) => `translate(${xscale(p[xfield])},${yscale(p[yfield])})`
+        ([p, _]) =>
+          `translate(${scales.x(p[fields.x])},${scales.y(p[fields.y])})`
       )
       .attr("display", ([, cell]) =>
         !cell || -d3.polygonArea(cell) > 3000 ? null : "none"
@@ -156,10 +143,10 @@ function pointLabels(
   };
 }
 
-function scales(stats, xfield, yfield, rfield) {
-  xAxType = statMeta[xfield].type;
+function makeScales(stats, fields) {
+  xAxType = statMeta[fields.x].type;
   if (xAxType == "categorical") {
-    const domain = new Set(stats.map((p) => p[xfield]));
+    const domain = new Set(stats.map((p) => p[fields.x]));
     var x = d3.scaleBand(domain, [
       settings.padding.left,
       settings.width - settings.padding.right,
@@ -167,13 +154,13 @@ function scales(stats, xfield, yfield, rfield) {
   } else {
     var x = d3
       .scaleLinear()
-      .domain(d3.extent(stats, (s) => s[xfield]))
+      .domain(d3.extent(stats, (s) => s[fields.x]))
       .range([settings.padding.left, settings.width - settings.padding.right]);
   }
 
-  yAxType = statMeta[yfield].type;
+  yAxType = statMeta[fields.y].type;
   if (yAxType == "categorical") {
-    const domain = new Set(stats.map((p) => p[yfield]));
+    const domain = new Set(stats.map((p) => p[fields.y]));
     var y = d3.scaleBand(domain, [
       settings.padding.top,
       settings.height - settings.padding.bottom,
@@ -181,28 +168,28 @@ function scales(stats, xfield, yfield, rfield) {
   } else {
     var y = d3
       .scaleLinear()
-      .domain(d3.reverse(d3.extent(stats, (s) => s[yfield])))
+      .domain(d3.reverse(d3.extent(stats, (s) => s[fields.y])))
       .range([settings.padding.top, settings.height - settings.padding.bottom]);
   }
 
   var r;
-  if (!isNaN(rfield)) {
+  if (!isNaN(fields.r)) {
     // if radius is a number, the scale is just a constant
-    r = (_) => parseFloat(rfield);
+    r = (_) => parseFloat(fields.r);
   } else {
     r = d3
       .scaleLinear()
-      .domain(d3.extent(stats, (s) => s[rfield]))
+      .domain(d3.extent(stats, (s) => s[fields.r]))
       .range([settings.minRadius, settings.maxRadius]);
   }
 
-  return [x, y, r];
+  return { x: x, y: y, r: r };
 }
 
 // https://observablehq.com/@d3/styled-axes
-function axes(svg, stats, xscale, yscale) {
+function axes(svg, stats, scales) {
   var xaxis = d3
-    .axisTop(xscale)
+    .axisTop(scales.x)
     .tickSize(settings.height)
     .tickFormat(d3.format(".2r"));
 
@@ -216,7 +203,7 @@ function axes(svg, stats, xscale, yscale) {
     .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", -15));
 
   const yaxis = d3
-    .axisRight(yscale)
+    .axisRight(scales.y)
     .tickSize(settings.width)
     .tickFormat(d3.format(".2r"));
 
@@ -230,19 +217,19 @@ function axes(svg, stats, xscale, yscale) {
     .call((g) => g.selectAll(".tick text").attr("dy", -4).attr("x", 4));
 
   // return an update function
-  return function (stats, xfield, yfield, xscale, yscale) {
-    xAxType = statMeta[xfield].type;
+  return function (stats, scales, fields) {
+    xAxType = statMeta[fields.x].type;
     if (xAxType == "categorical") {
-      xaxis.scale(xscale).tickFormat((p) => p);
+      xaxis.scale(scales.x).tickFormat((p) => p);
     } else {
-      xaxis.scale(xscale).tickFormat(d3.format(".2r"));
+      xaxis.scale(scales.x).tickFormat(d3.format(".2r"));
     }
 
-    yAxType = statMeta[yfield].type;
+    yAxType = statMeta[fields.y].type;
     if (yAxType == "categorical") {
-      yaxis.scale(yscale).tickFormat((p) => p);
+      yaxis.scale(scales.y).tickFormat((p) => p);
     } else {
-      yaxis.scale(yscale).tickFormat(d3.format(".2r"));
+      yaxis.scale(scales.y).tickFormat(d3.format(".2r"));
     }
 
     xaxisg
@@ -263,16 +250,19 @@ function axes(svg, stats, xscale, yscale) {
       .transition()
       .duration(settings.duration)
       .call(yaxis)
-      .on("start", function () {
-        yaxisg.select(".domain").remove(); // https://stackoverflow.com/a/50254240/42559
-      })
+      .on(
+        "start",
+        () => yaxisg.select(".domain").remove() // https://stackoverflow.com/a/50254240/42559
+      )
       .call((g) => g.select(".domain").remove())
       .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
+      // this line causes many <<Error: <text> attribute dy: Expected length,
+      // "NaN".>> for unknown reasons, but oddly it seems to work fine
       .call((g) => g.selectAll(".tick text").attr("x", 4).attr("dy", -4));
   };
 }
 
-function points(svg, stats, xscale, yscale, rscale, xfield, yfield, rfield) {
+function points(svg, stats, scales, fields) {
   var useTeamColors = $("#teamcolors").checked;
 
   const container = svg.append("g").attr("class", "points");
@@ -286,28 +276,28 @@ function points(svg, stats, xscale, yscale, rscale, xfield, yfield, rfield) {
     .attr("data-player-name", (d) => d.name)
     .attr(
       "transform",
-      (d) => `translate(${xscale(d[xfield])},${yscale(d[yfield])})`
+      (d) => `translate(${scales.x(d[fields.x])},${scales.y(d[fields.y])})`
     );
   if (useTeamColors) {
     points
       .append("circle")
       .attr("class", "outer")
       .attr("fill", (d) => teams[d.team].colors[0])
-      .attr("r", (d) => rscale(d[rfield]));
+      .attr("r", (d) => scales.r(d[fields.r]));
     points
       .append("circle")
       .attr("class", "inner")
       .attr("fill", (d) => teams[d.team].colors[1])
-      .attr("r", (d) => rscale(d[rfield]) / 2);
+      .attr("r", (d) => scales.r(d[fields.r]) / 2);
   } else {
     points
       .append("circle")
       .attr("class", "outer")
       .attr("fill", "#1f77b4")
-      .attr("r", (d) => rscale(d[radius]));
+      .attr("r", (d) => scales.r(d[radius]));
   }
 
-  return function (stats, xscale, yscale, rscale, xfield, yfield, rfield) {
+  return function (stats, scales, fields) {
     useTeamColors = $("#teamcolors").checked;
     d3.selectAll(".player_label").remove();
 
@@ -322,16 +312,16 @@ function points(svg, stats, xscale, yscale, rscale, xfield, yfield, rfield) {
             g.append("circle")
               .attr("class", "outer")
               .attr("fill", (d) => teams[d.team].colors[0])
-              .attr("r", (d) => rscale(d[rfield]));
+              .attr("r", (d) => scales.r(d[fields.r]));
             g.append("circle")
               .attr("class", "inner")
               .attr("fill", (d) => teams[d.team].colors[1])
-              .attr("r", (d) => rscale(d[rfield]) / 2);
+              .attr("r", (d) => scales.r(d[fields.r]) / 2);
           } else {
             g.append("circle")
               .attr("class", "outer")
               .attr("fill", "#1f77b4")
-              .attr("r", (d) => rscale(d[rfield]));
+              .attr("r", (d) => scales.r(d[fields.r]));
           }
           g.call((enter) => {
             enter
@@ -339,7 +329,8 @@ function points(svg, stats, xscale, yscale, rscale, xfield, yfield, rfield) {
               .duration(settings.duration)
               .attr(
                 "transform",
-                (d) => `translate(${xscale(d[xfield])},${yscale(d[yfield])})`
+                (d) =>
+                  `translate(${scales.x(d[fields.x])},${scales.y(d[fields.y])})`
               );
           });
           return g;
@@ -356,17 +347,18 @@ function points(svg, stats, xscale, yscale, rscale, xfield, yfield, rfield) {
                   .select("circle.outer")
                   .transition()
                   .duration(settings.duration)
-                  .attr("r", (d) => rscale(d[rfield]));
+                  .attr("r", (d) => scales.r(d[fields.r]));
                 d3.select(ns[i])
                   .select("circle.inner")
                   .transition()
                   .duration(settings.duration)
-                  .attr("r", (d) => rscale(d[rfield]) / 2);
+                  .attr("r", (d) => scales.r(d[fields.r]) / 2);
               })
               .transition()
               .attr(
                 "transform",
-                (d) => `translate(${xscale(d[xfield])},${yscale(d[yfield])})`
+                (d) =>
+                  `translate(${scales.x(d[fields.x])},${scales.y(d[fields.y])})`
               )
               .duration(settings.duration)
           ),
@@ -375,7 +367,7 @@ function points(svg, stats, xscale, yscale, rscale, xfield, yfield, rfield) {
   };
 }
 
-function axisLabels(svg, xfield, yfield) {
+function axisLabels(svg, fields) {
   // axis labels
   //
   // I like the axis labels on health & wealth:
@@ -386,18 +378,18 @@ function axisLabels(svg, xfield, yfield) {
     .attr("text-anchor", "end")
     .attr("x", settings.width - 20)
     .attr("y", settings.height - 5)
-    .text("→" + statMeta[xfield].name);
+    .text("→" + statMeta[fields.x].name);
   const ylabel = svg
     .append("text")
     .attr("class", "y label")
     .attr("text-anchor", "left")
     .attr("x", 10)
     .attr("y", 20)
-    .text("↑" + statMeta[yfield].name);
+    .text("↑" + statMeta[fields.y].name);
 
-  return function (xfield, yfield) {
-    xlabel.text("→" + statMeta[xfield].name);
-    ylabel.text("↑" + statMeta[yfield].name);
+  return function (fields) {
+    xlabel.text("→" + statMeta[fields.x].name);
+    ylabel.text("↑" + statMeta[fields.y].name);
   };
 }
 
@@ -441,47 +433,38 @@ function axisLabels(svg, xfield, yfield) {
 //    * if it were a log scale, the good shooters would jump out at you
 // * should I thread a single transition object through all the transitions?
 // * group up scales and fieldnames
-function graph(stats, xfield, yfield, rfield) {
+// * label radius size on chart
+function graph(stats, fields) {
   const svg = d3.select("#canvas");
 
-  var [x, y, r] = scales(stats, xfield, yfield, rfield);
-  var [delaunay, voronoiCells] = calcVoronoi(stats, x, y, xfield, yfield);
-  updateAxes = axes(svg, stats, x, y);
-  updateAxisLabels = axisLabels(svg, xfield, yfield);
-  updatePoints = points(svg, stats, x, y, r, xfield, yfield, rfield);
-  updateLabels = pointLabels(
-    svg,
-    stats,
-    x,
-    y,
-    r,
-    xfield,
-    yfield,
-    rfield,
-    voronoiCells
-  );
+  var scales = makeScales(stats, fields);
+  var [delaunay, voronoiCells] = calcVoronoi(stats, scales, fields);
+  updateAxes = axes(svg, stats, scales);
+  updateAxisLabels = axisLabels(svg, fields);
+  updatePoints = points(svg, stats, scales, fields);
+  updateLabels = pointLabels(svg, stats, scales, fields, voronoiCells);
 
   // https://observablehq.com/@d3/line-chart-with-tooltip
   var tooltip = svg.append("g").attr("class", "tooltip");
 
   svg.on("touchmove mousemove", (evt) =>
-    hover(evt, tooltip, stats, x, y, xfield, yfield, delaunay, voronoiCells)
+    hover(evt, tooltip, stats, scales, fields, delaunay, voronoiCells)
   );
 
   svg.on("touchend mouseleave", () => tooltip.call(callout, null));
 
   // https://observablehq.com/@d3/dot-plot
   return Object.assign(svg.node(), {
-    update(stats, xfield, yfield, rfield) {
-      y.domain(d3.reverse(d3.extent(stats, (s) => s[yfield])));
-      x.domain(d3.extent(stats, (s) => s[xfield]));
+    update(stats, fields) {
+      scales.y.domain(d3.reverse(d3.extent(stats, (s) => s[fields.y])));
+      scales.x.domain(d3.extent(stats, (s) => s[fields.x]));
 
-      [x, y, r] = scales(stats, xfield, yfield, rfield);
-      [delaunay, voronoiCells] = calcVoronoi(stats, x, y, xfield, yfield);
-      updateAxes(stats, xfield, yfield, x, y);
-      updateAxisLabels(xfield, yfield);
-      updatePoints(stats, x, y, r, xfield, yfield, rfield);
-      updateLabels(stats, x, y, r, xfield, yfield, rfield, voronoiCells);
+      scales = makeScales(stats, fields);
+      [delaunay, voronoiCells] = calcVoronoi(stats, scales, fields);
+      updateAxes(stats, scales, fields);
+      updateAxisLabels(fields);
+      updatePoints(stats, scales, fields);
+      updateLabels(stats, scales, fields, voronoiCells);
 
       // If an event listener was previously registered for the same typename
       // on a selected element, the old listener is removed before the new
@@ -492,10 +475,8 @@ function graph(stats, xfield, yfield, rfield) {
           evt,
           tooltip,
           stats,
-          x,
-          y,
-          xfield,
-          yfield,
+          scales,
+          fields,
           delaunay,
           voronoiCells
         );
@@ -902,21 +883,25 @@ async function changeYear(evt) {
   const res = await fetch(`./data/${evt.target.value}/stats.json`);
   window.stats = await res.json();
 
-  const xfield = $("#statx").value;
-  const yfield = $("#staty").value;
-  const rfield = $("#radius").value;
+  const fields = {
+    x: $("#statx").value,
+    y: $("#staty").value,
+    r: $("#radius").value,
+  };
 
   d3.selectAll("#canvas").html("");
-  const svg = graph(applyFilter(window.stats), xfield, yfield, rfield);
+  const svg = graph(applyFilter(window.stats), fields);
 }
 
 function changeUseTeamColors(evt, activeStats) {
-  const xfield = $("#statx").value;
-  const yfield = $("#staty").value;
-  const rfield = $("#radius").value;
+  const fields = {
+    x: $("#statx").value,
+    y: $("#staty").value,
+    r: $("#radius").value,
+  };
 
   d3.selectAll("#canvas").html("");
-  graph(applyFilter(window.stats), xfield, yfield, rfield);
+  graph(applyFilter(window.stats), fields);
 }
 
 // return a function (player, field, n) -> bool that will return true if a
@@ -945,12 +930,14 @@ function updateSettings(evt) {
   settings.minRadius = $("#settings-min-radius").value;
   settings.maxRadius = $("#settings-max-radius").value;
 
-  const xfield = $("#statx").value;
-  const yfield = $("#staty").value;
-  const rfield = $("#radius").value;
+  const fields = {
+    x: $("#statx").value,
+    y: $("#staty").value,
+    r: $("#radius").value,
+  };
 
   d3.selectAll("#canvas").html("");
-  graph(applyFilter(window.stats), xfield, yfield, rfield);
+  graph(applyFilter(window.stats), fields);
 }
 
 window.addEventListener("DOMContentLoaded", async (evt) => {
@@ -964,20 +951,18 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
 
   prepare();
 
-  const svg = graph(
-    applyFilter(window.stats),
-    "ts_pct",
-    "usg_pct",
-    $("#radius").value
-  );
+  const svg = graph(applyFilter(window.stats), {
+    x: "ts_pct",
+    y: "usg_pct",
+    r: $("#radius").value,
+  });
   // TODO: get the values from the select boxes; this makes it easier to test though
   $("#draw").addEventListener("click", () =>
-    svg.update(
-      activeStats,
-      $("#statx").value,
-      $("#staty").value,
-      $("#radius").value
-    )
+    svg.update(activeStats, {
+      x: $("#statx").value,
+      y: $("#staty").value,
+      r: $("#radius").value,
+    })
   );
   $("#settings-width").addEventListener("change", updateSettings);
   $("#settings-height").addEventListener("change", updateSettings);
@@ -988,11 +973,10 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
     changeUseTeamColors(evt)
   );
   $("#applyFilter").addEventListener("click", () => {
-    svg.update(
-      applyFilter(window.stats),
-      $("#statx").value,
-      $("#staty").value,
-      $("#radius").value
-    );
+    svg.update(applyFilter(window.stats), {
+      x: $("#statx").value,
+      y: $("#staty").value,
+      r: $("#radius").value,
+    });
   });
 });
