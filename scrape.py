@@ -126,6 +126,8 @@ def parse_team_stats(year):
 # * process per36 and per100
 #    * caution: they have overlapping columns! so we can't just do the dumb
 #      shit we've done so far
+# * get all-star data
+# * get rookie data
 def parse_player_stats(year):
     datadir = f"data/{year}"
 
