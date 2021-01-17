@@ -1,7 +1,7 @@
 $ = (s) => document.querySelector(s);
 
 const settings = {
-  padding: { left: 60, top: 40, right: 40, bottom: 40 },
+  padding: { left: 60, top: 80, right: 40, bottom: 40 },
   width: 1024,
   height: 768,
   dotRadius: 6,
@@ -38,37 +38,20 @@ ${statMeta[fields.y].name}: ${closestPlayer[fields.y]}${rtext}`
 }
 
 function orient(pos, r) {
+  // TODO: I added a transition to these, which worked for points that were
+  // already present but failed for entering points. Figure out why so I can
+  // have nice label transitions everywhere
   if (pos == "top") {
-    return (text) =>
-      text
-        .transition()
-        .duration(settings.duration)
-        .attr("text-anchor", "middle")
-        .attr("y", -r);
+    return (text) => text.attr("text-anchor", "middle").attr("y", -r);
   } else if (pos == "right") {
     return (text) =>
-      text
-        .transition()
-        .duration(settings.duration)
-        .attr("text-anchor", "start")
-        .attr("dy", "0.35em")
-        .attr("x", r);
+      text.attr("text-anchor", "start").attr("dy", "0.35em").attr("x", r);
   } else if (pos == "bottom") {
     return (text) =>
-      text
-        .transition()
-        .duration(settings.duration)
-        .attr("text-anchor", "middle")
-        .attr("dy", "0.71em")
-        .attr("y", r);
+      text.attr("text-anchor", "middle").attr("dy", "0.71em").attr("y", r);
   } else if (pos == "left") {
     return (text) =>
-      text
-        .transition()
-        .duration(settings.duration)
-        .attr("text-anchor", "end")
-        .attr("dy", "0.35em")
-        .attr("x", -r);
+      text.attr("text-anchor", "end").attr("dy", "0.35em").attr("x", -r);
   }
 }
 
@@ -419,6 +402,12 @@ function axisLabels(svg, fields) {
     .attr("x", 10)
     .attr("y", 20)
     .style("display", "none");
+
+  if (isNaN(fields.r)) {
+    rlabel.text("⬤ " + statMeta[fields.r].name).style("display", undefined);
+  } else {
+    rlabel.style("display", "none");
+  }
 
   return function (fields) {
     xlabel.text("→" + statMeta[fields.x].name);
