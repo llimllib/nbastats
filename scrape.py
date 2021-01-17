@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import argparse
 import json
 from os import mkdir, stat
 from os.path import isdir
@@ -8,7 +9,19 @@ import re
 from bs4 import BeautifulSoup
 import requests
 
+# TODO
+# * download team logos
+#   * can base this off colors.py which has links to (most) teams' wiki pages
+#   * will be useful for creating team ortg/drtg graphs
+# * process per36 and per100
+#    * caution: they have overlapping columns! so we can't just do the dumb
+#      shit we've done so far
+# * get all-star data
+# * get rookie data
+
 DEBUG = True
+MIN_YEAR = 2010
+MAX_YEAR = 2022
 
 
 def log(msg):
@@ -122,12 +135,6 @@ def parse_team_stats(year):
     json.dump(teamdata, open(output, "w"))
 
 
-# TODO:
-# * process per36 and per100
-#    * caution: they have overlapping columns! so we can't just do the dumb
-#      shit we've done so far
-# * get all-star data
-# * get rookie data
 def parse_player_stats(year):
     datadir = f"data/{year}"
 
@@ -135,7 +142,9 @@ def parse_player_stats(year):
 
     soup = BeautifulSoup(open(f"{datadir}/totals.html"), "html.parser")
 
-    for player in soup.find_all("tr", {"class": "full_table"}):
+    for player in soup.find_all(
+        "tr", {"class": re.compile(r".*\b(full_table|partial_table)\b.*")}
+    ):
         stats = {
             t["data-stat"].replace("-", "_"): tryint(
                 "".join(str(c) for c in t.children)
@@ -144,10 +153,12 @@ def parse_player_stats(year):
         }
         stats["name"] = BeautifulSoup(stats["player"], "html.parser").text
         stats["team"] = BeautifulSoup(stats["team_id"], "html.parser").text
-        players[stats["name"]] = stats
+        players[stats["name"] + "__" + stats["team"]] = stats
 
     soup = BeautifulSoup(open(f"{datadir}/advanced.html"), "html.parser")
-    for player in soup.find_all("tr", {"class": "full_table"}):
+    for player in soup.find_all(
+        "tr", {"class": re.compile(r".*\b(full_table|partial_table)\b.*")}
+    ):
         advstats = {
             t["data-stat"].replace("-", "_"): tryint(
                 "".join(str(c) for c in t.children)
@@ -155,33 +166,66 @@ def parse_player_stats(year):
             for t in player.find_all("td")
         }
         name = BeautifulSoup(advstats["player"], "html.parser").text
-        players[name] = {**players[name], **advstats}
+        team = BeautifulSoup(advstats["team_id"], "html.parser").text
+        key = name + "__" + team
+        players[key] = {**players[key], **advstats}
 
     output = f"data/{year}/stats.json"
     json.dump(list(players.values()), open(output, "w"))
 
 
-# TODO
-# * download team logos
-#   * can base this off colors.py which has links to (most) teams' wiki pages
-#   * will be useful for creating team ortg/drtg graphs
-# * add flag to force re-processing all files even if new data doesn't get downloaded
-def main():
-    for year in range(2010, 2022):
+def main(args):
+    for year in range(MIN_YEAR, MAX_YEAR):
+        if args.no_download:
+            continue
         datadir = f"data/{year}"
 
-        if not isdir(datadir):
+        if not isdir(datadir) or args.force_download:
             getdata(year, datadir)
         elif year == 2021 and one_hour_old(f"{datadir}/totals.html"):
             getdata(year, datadir)
         else:
             continue
 
-        log(f"procesing {year} data")
-
+    if args.year_only:
+        log(f"procesing {args.year_only} data")
         parse_player_stats(year)
         parse_team_stats(year)
+    else:
+        for year in range(MIN_YEAR, MAX_YEAR):
+            log(f"procesing {year} data")
+
+            parse_player_stats(year)
+            parse_team_stats(year)
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="download basketball statistics")
+    parser.add_argument(
+        "--no-download",
+        "-n",
+        dest="no_download",
+        action="store_true",
+        required=False,
+        help="do not download any data",
+    )
+    parser.add_argument(
+        "--force-download",
+        "-f",
+        dest="force_download",
+        action="store_true",
+        required=False,
+        help="download all data regardless of the cache",
+    )
+    parser.add_argument(
+        "--year-only",
+        "-y",
+        dest="year_only",
+        type=int,
+        action="store",
+        required=False,
+        help="only process a particular year",
+    )
+    args = parser.parse_args()
+
+    main(args)
