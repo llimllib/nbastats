@@ -15,6 +15,12 @@ function hover(event, tooltip, stats, scales, fields, delaunay, cells) {
 
   nearest = delaunay.find(mx, my);
   closestPlayer = cells[nearest][0];
+
+  var rtext;
+  if (statMeta[fields.r]) {
+    rtext = "\n" + statMeta[fields.r].name + ": " + closestPlayer[fields.r];
+  }
+
   tooltip
     .attr(
       "transform",
@@ -27,7 +33,7 @@ function hover(event, tooltip, stats, scales, fields, delaunay, cells) {
       `${closestPlayer.name}
 ${closestPlayer.team}
 ${statMeta[fields.x].name}: ${closestPlayer[fields.x]}
-${statMeta[fields.y].name}: ${closestPlayer[fields.y]}`
+${statMeta[fields.y].name}: ${closestPlayer[fields.y]}${rtext}`
     );
 }
 
@@ -383,13 +389,26 @@ function axisLabels(svg, fields) {
     .append("text")
     .attr("class", "y label")
     .attr("text-anchor", "left")
+    .attr("x", 15)
+    .attr("y", 40)
+    .text("↑" + statMeta[fields.y].name);
+  const rlabel = svg
+    .append("text")
+    .attr("class", "r label")
+    .attr("text-anchor", "left")
     .attr("x", 10)
     .attr("y", 20)
-    .text("↑" + statMeta[fields.y].name);
+    .style("display", "none");
 
   return function (fields) {
     xlabel.text("→" + statMeta[fields.x].name);
-    ylabel.text("↑" + statMeta[fields.y].name);
+    ylabel.text("↑ " + statMeta[fields.y].name);
+    // don't add a radius label if the value is constant
+    if (isNaN(fields.r)) {
+      rlabel.text("⬤ " + statMeta[fields.r].name).style("display", undefined);
+    } else {
+      rlabel.style("display", "none");
+    }
   };
 }
 
@@ -402,13 +421,11 @@ function axisLabels(svg, fields) {
 //     * alt: fuck it it's my UI I'll do what I like
 // * remove draw button and just optimistically redraw?
 // * show UI indication of legal filters
-// * tooltip should display above the player label after transitions
-//   * steps to repro: do a transition, then hover over a player with a bottom
-//     label
 // * permalinks to a graph with a given filter/year/resolution/etc
 // * select multiple years
 //   * view a set of players through years
 // * nice transitions between years
+//   * transitions on graph size change? probs overkill
 // * highlight a player or particular set of players
 //   * something like, one dot stays lit and the others go grey
 // * small multiples by team?
@@ -417,13 +434,10 @@ function axisLabels(svg, fields) {
 //   * collision detect after labelling?
 // * there are a lot of stats - how to give the user better control of them?
 //   * sorting, autocomplete? glossary?
-// * UI for selecting players only on particular teams
 // * ability to customize x and y domains
-// * ability to customize dot size, or use it to represent a variable
 // * handle players that are coincident better
 //   * right now we just have to ensure we ignore null cells anywhere they're used
 //   * what even is the right thing to do? I dunno
-//  * sometimes labels are overlapping the circles
 //  * the tooltip sometimes goes off the bottom, it should appear above the dot
 //    when it's low
 //  * would be cool to be able to set a linear or log scale
@@ -432,8 +446,7 @@ function axisLabels(svg, fields) {
 //      everybody else looks huge.
 //    * if it were a log scale, the good shooters would jump out at you
 // * should I thread a single transition object through all the transitions?
-// * group up scales and fieldnames
-// * label radius size on chart
+// * checkbox to show all labels no matter what
 function graph(stats, fields) {
   const svg = d3.select("#canvas");
 
