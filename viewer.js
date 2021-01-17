@@ -1,7 +1,43 @@
+// TODO
+// * organize all the inputs
+//   * sections?
+//   * ability to open and close sections?
+//   * what's a comparable UI?
+// * remove draw button and just optimistically redraw?
+// * show UI indication of legal filters
+// * permalinks to a graph with a given filter/year/resolution/etc
+// * select multiple years
+//   * view a set of players through years
+// * nice transitions between years
+//   * transitions on graph size change? probs overkill
+// * highlight a player or particular set of players
+//   * something like, one dot stays lit and the others go grey
+// * small multiples by team?
+// * teams instead of players
+// * labels sometimes overlap each other, or dots
+//   * collision detect after labelling?
+// * there are a lot of stats - how to give the user better control of them?
+//   * sorting, autocomplete? glossary?
+// * ability to customize x and y domains
+// * handle players that are coincident better
+//   * right now we just have to ensure we ignore null cells anywhere they're used
+//   * what even is the right thing to do? I dunno
+//  * the tooltip sometimes goes off the bottom, it should appear above the dot
+//    when it's low
+//    * convert it to an HTML absolutely positioned tooltip?
+//    * I know I have that in one of my other projects
+//  * would be cool to be able to set a linear or log scale
+//    * right now we just choose linear by default but for example, if you
+//      choose FT% as the circle size, you see that Andre Drummond looks tiny and
+//      everybody else looks huge.
+//    * if it were a log scale, the good shooters would jump out at you
+// * should I thread a single transition object through all the transitions?
+// * checkbox to show all labels no matter what
+
 $ = (s) => document.querySelector(s);
 
 const settings = {
-  padding: { left: 60, top: 80, right: 40, bottom: 40 },
+  padding: { left: 60, top: 40, right: 40, bottom: 40 },
   width: 1024,
   height: 768,
   dotRadius: 6,
@@ -218,7 +254,7 @@ function axes(svg, stats, scales) {
 
   const yaxisg = svg
     .append("g")
-    .attr("transform", `translate(30, 0)`)
+    .attr("transform", `translate(10, 0)`)
     .attr("class", "yaxis")
     .call(yaxis)
     .call((g) => g.select(".domain").remove())
@@ -422,40 +458,6 @@ function axisLabels(svg, fields) {
 }
 
 // stats should be a list of player objects
-// TODO
-// * organize all the inputs
-//   * sections?
-//   * ability to open and close sections?
-//   * what's a comparable UI?
-//     * alt: fuck it it's my UI I'll do what I like
-// * remove draw button and just optimistically redraw?
-// * show UI indication of legal filters
-// * permalinks to a graph with a given filter/year/resolution/etc
-// * select multiple years
-//   * view a set of players through years
-// * nice transitions between years
-//   * transitions on graph size change? probs overkill
-// * highlight a player or particular set of players
-//   * something like, one dot stays lit and the others go grey
-// * small multiples by team?
-// * teams instead of players
-// * labels sometimes overlap each other, or dots
-//   * collision detect after labelling?
-// * there are a lot of stats - how to give the user better control of them?
-//   * sorting, autocomplete? glossary?
-// * ability to customize x and y domains
-// * handle players that are coincident better
-//   * right now we just have to ensure we ignore null cells anywhere they're used
-//   * what even is the right thing to do? I dunno
-//  * the tooltip sometimes goes off the bottom, it should appear above the dot
-//    when it's low
-//  * would be cool to be able to set a linear or log scale
-//    * right now we just choose linear by default but for example, if you
-//      choose FT% as the circle size, you see that Andre Drummond looks tiny and
-//      everybody else looks huge.
-//    * if it were a log scale, the good shooters would jump out at you
-// * should I thread a single transition object through all the transitions?
-// * checkbox to show all labels no matter what
 function graph(stats, fields) {
   const svg = d3.select("#canvas");
 
