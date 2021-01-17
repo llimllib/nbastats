@@ -1,0 +1,22 @@
+{
+  "name": "nbastats",
+  "version": "0.0.1",
+  "description": "NBA Statistics",
+  "main": "viewer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/llimllib/nbastats.git"
+  },
+  "author": "Bill Mill",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/llimllib/nbastats/issues"
+  },
+  "homepage": "https://github.com/llimllib/nbastats#readme",
+  "devDependencies": {
+    "eslint": "^7.18.0"
+  }
+}
