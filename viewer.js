@@ -39,16 +39,36 @@ ${statMeta[fields.y].name}: ${closestPlayer[fields.y]}${rtext}`
 
 function orient(pos, r) {
   if (pos == "top") {
-    return (text) => text.attr("text-anchor", "middle").attr("y", -r);
+    return (text) =>
+      text
+        .transition()
+        .duration(settings.duration)
+        .attr("text-anchor", "middle")
+        .attr("y", -r);
   } else if (pos == "right") {
     return (text) =>
-      text.attr("text-anchor", "start").attr("dy", "0.35em").attr("x", r);
+      text
+        .transition()
+        .duration(settings.duration)
+        .attr("text-anchor", "start")
+        .attr("dy", "0.35em")
+        .attr("x", r);
   } else if (pos == "bottom") {
     return (text) =>
-      text.attr("text-anchor", "middle").attr("dy", "0.71em").attr("y", r);
+      text
+        .transition()
+        .duration(settings.duration)
+        .attr("text-anchor", "middle")
+        .attr("dy", "0.71em")
+        .attr("y", r);
   } else if (pos == "left") {
     return (text) =>
-      text.attr("text-anchor", "end").attr("dy", "0.35em").attr("x", -r);
+      text
+        .transition()
+        .duration(settings.duration)
+        .attr("text-anchor", "end")
+        .attr("dy", "0.35em")
+        .attr("x", -r);
   }
 }
 
