@@ -34,7 +34,7 @@
 // * should I thread a single transition object through all the transitions?
 // * checkbox to show all labels no matter what
 
-$ = (s) => document.querySelector(s);
+const $ = (s) => document.querySelector(s);
 
 const settings = {
   padding: { left: 60, top: 40, right: 40, bottom: 40 },
@@ -44,13 +44,14 @@ const settings = {
   maxRadius: 16,
   minRadius: 4,
   duration: 750,
+  domainPadding: 0.1,
 };
 
 function hover(event, tooltip, stats, scales, fields, delaunay, cells) {
   const [mx, my] = d3.pointer(event, this);
 
-  nearest = delaunay.find(mx, my);
-  closestPlayer = cells[nearest][0];
+  const nearest = delaunay.find(mx, my);
+  const closestPlayer = cells[nearest][0];
 
   var rtext;
   if (statMeta[fields.r]) {
@@ -150,7 +151,7 @@ function pointLabels(svg, stats, scales, fields, cells) {
     .attr("class", "labels")
     .style("font", "10px sans-serif");
 
-  const labels = container
+  container
     .selectAll("text")
     .data(cells, ([p, _]) => p.name)
     .join("text")
@@ -188,32 +189,42 @@ function pointLabels(svg, stats, scales, fields, cells) {
   };
 }
 
+function paddedExtent(lst, fn) {
+  var [min, max] = d3.extent(lst, fn);
+  return [
+    min * (1 - settings.domainPadding),
+    max * (1 + settings.domainPadding),
+  ];
+}
+
 function makeScales(stats, fields) {
-  xAxType = statMeta[fields.x].type;
+  const xAxType = statMeta[fields.x].type;
+  var x;
   if (xAxType == "categorical") {
     const domain = new Set(stats.map((p) => p[fields.x]));
-    var x = d3.scaleBand(domain, [
+    x = d3.scaleBand(domain, [
       settings.padding.left,
       settings.width - settings.padding.right,
     ]);
   } else {
-    var x = d3
+    x = d3
       .scaleLinear()
-      .domain(d3.extent(stats, (s) => s[fields.x]))
+      .domain(paddedExtent(stats, (s) => s[fields.x]))
       .range([settings.padding.left, settings.width - settings.padding.right]);
   }
 
-  yAxType = statMeta[fields.y].type;
+  const yAxType = statMeta[fields.y].type;
+  var y;
   if (yAxType == "categorical") {
     const domain = new Set(stats.map((p) => p[fields.y]));
-    var y = d3.scaleBand(domain, [
+    y = d3.scaleBand(domain, [
       settings.padding.top,
       settings.height - settings.padding.bottom,
     ]);
   } else {
-    var y = d3
+    y = d3
       .scaleLinear()
-      .domain(d3.reverse(d3.extent(stats, (s) => s[fields.y])))
+      .domain(d3.reverse(paddedExtent(stats, (s) => s[fields.y])))
       .range([settings.padding.top, settings.height - settings.padding.bottom]);
   }
 
@@ -263,14 +274,14 @@ function axes(svg, stats, scales) {
 
   // return an update function
   return function (stats, scales, fields) {
-    xAxType = statMeta[fields.x].type;
+    const xAxType = statMeta[fields.x].type;
     if (xAxType == "categorical") {
       xaxis.scale(scales.x).tickFormat((p) => p);
     } else {
       xaxis.scale(scales.x).tickFormat(d3.format(".2r"));
     }
 
-    yAxType = statMeta[fields.y].type;
+    const yAxType = statMeta[fields.y].type;
     if (yAxType == "categorical") {
       yaxis.scale(scales.y).tickFormat((p) => p);
     } else {
@@ -339,7 +350,7 @@ function points(svg, stats, scales, fields) {
       .append("circle")
       .attr("class", "outer")
       .attr("fill", "#1f77b4")
-      .attr("r", (d) => scales.r(d[radius]));
+      .attr("r", (d) => scales.r(d[fields.r]));
   }
 
   return function (stats, scales, fields) {
@@ -463,10 +474,10 @@ function graph(stats, fields) {
 
   var scales = makeScales(stats, fields);
   var [delaunay, voronoiCells] = calcVoronoi(stats, scales, fields);
-  updateAxes = axes(svg, stats, scales);
-  updateAxisLabels = axisLabels(svg, fields);
-  updatePoints = points(svg, stats, scales, fields);
-  updateLabels = pointLabels(svg, stats, scales, fields, voronoiCells);
+  const updateAxes = axes(svg, stats, scales);
+  const updateAxisLabels = axisLabels(svg, fields);
+  const updatePoints = points(svg, stats, scales, fields);
+  const updateLabels = pointLabels(svg, stats, scales, fields, voronoiCells);
 
   // https://observablehq.com/@d3/line-chart-with-tooltip
   var tooltip = svg.append("g").attr("class", "tooltip");
@@ -480,8 +491,8 @@ function graph(stats, fields) {
   // https://observablehq.com/@d3/dot-plot
   return Object.assign(svg.node(), {
     update(stats, fields) {
-      scales.y.domain(d3.reverse(d3.extent(stats, (s) => s[fields.y])));
-      scales.x.domain(d3.extent(stats, (s) => s[fields.x]));
+      scales.y.domain(d3.reverse(paddedExtent(stats, (s) => s[fields.y])));
+      scales.x.domain(paddedExtent(stats, (s) => s[fields.x]));
 
       scales = makeScales(stats, fields);
       [delaunay, voronoiCells] = calcVoronoi(stats, scales, fields);
@@ -515,7 +526,7 @@ function graph(stats, fields) {
 }
 
 // https://observablehq.com/@d3/line-chart-with-tooltip
-callout = (g, value) => {
+function callout(g, value) {
   if (!value) return g.style("display", "none");
 
   g.style("display", null)
@@ -544,16 +555,19 @@ callout = (g, value) => {
         .text((d) => d)
     );
 
-  const { x, y, width: w, height: h } = text.node().getBBox();
+  // I don't know why eslint won't accept the _ as a legally unused var :shrug:
+  /* eslint-disable no-unused-vars */
+  const { _, y, width: w, height: h } = text.node().getBBox();
+  /* eslint-enable */
 
   text.attr("transform", `translate(${-w / 2},${15 - y})`);
   path.attr(
     "d",
     `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`
   );
-};
+}
 
-statMeta = {
+const statMeta = {
   pos: {
     name: "Position",
     type: "categorical",
@@ -876,7 +890,7 @@ const teams = {
 
 function prepare() {
   Object.keys(statMeta).forEach((key) => {
-    meta = statMeta[key];
+    const meta = statMeta[key];
     if (meta.name == "") {
       return;
     }
@@ -914,10 +928,10 @@ async function changeYear(evt) {
   };
 
   d3.selectAll("#canvas").html("");
-  const svg = graph(applyFilter(window.stats), fields);
+  graph(applyFilter(window.stats), fields);
 }
 
-function changeUseTeamColors(evt, activeStats) {
+function changeUseTeamColors(_) {
   const fields = {
     x: $("#statx").value,
     y: $("#staty").value,
@@ -937,18 +951,21 @@ function makeQuantiler(stats) {
 }
 
 function applyFilter(stats) {
-  quantile = makeQuantiler(stats);
+  // This is here to be available for the eval, so it appears unused
+  /* eslint-disable no-unused-vars */
+  const quantile = makeQuantiler(stats);
 
   // example filters:
   // player.usg_pct > 26 && player.fga > 80
   // ['BOS', 'MIA', 'BRK'].indexOf(player.team) != -1 && player.fga > 30
   // player.team == 'BOS'
   // quantile(player, 'fga', 80) || quantile(player, 'trb', 80)
-  activeStats = stats.filter((player) => eval($("#filter").value));
+  const activeStats = stats.filter((player) => eval($("#filter").value));
+  /* eslint-enable */
   return activeStats;
 }
 
-function updateSettings(evt) {
+function updateSettings(_evt) {
   settings.width = $("#settings-width").value;
   settings.height = $("#settings-height").value;
   settings.minRadius = $("#settings-min-radius").value;
@@ -964,7 +981,7 @@ function updateSettings(evt) {
   graph(applyFilter(window.stats), fields);
 }
 
-window.addEventListener("DOMContentLoaded", async (evt) => {
+window.addEventListener("DOMContentLoaded", async (_evt) => {
   const res = await fetch("./data/2021/stats.json");
   window.stats = await res.json();
 
@@ -982,7 +999,7 @@ window.addEventListener("DOMContentLoaded", async (evt) => {
   });
   // TODO: get the values from the select boxes; this makes it easier to test though
   $("#draw").addEventListener("click", () =>
-    svg.update(activeStats, {
+    svg.update(applyFilter(window.stats), {
       x: $("#statx").value,
       y: $("#staty").value,
       r: $("#radius").value,
