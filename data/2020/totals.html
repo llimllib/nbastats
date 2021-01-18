@@ -2,10 +2,168 @@
 <!DOCTYPE html>
 <html data-version="klecko-" data-root="/home/bbr/build" itemscope itemtype="https://schema.org/WebSite" lang="en" class="no-js" >
 <head>
+<!-- Quantcast Choice. Consent Manager Tag v2.0 (for TCF 2.0) -->
+<script type="text/javascript" async=true>
+    (function() {
+	var host = window.location.hostname;
+	var element = document.createElement('script');
+	var firstScript = document.getElementsByTagName('script')[0];
+	var url = 'https://quantcast.mgr.consensu.org'
+	    .concat('/choice/', 'XwNYEpNeFfhfr', '/', host, '/choice.js')
+	var uspTries = 0;
+	var uspTriesLimit = 3;
+	element.async = true;
+	element.type = 'text/javascript';
+	element.src = url;
+	
+	firstScript.parentNode.insertBefore(element, firstScript);
+	
+	function makeStub() {
+	    var TCF_LOCATOR_NAME = '__tcfapiLocator';
+	    var queue = [];
+	    var win = window;
+	    var cmpFrame;
+	    
+	    function addFrame() {
+		var doc = win.document;
+		var otherCMP = !!(win.frames[TCF_LOCATOR_NAME]);
+		
+		if (!otherCMP) {
+		    if (doc.body) {
+			var iframe = doc.createElement('iframe');
+			
+			iframe.style.cssText = 'display:none';
+			iframe.name = TCF_LOCATOR_NAME;
+			doc.body.appendChild(iframe);
+		    } else {
+			setTimeout(addFrame, 5);
+		    }
+		}
+		return !otherCMP;
+	    }
+	    
+	    function tcfAPIHandler() {
+		var gdprApplies;
+		var args = arguments;
+		
+		if (!args.length) {
+		    return queue;
+		} else if (args[0] === 'setGdprApplies') {
+		    if (
+			args.length > 3 &&
+			    args[2] === 2 &&
+			    typeof args[3] === 'boolean'
+		    ) {
+			gdprApplies = args[3];
+			if (typeof args[2] === 'function') {
+			    args[2]('set', true);
+			}
+		    }
+		} else if (args[0] === 'ping') {
+		    var retr = {
+			gdprApplies: gdprApplies,
+			cmpLoaded: false,
+			cmpStatus: 'stub'
+		    };
+		    
+		    if (typeof args[2] === 'function') {
+			args[2](retr);
+		    }
+		} else {
+		    queue.push(args);
+		}
+	    }
+	    
+	    function postMessageEventHandler(event) {
+		var msgIsString = typeof event.data === 'string';
+		var json = {};
+		
+		try {
+		    if (msgIsString) {
+			json = JSON.parse(event.data);
+		    } else {
+			json = event.data;
+		    }
+		} catch (ignore) {}
+		
+		var payload = json.__tcfapiCall;
+		
+		if (payload) {
+		    window.__tcfapi(
+			payload.command,
+			payload.version,
+			function(retValue, success) {
+			    var returnMsg = {
+				__tcfapiReturn: {
+				    returnValue: retValue,
+				    success: success,
+				    callId: payload.callId
+				}
+			    };
+			    if (msgIsString) {
+				returnMsg = JSON.stringify(returnMsg);
+			    }
+			    event.source.postMessage(returnMsg, '*');
+			},
+			payload.parameter
+		    );
+		}
+	    }
+	    
+	    while (win) {
+		try {
+		    if (win.frames[TCF_LOCATOR_NAME]) {
+			cmpFrame = win;
+			break;
+		    }
+		} catch (ignore) {}
+		
+		if (win === window.top) {
+		    break;
+		}
+		win = win.parent;
+	    }
+	    if (!cmpFrame) {
+		addFrame();
+		win.__tcfapi = tcfAPIHandler;
+		win.addEventListener('message', postMessageEventHandler, false);
+	    }
+	};
+	
+	makeStub();
+	
+	var uspStubFunction = function() {
+	    var arg = arguments;
+	    if (typeof window.__uspapi !== uspStubFunction) {
+		setTimeout(function() {
+		    if (typeof window.__uspapi !== 'undefined') {
+			window.__uspapi.apply(window.__uspapi, arg);
+		    }
+		}, 500);
+	    }
+	};
+	
+	var checkIfUspIsReady = function() {
+	    uspTries++;
+	    if (window.__uspapi === uspStubFunction && uspTries < uspTriesLimit) {
+		console.warn('USP is not accessible');
+	    } else {
+		clearInterval(uspInterval);
+	    }
+	};
+	
+	if (typeof window.__uspapi === 'undefined') {
+	    window.__uspapi = uspStubFunction;
+	    var uspInterval = setInterval(checkIfUspIsReady, 6000);
+	}
+    })();
+</script>
+<!-- End Quantcast Choice. Consent Manager Tag v2.0 (for TCF 2.0) -->
+
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0" />
-    <link rel="dns-prefetch" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013" />
+    <link rel="dns-prefetch" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111" />
 
     <title>2019-20 NBA Player Stats: Totals | Basketball-Reference.com</title>
 
@@ -20,17 +178,17 @@
 <link rel="preconnect" href="https://d2p3bygnnzw9w3.cloudfront.net" crossorigin>
 <link rel="preconnect" href="https://www.google-analytics.com"  crossorigin>
 <link rel="preconnect" href="https://www.googletagservices.com" crossorigin>
-<link rel="preload"    href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101064/js/bbr/sr-min.js" as="script" crossorigin>
-<link rel="preload"    href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101064/icons/sr_icons-min.svg?bbr" as="fetch" crossorigin>
+<link rel="preload"    href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101131/js/bbr/sr-min.js" as="script" crossorigin>
+<link rel="preload"    href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101131/icons/sr_icons-min.svg?bbr" as="fetch" crossorigin>
 <link rel="preload"    href="https://www.basketball-reference.com/short/inc/main_nav_menu.json" as="fetch" crossorigin>
 <link rel="preload"    href="https://d2p3bygnnzw9w3.cloudfront.net/req/201604190/images/chosen-sprite.png" as="image" crossorigin>
-<link rel="preload"    href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101064/css/bbr/sr-min.css" as="style"    crossorigin>
+<link rel="preload"    href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101131/css/bbr/sr-min.css" as="style"    crossorigin>
 
 <!-- CSS start -->
  <style>html,body{margin:0;padding:0;font:14px/1.25 "Helvetica Neue",helvetica,arial,sans-serif;color:#000}html:not(.backstop){scroll-behavior:smooth}html:not(.backstop) div,html:not(.backstop) span{scroll-margin:2.5em 0 0 0;scroll-snap-margin:2.5em 0 0 0}body{position:relative;background:#c9cbcd;z-index:0;-webkit-text-size-adjust:none;-moz-text-size-adjust:none;-ms-text-size-adjust:none}a img{border:0}ul,li,ol{margin:0;padding:0;list-style-type:none}table th,table td{border:0}iframe{max-width:100%}code{background:#eee}a,button,input,select,textarea,label,summary{touch-action:manipulation;-ms-touch-action:manipulation}::selection{background:#ff0;text-shadow:none}html.no-js .hasmore,html.no-js .js,html.js .no-js,html.no-js button,html.is_build .hide_build,html.is_dev .hide_dev,html.is_live .hide_live{display:none!important}.js-select{visibility:hidden}a[href]{color:#34d}a[href]:visited{color:#848}a[href]:hover{color:#5e44b3}a[href]:active{color:#b12}a[href^="tel:"]::before{content:"\260E";display:inline-block;margin-right:0}a[href^="mailto:"]::before{content:"\2709";display:inline-block;margin-right:0}.icon_group a[href^="tel:"]:before,.icon_group a[href^="mailto:"]:before{content:""}.screen_only{display:initial}.user_logged_in .not_logged_in,.logged_in,.sr_cpi_control,.print_only{display:none}#perflog,#modernizr,.user_logged_in .logged_in{display:block}h2{color:#000;margin-bottom:5px;font-size:1.5em}img.right{float:right;margin:0 0 5px 5px}img.left{float:left;margin:0 15px 15px 0}sup{font-size:.75em;position:relative;top:-0.4em;vertical-align:baseline}#wrap{width:100%;background:#fff;position:relative}#wrap>div,#wrap>ul{width:100%;position:relative;clear:both}.hidden-iso,.hidden,#content .hidden,.gutterad,.more,.print_only,#warnings.hide,#nag_devs{display:none}#inner_nav.hidden{visibility:hidden}.float_wrap{overflow:hidden}.grid2{display:grid;grid-column-gap:10px;grid-template-columns:1fr 1fr}.grid2 img{max-width:100%}.grid2.heavyleft{grid-template-columns:2fr 1fr}.grid2.heavyright{grid-template-columns:1fr 2fr}#header{overflow:visible;background:#efeeed;border-bottom:3px solid #f8951d;min-height:50px}#header img{height:25px;float:left;padding:8px 0 8px 2%;max-width:71%;max-width:calc(95% - 80px)}#header #nav_trigger{display:block;cursor:pointer;float:right;padding:7px 2% 7px 1%;height:30px}#header #nav_trigger a{color:#f8951d;font-size:20px;font-weight:bold;text-decoration:none;display:inline-block}#header #nav_trigger a:before{color:#f8951d;content:"\2630 ";font-weight:normal}#header #nav{display:none;clear:both;width:88%;background:#fff;padding:7px 6% 0;border-bottom:3px solid #f8951d;border-top:3px solid #f8951d;overflow:hidden;font-size:12px}#header #nav .usertools{font-weight:bold;font-size:12px;margin:0 0 4px;padding:7px 6% 0;border-top:1px solid #c9cbcd}#header #nav .breadcrumbs{font-size:12px;padding:7px 6%;border-top:1px solid #c9cbcd}#header #nav_trigger.open{background:#f8951d}#header #nav_trigger.open a{color:#fff}#header #nav_trigger.open a:before{color:#fff}#header #nav.open{display:block}#header .social{margin:15px 0;display:none}#header.open_search{margin-bottom:50px}#header #subnav{display:none}#translations{background-color:#ffa;padding:4px 0;text-align:center;display:none}#translations.show{display:block}#translations .closer{top:4px}#translations .langs{display:inline-block}#translations .links{margin:0 35px 0 0}#translations .links>div{display:inline-block}#translations .links .welcome{font-weight:bold}#header .search{margin-top:10px;clear:both;padding:0 2% 6px}#header .search input,#header .search input:active,#header .search input:focus{height:32px;font-size:20px}.search input[type="search"]{padding:4px 5px;border:#747678 1px solid;width:73%;margin-right:2%}.search input[type="search"].prefilled{background-color:#ffa}.search input[type="submit"]{float:right;background:#f8951d;color:white;border:1px solid #747678;padding:0;border-radius:5px;height:24px;width:25%;width:calc(25% 0 2px)}.search input[type="submit"]:hover{text-decoration:underline}.search input[type="submit"]:active{background-color:#454340}.search .ac-outline{width:73%;margin-right:2%}.search .ac-outline input[type="search"]{width:100%;margin:0}@media screen and (-webkit-min-device-pixel-ratio:0) and (max-width:400px){#header .search input,#header .search input:active,#header .search input:focus{height:32px;font-size:20px}}#wrap>#info{width:96%;margin:0 auto;padding-bottom:10px}#info .opener,#info .opener:active,#inner_nav div .opener{color:#900;font-weight:bold;clear:both;width:100%;text-align:left;padding:10px 0;border:0;background:transparent}#info button#meta_more_button{border:1px solid #c9cbcd;background-color:#efeeed;padding:.5em;margin:.5em 0;text-align:center;width:100%;max-width:400px;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;display:none}#info button#meta_more_button.show{display:inline-block}#info #meta>div>p:nth-child(n+6){display:none}#info.open #meta>div>p:nth-child(n+6){display:block}#info #meta .opener{display:none}#info #meta{margin-top:10px;overflow:hidden}#info #meta p{font-size:.93em;margin:3px 0}#info #meta>div.media-item{float:right;margin-left:10px;width:70px}#info #meta>div.media-item.country{width:100px;height:75px}#info #meta>div.media-item.country .flag{width:100%;height:100%;background-size:100%}#info .media-item img{width:100%;height:auto;border:1px solid black;box-sizing:border-box}#info .media-item img.additional{display:none}#info .media-item.logo img,.bbr #info .media-item img,.cbb #info .media-item img{border:0}#info #meta .media-item p{margin:3px 0;font-size:.785em;font-style:italic}#info #meta .media-item.loader p{visibility:hidden}#info h1{margin-top:0;margin-bottom:5px;line-height:1.1em;font-size:1.5em}#info h1+p{margin-top:5px}#info #bling{margin:6px 1% 6px 0;color:#fff;height:24px;overflow:hidden;float:left;width:88%;display:grid;grid-gap:5px 4px;grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}#info.teams #bling{width:100%}#info #bling li{padding:4px 1.25%;text-align:center;position:relative;height:15px;background:#8f5400;font-size:.85em;word-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:5px;display:inline-block;width:27%;margin-bottom:5px}#info.teams #bling li{width:45%}#bling li a{color:inherit}#info #bling li.bling_hof{background-color:#ffdb1c;color:#000}#info #bling li.bling_all_star{background-color:#c9cbcd;color:#454340}#info #bling li.bling_hof,#info.teams #bling li.bling_all_star,#info.teams #bling li.bling_champ{grid-column-end:span 2}#info #bling li.important{grid-column-end:span 2}#info #bling li.special{background-color:#ffdb1c;color:#000}#info #bling li.all_star{background-color:#c9cbcd;color:#454340}#info.open #bling{height:auto;width:100%;margin-right:0;float:none;overflow:visible}@supports(display:grid){#info #bling li,#info.open #bling li,#info.teams #bling li{width:auto!important;margin-bottom:0!important}}.uni_holder{margin:3px 0;float:none;width:100%;position:relative}#info .uni_holder{float:left}#bling+.uni_holder{width:11%}#info.open #bling+.uni_holder{width:100%;overflow:visible;float:none;margin-bottom:5px}.uni_holder>a{display:inline-block;position:relative;height:auto;width:28px;margin-bottom:3px;margin-right:.3em;text-decoration:none;overflow:hidden}.uni_holder svg{height:28px;width:28px}.uni_holder svg.jersey{height:35px}.uni_holder svg text{font-size:1.8em;font-weight:bold}.uni_holder svg text.string{font-size:1.3em}.uni_holder svg.jersey text{font-size:1.5em}.uni_holder svg.jersey text.string{font-size:.7em}#info #bling+.uni_holder>a{display:none}#info .uni_holder>a.default,#info.open .uni_holder>a,#info #bling+.uni_holder>a.default{display:inline-block}#info .uni_holder .counter{display:none;position:absolute;height:14px;width:18px;border-radius:50%;color:#fff;font-weight:bold;font-size:10px;top:-4px;left:18px;background:black;text-align:center;border:0;padding:4px 0 0;cursor:pointer;text-overflow:inherit}#info .uni_holder .counter:after{content:'';padding:0;font-size:0}#info #bling+.uni_holder .counter{display:block}#info.open #bling+.uni_holder .counter{display:none}#info.open #bling+.uni_holder>a{display:inline-block}#info.open .uni_holder>a{display:inline-block;width:33px}#info.open .uni_holder svg{height:33px;width:33px}#info.open .uni_holder svg.jersey{height:41px}.stats_pullout{overflow:hidden;text-align:center;width:96%;margin:0 auto 15px 0;padding-top:6px}.stats_pullout>div{float:left}.stats_pullout>div:first-child{text-align:left}.stats_pullout>div.p2,.stats_pullout>div.p3{display:none}.stats_pullout>div>div{float:left;margin-left:15px}.stats_pullout>div>div.p2{display:none}.stats_pullout>div:first-child>div{margin-left:0}.stats_pullout h4{color:#900;margin:2px 0;font-size:.785714286em;text-align:center}.stats_pullout p{margin:2px 0;font-size:1.1em}.stats_pullout .caption{clear:both;text-align:left}@media screen and (min-width:520px){.stats_pullout>div.p2{display:block}}@media screen and (min-width:600px){.stats_pullout>div{border-left:1px solid #c9cbcd;margin-left:10px}.stats_pullout>div:first-child{border-left:none;margin-left:0}}@media screen and (min-width:736px){.stats_pullout>div.p2{display:none}}@media screen and (min-width:800px){.stats_pullout>div.p2{display:block}.stats_pullout>div>div.p2{display:block}}.opener{cursor:pointer;position:relative;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.opener:after{content:"\25BC";font-size:.75em;padding-left:5px;display:inline-block;text-decoration:none}.opener.open:after{content:"\25B2"}.note .opener{white-space:normal}.toggleable{display:none}.toggleable.open{display:block}tr.toggleable.open{display:table-row}table.toggleable.open{display:table}span.toggleable.open{display:inline}.hoverer{cursor:pointer}.hoverer:after{content:"\25BC";position:absolute;top:7px;right:0}html.no-touchevents .hoverer:hover:after{content:"\25B2"}ul.news_stories>li{margin:5px 10px 0 0;float:none}ul.news_stories.more{display:none}ul.news_stories.more.open{display:block}.bullets{padding-left:20px}.bullets>li{margin-left:0;margin-bottom:6px}ul.bullets>li{list-style-type:disc}ol.bullets>li{list-style-type:decimal}.bullets-inline>li{display:inline-block;margin-right:9px;margin-bottom:10px}.bullets-inline>li:after{content:"\00B7";margin-left:9px}.bullets-inline>li:last-child:after{content:"";margin-left:0}.bullets-inline>li.logged_in{display:none}.user_logged_in .bullets-inline>li.logged_in{display:inline-block}.desc{font-style:italic;font-size:.93em}.hilite{background-color:#ffa}.modified,.modified *{background-color:#f5f5f5}tr.hilite th,tr.hilite td{background-color:#ffa}.callout{margin:10px 0;padding:10px 15px;border:1px solid #aaa;background:#454340;color:#c9cbcd;font-size:1.1em}.callout a{color:#b3beff}.callout a:visited,.callout a:active{color:#a4adff}.callout a:hover,.callout a:visited:hover,.callout a:active:hover{color:#c4cfff}.callout.light{border-color:#404542;background:#c9cbcd;color:#404452}.callout.light a{color:#34d}.callout.light a.button,.callout.light a.button:hover{color:white}.callout.light a:hover{color:#5e44b3}.callout.light h3{background-color:transparent}#content>.notables{background-color:#ffa;border:1px dotted #747678;margin:0 auto;padding:6px;text-align:center;width:auto;max-width:500px;font-size:.93em;display:table}.notables li{margin-top:8px}.notables li:first-child{margin-top:0}.note{color:#444;font-size:.92em}.header{font-weight:bold;font-size:1.16em}.pagelog{width:90%;overflow:scroll}.preformatted-desc{width:90%;overflow:auto}.callout.stathead_player_highlight{background:#fff;border:1px solid #7e3e89;text-align:center}.stathead_player_highlight .cta{font-size:90%}.stathead_player_highlight .button.stathead_button{background-color:#7e3e89;display:none}.stathead_player_highlight img{max-width:300px}.stathead_player_highlight .stathead_player_highlight_content>div:first-child{margin-bottom:.25em}@media screen and (min-width:736px){.callout.stathead_player_highlight{display:grid;grid-template-columns:minmax(205px,1fr) 4fr minmax(175px,1fr);grid-column-gap:10px;align-items:center}.stathead_player_highlight .button.stathead_button{display:block}.stathead_player_highlight img{width:100%}}#info .adblock{display:none}.adblock{overflow:hidden}.adblock>p{font-size:.93em;margin:2px 0}.adblock img{display:block;margin:0 auto}.adblock{background-color:white;text-align:center}.adblock.ad728{display:none}body.hr #srcom .adblock.ad728{display:block}.adblock.ad300{padding:10px}.adblock.grouped{float:left;padding:0}.adblock.ad300.grouped{float:none;padding:10px}.adblock.rails{display:none}#div-gpt-ad-728x90-BTF-1{max-height:340px}@media screen and (min-width:481px){.adblock.ad300{padding:10px 0}}@media screen and (min-width:800px){.adblock.ad728{display:block;float:none;margin-bottom:10px}.adblock.ad300{display:none}.adblock.grouped.ad728{display:none}.adblock.grouped.ad300{float:left;width:320px;background:0;padding:0;display:block}}@media screen and (min-width:1810px){.adblock.rails{display:block;height:600px;width:160px;background-color:transparent;position:absolute;top:96px}.adblock.rails.left{left:0}.adblock.rails.right{right:0}}@media screen and (max-width:330px){.adblock{padding:0}.adblock.grouped{padding:0}.adblock.ad300.grouped{padding:0}}.button{background-color:#8f5400;padding:10px 15px;color:white;text-decoration:none;display:inline-block;text-align:center;font-size:1.1em;margin:10px 0;border-radius:5px;cursor:pointer}.button.stathead_button{background-color:#7e3e89}.button:active,.button:visited,a.button,a.button:visited,a.button:hover{color:white}.button.alt{background:#f8951d;border:#747678 1px solid;display:block}.button.mini{font-size:.8em;padding:4px 8px;cursor:auto}button.tooltip,button.modal{background:transparent;border:0;text-align:left;padding:0;color:#900}.button2{display:inline-block;border:1px solid #c9cbcd;border-radius:3px;background-color:#efeeed;font-size:.93em;font-weight:normal;margin:0 8px 0 0;padding:8px 12px;width:auto;text-align:center}#meta .button2{font-size:.785714286em;margin:0 6px 0 0;padding:8px 7px}.button2[href]{text-decoration:none}.button2.next{text-align:right}.button2.prev{text-align:left}.button2.index,.button2.index:hover,.button2.index:active,.button2.index:visited{background-color:#454340;color:#fff}.button2.index:hover{color:#ccc}.button2.current{text-align:left;background-color:#fff;border:0;font-weight:bold;padding-left:0;padding-right:0;margin-left:-8px;margin-right:0}.button2:last-child{margin-right:0}.button2.next:after{content:"\203A\203A";padding-left:6px;color:black}.button2.prev:before{content:"\2039\2039";padding-right:6px;color:black}#info_box div.prevnext{margin-left:1em}.prevnext{margin:10px 0 15px 0}#content .prevnext>*{margin:.25em}#header #main_nav{color:#454340;overflow:hidden}#header #main_nav>li{border-top:1px solid #c9cbcd}#header #main_nav>li:first-child{border-top:0}#header #main_nav>li>a{display:block;padding:8px 0 8px 6%;font-weight:bold;text-decoration:none;font-size:1.4em}html.no-touchevents #header #main_nav>li:active{background-color:#454340}#header #main_nav>li:active>a{color:#efeeed}#header #main_nav li.current{background-color:#f8951d}#header #main_nav li.current>a{color:#efeeed}#header #main_nav h4{margin:4px 0}#header #main_nav h4:first-child{margin-top:0}#header #main_nav .nm{display:none}#header #main_nav>li>div{display:none;width:98%;position:absolute;top:100%;left:0;z-index:200;border-top:1px solid #454340;padding:1%;background:#fff;font-size:14px;font-weight:normal;box-shadow:0 6px 12px -3px #454340;color:black}#header #main_nav>li.drophover>div{display:block;line-height:initial}#main_nav td{padding:3px}#main_nav .end_links{clear:both}#main_nav .list{margin:0 0 8px;padding:3px;overflow-x:hidden;text-overflow:ellipsis}#main_nav div.list span{font-weight:bold;display:inline-block}#header_leaders div.list span{min-width:70px}#main_nav .game_summary td{padding:1px}@media screen and (max-width:1019px){#header #main_nav>li>div.mobile_list{display:block;position:relative;top:auto;box-shadow:none;border:0;padding:0 0 0 12%}#header #main_nav>li>div.mobile_list strong.desc{display:none}#header #main_nav>li>div.mobile_list div.list{width:90%;line-height:2em}}.ac-outline{display:inline-block}.ac-wrapper{position:relative}.ac-prompt{position:absolute;font-size:16px;color:#454340;top:0;left:0;overflow:hidden;background:transparent}.ac-input:focus,.ac-input:active,.ac-hint:focus,.ac-input,.ac-hint{font-size:16px;background-color:#fff;width:100%;outline:0;border:0;margin:0;padding:0}.ac-input:focus,.ac-input:active,.ac-input{background-color:transparent}.ac-input{vertical-align:top;position:relative;color:#454340}.ac-hint{position:absolute;top:0;left:0;border-color:transparent;box-shadow:none;color:#747678}.ac-dropdown{position:absolute;visibility:hidden;padding:.5em 0;font-size:16px;background-color:#fff;z-index:100;cursor:default;overflow-x:hidden;overflow-y:scroll;width:calc(100% - 2px);min-width:380px;border:#aaa 1px solid;border-top:0}.ac-dropdown>div:first-of-type>.ac-results-header{padding-top:0}.ac-results-header{font-size:1em;padding:.35em .5em;font-weight:700}.ac-suggestion{cursor:pointer;padding:.35em 1em;font-size:1em;line-height:1em;border-top:1px solid #fff;border-bottom:1px solid #fff}.ac-suggestion p{margin:0}.ac-suggestion.active,.ac-suggestion.active .search-results-item{color:#b12;font-weight:bold}.search-results-item em{font-style:normal;border-bottom:1px dotted}.ac-suggestion.ac-is-under-cursor,html.no-touchevents .ac-suggestion:hover{border-top:1px solid #aaa!important;border-bottom:1px solid #aaa!important;background-color:#ffa!important}.ac-suggestion .subhead{margin-left:.5em;padding-top:.25em;display:block;font-size:.75em}.ac-suggestion-other-search{font-size:1em;line-height:1.2em;padding-left:.5em;color:#34d}.player_select_name{font-size:16px}.player_select_name button{font-size:2em;margin-left:10px;vertical-align:middle}.player_select_name strong{display:inline-block}.pi_forms .group input[type="search"]{max-width:none;height:auto;font-size:16px;padding-bottom:3px}.pi_forms .ac-outline{width:100%;max-width:520px}@media screen and (max-width:480px){.ac-dropdown{min-width:310px}#desc_container{font-size:12px}}@media screen and (min-width:400px){#info h1 span{display:inline-block}#info h1 span.header_end{display:inline}}@media screen and (min-width:481px){#header #nav_trigger a{font-size:24px}#header img{height:28px}#info #meta>div.media-item{width:92px}#info #meta>div.media-item.logo{width:118px}#info #meta>div.media-item.country{width:140px;height:105px}#info #meta>div>p:nth-child(6){display:block}#info #meta>div>p:nth-child(7){display:block}#info h1{font-size:1.7em}.button2,.button2.current{padding:8px 12px;margin:0 20px 0 0}}@media screen and (min-width:600px){#info #bling{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}#info.open #bling li{width:19.5%}#meta .button2{font-size:.93em;margin:0 20px 0 0;padding:8px 12px}}@media screen and (max-width:735px){.no_mobile{display:none}}@media screen and (min-width:736px){.mobile_only{display:none}#wrap>#header{width:100%;padding-left:0;padding-right:0;border-bottom:0}#wrap>#srcom{width:99%;margin:0 auto}#wrap>#info{width:65%;width:calc(99% - 322px);margin:0 auto;padding-right:320px;min-height:270px}#info .adblock{display:block;position:absolute;top:0;right:0;height:270px;width:300px;padding:0}h2{font-size:1.8em;line-height:1.2em}#info h1{font-size:2em;line-height:1.1em}#info #meta{min-height:auto}#info#general #meta{min-height:auto}#info.open #bling li{width:28%}}@media screen and (min-width:800px){#info #meta>div{float:left;width:100%}#info #meta>div.media-item{float:left;margin-left:0;margin-right:10px}#info #meta>div.media-item+div{width:85%;width:calc(100% - 102px)}#info #meta>div.media-item.logo+div{width:calc(100% - 128px)}#info #meta>div.media-item.country+div{width:calc(100% - 160px)}#info #meta>div>p.opener{max-width:75%}#info.open.teams #bling li{width:45%}}@media screen and (min-width:1020px){#header #nav_trigger{display:none}#wrap>#header{border-bottom:2px solid #f8951d;overflow:visible;height:126px;background:#fff}#header img{position:absolute;top:22px;height:auto;max-height:55px;max-width:35%}#header #nav{display:block;width:100%;padding:0;margin:0;clear:none;background:#efeeed;border-top:1px solid #c9cbcd;border-bottom:0;overflow:visible;height:30px;position:absolute;bottom:0}#header #nav>*{display:none}#header #nav>#main_nav{display:block;color:#454340;text-align:left;margin-bottom:0;border:0;overflow:visible}#header #main_nav ul{border:0;position:relative}#header #main_nav>li{border:0;width:auto;white-space:nowrap;float:left;color:#454340;font-size:1.16666667em;font-weight:bold;height:14px;padding:8px 1.7%;line-height:12px}#header #main_nav>li>a{color:#454340;padding:0;position:relative;font-size:1em}#header #main_nav>li.current>a{color:#fff}#header #main_nav>li.nm{display:block}#header #main_nav>li.m{display:none}#header #main_nav>li.hasmore>a:after{content:"";display:none}#header #main_nav>li.hasmore.drophover>a:after{content:"";display:none}#header #main_nav li:nth-child(even){border:0}#header #main_nav>li.drophover,#header #main_nav>li:not(.hasmore):hover,#inner_nav>ul>li.drophover{background:#454340}#header #main_nav>li.drophover>a,#header #main_nav>li:not(.hasmore):hover>a,#inner_nav>ul>li.drophover>a{color:#fff}#header #main_nav>li.drophover>span,#header #main_nav>li:not(.hasmore):hover>span,#inner_nav>ul>li.drophover>span{color:#fff}#header #main_nav>li>div>ul{overflow:hidden;margin-top:10px;margin-bottom:10px}#header #main_nav>li>div>ul>li{width:18%;margin-right:2%;margin-bottom:8px;float:left}html.no-touchevents .hasmore>div{position:absolute;left:-999em}html.no-touchevents .hasmore.drophover>div{z-index:69;left:0;box-shadow:0 6px 12px -3px #454340}#header #subnav{display:block;color:#c9cbcd;background-color:#454340;width:100%;padding:0;height:22px}#header #subnav>li{font-size:.785714286em;float:left;padding:2px 10px 2px;margin-top:3px;position:relative;border-left:1px solid #747678;height:12px}#header #subnav>li.user .username{display:inline-block;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:12px;vertical-align:text-bottom;padding-left:3px;margin-top:-7px}#header #subnav>li:first-child{display:block;border-left:none}#header #subnav>li:nth-child(9){display:none}#header #subnav>li:nth-child(n+10){float:right;border-left:none;border-right:1px solid #747678}#header #subnav>li:last-child{display:none}#header #subnav>li:last-child(2){border-right:0}#header #subnav>li.current a{color:#fff}#header #subnav li a{color:#c9cbcd;text-decoration:none}#header #subnav li a:hover{color:#fff;text-decoration:underline}#header #subnav li svg{vertical-align:top;margin-top:-2px}#header .search{position:relative;float:right;padding:0;width:60%;max-width:700px;clear:none;margin-right:12px;margin-top:17px}#wrap #info{overflow:hidden;margin-bottom:8px}#info #meta{margin-top:0;margin-bottom:10px;padding-top:15px;float:left;width:70%;width:calc(100% - 265px)}#info #bling,#info.open #bling,#info.teams #bling{float:right;width:250px;height:auto;margin-top:10px;margin-right:0;grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}#info #bling li,#info.open #bling li{width:45%}#info.teams #bling li,#info.open.teams #bling li{width:92%}#info #meta>div>p.opener{display:none}#info #meta>div>p:nth-child(6){display:none}#info #meta>div>p:nth-child(7){display:none}#info.teams #meta>div>p:nth-child(n+6){display:block}#info.teams #meta>div>p:nth-child(n+11){display:none}#info.teams.open #meta>div>p:nth-child(n+11){display:block}#info.leagues #meta>div>p:nth-child(n+6){display:block}#info.leagues #meta>div>p:nth-child(n+11){display:none}#info.leagues.open #meta>div>p:nth-child(n+11){display:block}#info .adblock>div{margin-top:2px}.uni_holder{float:right;clear:right;width:250px;margin-top:10px}.uni_holder>a{width:42px}.uni_holder svg{height:42px;width:42px}.uni_holder svg.jersey{height:52px}#info .uni_holder{float:right}#info .uni_holder>a,#info #bling+.uni_holder>a{display:inline-block}#bling+.uni_holder,#info.open #bling+.uni_holder{margin-top:0;width:250px;float:right}#info #bling+.uni_holder .counter{display:none}#info.open .uni_holder>a{width:42px}#info.open .uni_holder svg{height:42px;width:42px}#info.open .uni_holder svg.jersey{height:52px}.stats_pullout>div.p3{display:block}#bling li:after{content:"";position:absolute;top:-110%;left:-210%;width:150%;height:200%;opacity:0;transform:rotate(10deg);background:rgba(255,255,255,0.13);background:linear-gradient(to right,rgba(255,255,255,0.13) 0,rgba(255,255,255,0.13) 77%,rgba(255,255,255,0.5) 92%,rgba(255,255,255,0.0) 100%)}#bling li:hover:after{opacity:1;top:-63%;left:-26%;transition-property:left,top,opacity;transition-duration:.7s,0.7s,0.15s;transition-timing-function:ease}#bling li:active:after{opacity:0}.adblock.ad728{display:block;float:left}.adblock.grouped.ad300{display:none}}@media screen and (min-width:1160px){#header #main_nav>li{padding:8px 2.2%}#info #meta>div.media-item{margin-right:20px;width:92px}#info #meta>div.media-item.logo{margin-right:10px;width:125px}#info #meta>div.media-item.country{width:160px;height:120px}#info #meta>div.media-item.logo>img{height:125px;width:125px}#info #meta>div.media-item+div{width:calc(100% - 112px)}#info #meta>div.media-item.logo+div{width:calc(100% - 135px)}#info #meta>div.media-item.country+div{width:calc(100% - 180px)}#info #meta>div.media-item.multiple:hover img.additional{display:block}#info #meta>div.media-item.multiple:hover{position:fixed;z-index:200;width:auto;background-color:rgba(200,200,200,0.8);padding:5px;border:1px solid black}#info #meta>div.media-item.multiple:hover+div{margin-left:112px}#info #meta>div.media-item.multiple:hover img{width:92px;float:left;margin-right:10px}#info #meta>div.media-item.multiple:hover img:last-child{margin-right:0}#info #meta>div.media-item.multiple:hover:after{content:'Order may not be chronological';font display:block;background:rgba(200,200,200,1);float:right;clear:left;padding:2px 5px;font-size:.83em}.stats_pullout>div>div{margin-left:21px}.stats_pullout p{font-size:1em}:lang(en) #info #meta>div.media-item.multiple:hover:after{content:"Order may not be chronological"}:lang(es) #info #meta>div.media-item.multiple:hover:after{content:"El orden no puede ser cronológico"}:lang(fr) #info #meta>div.media-item.multiple:hover:after{content:"L'ordre peut ne pas être chronologique"}:lang(pt) #info #meta>div.media-item.multiple:hover:after{content:"A ordem pode não ser cronológica"}:lang(de) #info #meta>div.media-item.multiple:hover:after{content:"Reihenfolge darf nicht chronologisch sein"}#header #subnav>li:nth-child(9){display:block}#header #subnav>li.user .username{max-width:160px}}@media screen and (min-width:1478px){#wrap{width:1450px;border-left:1px solid #747678;border-right:1px solid #747678;box-shadow:0 0 27px #454340;margin:0 auto}.sr_expanded>#wrap{width:100%;border:0;box-shadow:none}#header #subnav>li:last-child{display:block}.user_logged_in #header #subnav>li:last-child.not_logged_in{display:none}#info #meta>div>p:nth-child(6){display:block}#info #meta>div>p:nth-child(7){display:block}}.f-i,#footer,#content,#inner_nav,#srcom{display:none}</style>
-<link rel="stylesheet" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101064/css/bbr/sr-min.css" media="print" crossorigin
+<link rel="stylesheet" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101131/css/bbr/sr-min.css" media="print" crossorigin
       onload="if (document.srdev) { this.href = 'https://d2p3bygnnzw9w3.cloudfront.net/nocdn/dev/'.concat(document.srdev.substr(0,2),'/css/bbr/sr.css'); }; this.media='all'">
-<noscript><link href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101064/css/bbr/sr-min.css"  rel="stylesheet" type="text/css" /></noscript>
+<noscript><link href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101131/css/bbr/sr-min.css"  rel="stylesheet" type="text/css" /></noscript>
 <!-- CSS END -->
 
 <!-- JS START -->
@@ -38,7 +196,7 @@
 function vjs_getUrlParameter(e){e=e.replace(/[\[]/,"\\[").replace(/[\]]/,"\\]");var t=new RegExp("[\\?&]"+e+"=([^&#]*)").exec(location.search);return null===t?"":decodeURIComponent(t[1].replace(/\+/g," "))}document.lang="","/es/"===window.location.pathname.substr(0,4)?document.lang="es":"/pt/"===window.location.pathname.substr(0,4)?document.lang="pt":"/fr/"===window.location.pathname.substr(0,4)?document.lang="fr":"/it/"===window.location.pathname.substr(0,4)?document.lang="it":"/de/"===window.location.pathname.substr(0,4)?document.lang="de":(window.location.pathname.substr(0,4),document.lang="en"),vjs_getUrlParameter("lang")&&(document.lang=vjs_getUrlParameter("lang")),document.srdev=null,vjs_getUrlParameter("srdev")&&(document.srdev=vjs_getUrlParameter("srdev"));var log_performance=!0,is_new_jscss_version=!1,sr_detect_operaMini=-1<navigator.userAgent.indexOf("Opera Mini");sr_detect_operaMini&&((el=document.querySelector("html")).className=el.className.concat(" operamini"));var sr_detect_firefox=-1<navigator.userAgent.indexOf("Firefox");sr_detect_firefox&&((el=document.querySelector("html")).className=el.className.concat(" firefox"));var sr_detect_firefoxMobile=-1<navigator.userAgent.indexOf("Firefox")&&(-1<navigator.userAgent.indexOf("Mobile")||-1<navigator.userAgent.indexOf("Tablet"));sr_detect_firefoxMobile&&((el=document.querySelector("html")).className=el.className.concat(" firefox-mobile"));var el,sr_detect_ie=function(){var e=window.navigator.userAgent;if(0<e.indexOf("Trident/7.0"))return 11;if(0<e.indexOf("Trident/6.0"))return 10;if(0<e.indexOf("Trident/5.0"))return 9;for(var t=3,n=document.createElement("div"),r=n.getElementsByTagName("i");n.innerHTML="\x3c!--[if gt IE "+ ++t+"]><i></i><![endif]--\x3e",r[0];);return 4<t&&t}(),sr_detect_edge=!sr_detect_ie&&!!window.StyleMedia,sr_detect_safari=/Safari/.test(navigator.userAgent)&&/Apple Computer/.test(navigator.vendor),className="no-js";(el=document.querySelector("html")).classList?el.classList.remove(className):el.className=el.className.replace(new RegExp("(^|\\b)"+className.split(" ").join("|")+"(\\b|)","gi")," "),el.className=el.className.concat(" js"),function(a,u,f){function m(e,t){return typeof e===t}function p(e){return"function"!=typeof u.createElement?u.createElement(e):y?u.createElementNS.call(u,"http://www.w3.org/2000/svg",e):u.createElement.apply(u,arguments)}function o(e,t,n,r){var o,i,a,s,l="modernizr",c=p("div"),d=function(){var e=u.body;return e||((e=p(y?"svg":"body")).fake=!0),e}();if(parseInt(n,10))for(;n--;)(a=p("div")).id=r?r[n]:l+(n+1),c.appendChild(a);return(o=p("style")).type="text/css",o.id="s"+l,(d.fake?d:c).appendChild(o),d.appendChild(c),o.styleSheet?o.styleSheet.cssText=e:o.appendChild(u.createTextNode(e)),c.id=l,d.fake&&(d.style.background="",d.style.overflow="hidden",s=_.style.overflow,_.style.overflow="hidden",_.appendChild(d)),i=t(c,e),d.fake?(d.parentNode.removeChild(d),_.style.overflow=s,_.offsetHeight):c.parentNode.removeChild(c),!!i}function h(e){return e.replace(/([a-z])-([a-z])/g,function(e,t,n){return t+n.toUpperCase()}).replace(/^-/,"")}function s(e,t){return function(){return e.apply(t,arguments)}}function i(e){return e.replace(/([A-Z])/g,function(e,t){return"-"+t.toLowerCase()}).replace(/^ms-/,"-ms-")}function v(e,t){var n=e.length;if("CSS"in a&&"supports"in a.CSS){for(;n--;)if(a.CSS.supports(i(e[n]),t))return!0;return!1}if("CSSSupportsRule"in a){for(var r=[];n--;)r.push("("+i(e[n])+":"+t+")");return o("@supports ("+(r=r.join(" or "))+") { #modernizr { position: absolute; } }",function(e){return"absolute"==function(e,t,n){var r;if("getComputedStyle"in a){r=getComputedStyle.call(a,e,t);var o=a.console;if(null!==r)n&&(r=r.getPropertyValue(n));else if(o){o[o.error?"error":"log"].call(o,"getComputedStyle returning null, its possible modernizr test results are inaccurate")}}else r=!t&&e.currentStyle&&e.currentStyle[n];return r}(e,null,"position")})}return f}function r(e,t,n,r,o){var i=e.charAt(0).toUpperCase()+e.slice(1),a=(e+" "+z.join(i+" ")+i).split(" ");return m(t,"string")||m(t,"undefined")?function(e,t,n,r){function o(){a&&(delete T.style,delete T.modElem)}if(r=!m(r,"undefined")&&r,!m(n,"undefined")){var i=v(e,n);if(!m(i,"undefined"))return i}for(var a,s,l,c,d,u=["modernizr","tspan","samp"];!T.style&&u.length;)a=!0,T.modElem=p(u.shift()),T.style=T.modElem.style;for(l=e.length,s=0;s<l;s++)if(c=e[s],d=T.style[c],!~(""+c).indexOf("-")||(c=h(c)),T.style[c]!==f){if(r||m(n,"undefined"))return o(),"pfx"!=t||c;try{T.style[c]=n}catch(e){}if(T.style[c]!=d)return o(),"pfx"!=t||c}return o(),!1}(a,t,r,o):function(e,t,n){var r;for(var o in e)if(e[o]in t)return!1===n?e[o]:m(r=t[e[o]],"function")?s(r,n||t):r;return!1}(a=(e+" "+M.join(i+" ")+i).split(" "),t,n)}function e(e,t,n){return r(e,f,f,t,n)}var l=[],c=[],t={_version:"3.6.0",_config:{classPrefix:"",enableClasses:!0,enableJSClass:!0,usePrefixes:!0},_q:[],on:function(e,t){var n=this;setTimeout(function(){t(n[e])},0)},addTest:function(e,t,n){c.push({name:e,fn:t,options:n})},addAsyncTest:function(e){c.push({name:null,fn:e})}},d=function(){};d.prototype=t,(d=new d).addTest("cookies",function(){try{u.cookie="cookietest=1";var e=-1!=u.cookie.indexOf("cookietest=");return u.cookie="cookietest=1; expires=Thu, 01-Jan-1970 00:00:01 GMT",e}catch(e){return!1}}),d.addTest("localstorage",function(){var e="modernizr";try{return localStorage.setItem(e,e),localStorage.removeItem(e),!0}catch(e){return!1}}),d.addTest("sessionstorage",function(){var e="modernizr";try{return sessionStorage.setItem(e,e),sessionStorage.removeItem(e),!0}catch(e){return!1}}),d.addTest("cors","XMLHttpRequest"in a&&"withCredentials"in new XMLHttpRequest),d.addTest("history",function(){var e=navigator.userAgent;return(-1===e.indexOf("Android 2.")&&-1===e.indexOf("Android 4.0")||-1===e.indexOf("Mobile Safari")||-1!==e.indexOf("Chrome")||-1!==e.indexOf("Windows Phone")||"file:"===location.protocol)&&(a.history&&"pushState"in a.history)});var g=t._config.usePrefixes?" -webkit- -moz- -o- -ms- ".split(" "):["",""];t._prefixes=g;var _=u.documentElement,y="svg"===_.nodeName.toLowerCase();y||function(e,a){function u(e,t){var n=e.createElement("p"),r=e.getElementsByTagName("head")[0]||e.documentElement;return n.innerHTML="x<style>"+t+"</style>",r.insertBefore(n.lastChild,r.firstChild)}function f(){var e=g.elements;return"string"==typeof e?e.split(" "):e}function m(e){var t=v[e[d]];return t||(t={},h++,e[d]=h,v[h]=t),t}function r(e,t,n){return t=t||a,s?t.createElement(e):!(r=(n=n||m(t)).cache[e]?n.cache[e].cloneNode():c.test(e)?(n.cache[e]=n.createElem(e)).cloneNode():n.createElem(e)).canHaveChildren||l.test(e)||r.tagUrn?r:n.frag.appendChild(r);var r}function o(e){var t=m(e=e||a);return!g.shivCSS||n||t.hasCSS||(t.hasCSS=!!u(e,"article,aside,dialog,figcaption,figure,footer,header,hgroup,main,nav,section{display:block}mark{background:#FF0;color:#000}template{display:none}")),s||function(t,n){n.cache||(n.cache={},n.createElem=t.createElement,n.createFrag=t.createDocumentFragment,n.frag=n.createFrag()),t.createElement=function(e){return g.shivMethods?r(e,t,n):n.createElem(e)},t.createDocumentFragment=Function("h,f","return function(){var n=f.cloneNode(),c=n.createElement;h.shivMethods&&("+f().join().replace(/[\w\-:]+/g,function(e){return n.createElem(e),n.frag.createElement(e),'c("'+e+'")'})+");return n}")(g,n.frag)}(e,t),e}function p(e){for(var t,n=e.attributes,r=n.length,o=e.ownerDocument.createElement(w+":"+e.nodeName);r--;)(t=n[r]).specified&&o.setAttribute(t.nodeName,t.nodeValue);return o.style.cssText=e.style.cssText,o}function t(s){function l(){clearTimeout(e._removeSheetTimer),c&&c.removeNode(!0),c=null}var c,d,e=m(s),t=s.namespaces,n=s.parentWindow;return!x||s.printShived||(void 0===t[w]&&t.add(w),n.attachEvent("onbeforeprint",function(){l();for(var e,t,n,r=s.styleSheets,o=[],i=r.length,a=Array(i);i--;)a[i]=r[i];for(;n=a.pop();)if(!n.disabled&&y.test(n.media)){try{t=(e=n.imports).length}catch(e){t=0}for(i=0;i<t;i++)a.push(e[i]);try{o.push(n.cssText)}catch(e){}}o=function(e){for(var t,n=e.split("{"),r=n.length,o=RegExp("(^|[\\s,>+~])("+f().join("|")+")(?=[[\\s,>+~#.:]|)","gi"),i="1"+w+"\\:2";r--;)(t=n[r]=n[r].split("}"))[t.length-1]=t[t.length-1].replace(o,i),n[r]=t.join("}");return n.join("{")}(o.reverse().join("")),d=function(e){for(var t,n=e.getElementsByTagName("*"),r=n.length,o=RegExp("^(?:"+f().join("|")+")","i"),i=[];r--;)t=n[r],o.test(t.nodeName)&&i.push(t.applyElement(p(t)));return i}(s),c=u(s,o)}),n.attachEvent("onafterprint",function(){(function(e){for(var t=e.length;t--;)e[t].removeNode()})(d),clearTimeout(e._removeSheetTimer),e._removeSheetTimer=setTimeout(l,500)}),s.printShived=!0),s}var n,s,i=e.html5||{},l=/^<|^(?:button|map|select|textarea|object|iframe|option|optgroup)/i,c=/^(?:a|b|code|div|fieldset|h1|h2|h3|h4|h5|h6|i|label|li|ol|p|q|span|strong|style|table|tbody|td|th|tr|ul)/i,d="_html5shiv",h=0,v={};!function(){try{var e=a.createElement("a");e.innerHTML="<xyz></xyz>",n="hidden"in e,s=1==e.childNodes.length||function(){a.createElement("a");var e=a.createDocumentFragment();return void 0===e.cloneNode||void 0===e.createDocumentFragment||void 0===e.createElement}()}catch(e){s=n=!0}}();var g={elements:i.elements||"abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output picture progress section summary template time video",version:"3.7.3",shivCSS:!1!==i.shivCSS,supportsUnknownElements:s,shivMethods:!1!==i.shivMethods,type:"default",shivDocument:o,createElement:r,createDocumentFragment:function(e,t){if(e=e||a,s)return e.createDocumentFragment();for(var n=(t=t||m(e)).frag.cloneNode(),r=0,o=f(),i=o.length;r<i;r++)n.createElement(o[r]);return n},addElements:function(e,t){var n=g.elements;"string"!=typeof n&&(n=n.join(" ")),"string"!=typeof e&&(e=e.join(" ")),g.elements=n+" "+e,o(t)}};e.html5=g,o(a);var _,y=/^|\b(?:all|print)\b/,w="html5shiv",x=!(s||(_=a.documentElement,void 0===a.namespaces||void 0===a.parentWindow||void 0===_.applyElement||void 0===_.removeNode||void 0===e.attachEvent));g.type+=" print",(g.shivPrint=t)(a),"object"==typeof module&&module.exports&&(module.exports=g)}(void 0!==a?a:this,u),d.addTest("csspositionsticky",function(){var e="position:",t=p("a").style;return t.cssText=e+g.join("sticky;"+e).slice(0,-e.length),-1!==t.position.indexOf("sticky")});var w,n=(w=!("onblur"in u.documentElement),function(e,t){var n;return!!e&&(t&&"string"!=typeof t||(t=p(t||"div")),!(n=(e="on"+e)in t)&&w&&(t.setAttribute||(t=p("div")),t.setAttribute(e,""),n="function"==typeof t[e],t[e]!==f&&(t[e]=f),t.removeAttribute(e)),n)});t.hasEvent=n;var x=t.testStyles=o;d.addTest("touchevents",function(){var t;if("ontouchstart"in a||a.DocumentTouch&&u instanceof DocumentTouch)t=!0;else{var e=["@media (",g.join("touch-enabled),("),"heartz",")","{#modernizr{top:9px;position:absolute}}"].join("");x(e,function(e){t=9===e.offsetTop})}return t});var b="Moz O ms Webkit",M=t._config.usePrefixes?b.toLowerCase().split(" "):[];t._domPrefixes=M,d.addTest("pointerevents",function(){var e=!1,t=M.length;for(e=d.hasEvent("pointerdown");t--&&!e;)n(M[t]+"pointerdown")&&(e=!0);return e});var z=t._config.usePrefixes?b.split(" "):[];t._cssomPrefixes=z;function S(e){var t,n=g.length,r=a.CSSRule;if(void 0===r)return f;if(!e)return!1;if((t=(e=e.replace(/^@/,"")).replace(/-/g,"_").toUpperCase()+"_RULE")in r)return"@"+e;for(var o=0;o<n;o++){var i=g[o];if(i.toUpperCase()+"_"+t in r)return"@-"+i.toLowerCase()+"-"+e}return!1}t.atRule=S;var E={elem:p("modernizr")};d._q.push(function(){delete E.elem});var T={style:E.elem.style};d._q.unshift(function(){delete T.style}),t.testAllProps=r;var C=t.prefixed=function(e,t,n){return 0===e.indexOf("@")?S(e):(-1!=e.indexOf("-")&&(e=h(e)),t?r(e,t,n):r(e,"pfx"))};d.addTest("matchmedia",!!C("matchMedia",a)),t.testAllProps=e,d.addTest("flexwrap",e("flexWrap","wrap",!0)),function(){var e,t,n,r,o,i;for(var a in c)if(c.hasOwnProperty(a)){if(e=[],(t=c[a]).name&&(e.push(t.name.toLowerCase()),t.options&&t.options.aliases&&t.options.aliases.length))for(n=0;n<t.options.aliases.length;n++)e.push(t.options.aliases[n].toLowerCase());for(r=m(t.fn,"function")?t.fn():t.fn,o=0;o<e.length;o++)1===(i=e[o].split(".")).length?d[i[0]]=r:(!d[i[0]]||d[i[0]]instanceof Boolean||(d[i[0]]=new Boolean(d[i[0]])),d[i[0]][i[1]]=r),l.push((r?"":"no-")+i.join("-"))}}(),function(e){var t=_.className,n=d._config.classPrefix||"";if(y&&(t=t.baseVal),d._config.enableJSClass){var r=new RegExp("(^|\\s)"+n+"no-js(\\s|)");t=t.replace(r,"1"+n+"js2")}d._config.enableClasses&&(t+=" "+n+e.join(" "+n),y?_.className.baseVal=t:_.className=t)}(l),delete t.addTest,delete t.addAsyncTest;for(var N=0;N<d._q.length;N++)d._q[N]();a.Modernizr=d}(window,document),Modernizr.viewport_width=Math.max(document.documentElement.clientWidth,window.innerWidth||0),Modernizr.viewport_height=Math.max(document.documentElement.clientHeight,window.innerHeight||0),Modernizr.narrow=Modernizr.viewport_width<=704,Modernizr.constrained=Modernizr.viewport_width<=1200,Modernizr.site_menu=Modernizr.viewport_width<=1020?"button":"nav_bar",Modernizr.touch=Modernizr.touchevents||Modernizr.pointerevents&&(0<navigator.MaxTouchPoints||0<navigator.msMaxTouchPoints),Modernizr.phone=Modernizr.narrow&&Modernizr.touch,Modernizr.tablet=Modernizr.viewport_width<1075&&Modernizr.touch,Modernizr.desktop=!Modernizr.constrained&&!Modernizr.touch,Modernizr.laptop=!(Modernizr.desktop||Modernizr.tablet||Modernizr.phone);var patt=new RegExp("hideallads");Modernizr.adfree=patt.test(window.location.href);var sr_html=document.querySelector("html"),cn=sr_html.className;Modernizr.phone?sr_html.className=cn.concat(" phone"):Modernizr.tablet?sr_html.className=cn.concat(" tablet"):(Modernizr.desktop||Modernizr.laptop)&&(sr_html.className=cn.concat(" desktop"));var sr_host_parts=window.location.hostname.split(".");cn=sr_html.className;Modernizr.is_build=Modernizr.is_live=Modernizr.is_dev=!1,"www"===sr_host_parts[0]||"fbref"===sr_host_parts[0]?(Modernizr.is_live=!0,sr_html.className=cn.concat(" is_live")):sr_host_parts[0].startsWith("b")?(Modernizr.is_build=!0,sr_html.className=cn.concat(" is_build")):(sr_host_parts[0].startsWith("d")||sr_host_parts[0].startsWith("r"))&&(Modernizr.is_dev=!0,sr_html.className=cn.concat(" is_dev")),Modernizr.is_stathead=!1,("stathead"===sr_host_parts[1]&&"srdevel"===sr_host_parts[2]||"stathead"===sr_host_parts[0]||"www"===sr_host_parts[0]&&"stathead"===sr_host_parts[1])&&(cn=sr_html.className,sr_html.className=cn.concat(" is_stathead"),Modernizr.is_stathead=!0);var sr_logger=function(){var e=null,t={enableLogger:function(){null!=e&&(window.console.log=e)},disableLogger:function(){e=console.log,window.console.log=function(){}}};return t}();!document.srdev&&sr_is_production&&sr_logger.disableLogger(),Modernizr.is_modern=1,Modernizr.lang=document.lang||"",Modernizr.srdev=document.srdev;var sr_utilities_js_loader=[];function vjs_readCookie(e){for(var t=e+"=",n=document.cookie.split(";"),r=0;r<n.length;r++){for(var o=n[r];" "===o.charAt(0);)o=o.substring(1,o.length);if(0===o.indexOf(t))return decodeURIComponent(o.substring(t.length,o.length))}return null}function vjs_createCookie(e,t,n){var r="";if(n){var o=new Date;o.setTime(o.getTime()+24*n*60*60*1e3),r="; expires="+o.toGMTString()}else r="";var i=encodeURIComponent(e)+"="+encodeURIComponent(t)+r+"; path=/";document.cookie=i}!function(o){function e(e,t){"use strict";var n=o.document.getElementsByTagName("script")[0],r=o.document.createElement("script");return r.src=e,r.async=!0,n.parentNode.insertBefore(r,n),t&&"function"==typeof t&&(r.onload=t),r}"undefined"!=typeof module?module.exports=e:o.loadJS=e}("undefined"!=typeof global?global:this),String.prototype.vjs_isMatch=function(e){return null!==this.match(e)};var sr_time_begin=new Date,sr_perf_startTime=new Date,sr_perf_log="<strong>Performance:</strong>",sr_perf_lastTime=new Date;function vjs_ready(e){"loading"!=document.readyState?e():document.addEventListener("DOMContentLoaded",e)}
 </script>
 <script>
-var _sr_modern_url = ''.concat(document.srdev?'https://d2p3bygnnzw9w3.cloudfront.net/nocdn/dev/'.concat(document.srdev.substring(0, 2)):"https://d2p3bygnnzw9w3.cloudfront.net/req/202101064",
+var _sr_modern_url = ''.concat(document.srdev?'https://d2p3bygnnzw9w3.cloudfront.net/nocdn/dev/'.concat(document.srdev.substring(0, 2)):"https://d2p3bygnnzw9w3.cloudfront.net/req/202101131",
                                "/js/bbr", "/sr",document.srdev?"":"-min",   			       ".js");
 loadJS( _sr_modern_url, function() { vjs_ready(sr_fire_js); });
 </script>
@@ -50,7 +208,7 @@ loadJS( _sr_modern_url, function() { vjs_ready(sr_fire_js); });
 
 
 
-    <meta name="revised" content="12:47:14 07-Dec-2020" />
+    <meta name="revised" content="10:01:38 14-Jan-2021" />
     <meta name="HandheldFriendly" content="True" />
     <meta name="HandheldFriendly" content="True" />
     <meta name="generated-by"     content="build_league_year_pages.pl" />
@@ -72,42 +230,42 @@ loadJS( _sr_modern_url, function() { vjs_ready(sr_fire_js); });
     <meta property="og:site_name"    content="Basketball-Reference.com">
     <meta property="og:type"         content="    article" />
     <meta property="og:description"  content="Player stat totals for the 2019-20 NBA season">
-    <meta property="og:image"        content="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/apple-touch-icon-228x228-precomposed.png">
+    <meta property="og:image"        content="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/apple-touch-icon-228x228-precomposed.png">
     <meta name="twitter:card"         content="summary">
     <meta name="twitter:site"         content="@bball_ref">
     <meta name="twitter:creator"      content="@bball_ref">
-    <meta property="twitter:image"    content="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/apple-touch-icon-228x228-precomposed.png">
+    <meta property="twitter:image"    content="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/apple-touch-icon-228x228-precomposed.png">
     <meta name="twitter:domain"       content="Basketball-Reference.com">
     <meta name="referrer" content="unsafe-url">
     <!-- HeaderSeoSocial:END -->
 
     <!-- tiles, touch, favicons -->
-    <link rel="apple-touch-icon-precomposed" sizes="180x180" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/apple-touch-icon-180x180-precomposed.png">
-    <link rel="icon"                         sizes="48x48"   href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/favicon-48.png">
-    <link rel="shortcut icon"                sizes="228x228" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/apple-touch-icon-228x228-precomposed.png">
-    <link rel="apple-touch-icon"             sizes="228x228" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/apple-touch-icon-228x228-precomposed.png">
-    <link rel="apple-touch-icon"             sizes="195x195" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/apple-touch-icon-195x195-precomposed.png">
-    <link rel="apple-touch-icon"             sizes="180x180" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/apple-touch-icon-180x180-precomposed.png">
-    <link rel="apple-touch-icon"             sizes="152x152" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/apple-touch-icon-152x152-precomposed.png">
-    <link rel="apple-touch-icon"             sizes="144x144" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/apple-touch-icon-144x144-precomposed.png">
-    <link rel="apple-touch-icon"             sizes="128x128" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/apple-touch-icon-128x128-precomposed.png">
-    <link rel="apple-touch-icon"             sizes="120x120" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/apple-touch-icon-120x120-precomposed.png">
-    <link rel="apple-touch-icon"             sizes="114x114" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/apple-touch-icon-114x114-precomposed.png">
-    <link rel="apple-touch-icon"             sizes="76x76"   href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/apple-touch-icon-76x76-precomposed.png">
-    <link rel="apple-touch-icon"             sizes="72x72"   href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/apple-touch-icon-72x72-precomposed.png">
-    <link rel="apple-touch-icon"             sizes="57x57"   href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/apple-touch-icon-57x57-precomposed.png">
-    <link rel="icon"                         sizes="32x32"   href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/favicon-32.png">
+    <link rel="apple-touch-icon-precomposed" sizes="180x180" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/apple-touch-icon-180x180-precomposed.png">
+    <link rel="icon"                         sizes="48x48"   href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/favicon-48.png">
+    <link rel="shortcut icon"                sizes="228x228" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/apple-touch-icon-228x228-precomposed.png">
+    <link rel="apple-touch-icon"             sizes="228x228" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/apple-touch-icon-228x228-precomposed.png">
+    <link rel="apple-touch-icon"             sizes="195x195" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/apple-touch-icon-195x195-precomposed.png">
+    <link rel="apple-touch-icon"             sizes="180x180" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/apple-touch-icon-180x180-precomposed.png">
+    <link rel="apple-touch-icon"             sizes="152x152" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/apple-touch-icon-152x152-precomposed.png">
+    <link rel="apple-touch-icon"             sizes="144x144" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/apple-touch-icon-144x144-precomposed.png">
+    <link rel="apple-touch-icon"             sizes="128x128" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/apple-touch-icon-128x128-precomposed.png">
+    <link rel="apple-touch-icon"             sizes="120x120" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/apple-touch-icon-120x120-precomposed.png">
+    <link rel="apple-touch-icon"             sizes="114x114" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon"             sizes="76x76"   href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/apple-touch-icon-76x76-precomposed.png">
+    <link rel="apple-touch-icon"             sizes="72x72"   href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon"             sizes="57x57"   href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/apple-touch-icon-57x57-precomposed.png">
+    <link rel="icon"                         sizes="32x32"   href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/favicon-32.png">
     <!--[if IE]>
-    <link rel="shortcut icon"                                href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/favicon.ico"><![endif]-->
+    <link rel="shortcut icon"                                href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/favicon.ico"><![endif]-->
     <meta name="msapplication-TileColor" content="#905500" />
-    <meta name="msapplication-TileImage" content="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/favicons/bbr/ms-tile-144.png" />
-    <link rel=search        type="application/opensearchdescription+xml" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/opensearch/opensearch-bbr.xml" title=" Player and Team Search">
+    <meta name="msapplication-TileImage" content="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/favicons/bbr/ms-tile-144.png" />
+    <link rel=search        type="application/opensearchdescription+xml" href="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/opensearch/opensearch-bbr.xml" title=" Player and Team Search">
     <!-- tiles, touch, favicons:end -->
 
 <!-- ad code: begin -->
+
+
 <script data-ad-client="ca-pub-5319453360923253" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-
-
 <script>
     var freestar = freestar || {};
     freestar.config = freestar.config || {};
@@ -147,6 +305,8 @@ loadJS( _sr_modern_url, function() { vjs_ready(sr_fire_js); });
 
 <!-- ad code:end -->
 
+
+
 </head>
 <body class="bbr">
 <div id="wrap">
@@ -163,7 +323,7 @@ loadJS( _sr_modern_url, function() { vjs_ready(sr_fire_js); });
 	
 	
 	
-	<li><a href="https://fbref.com/es/">Fútbol</a></li>
+	<li><a href="https://fbref.com/en/">Soccer</a></li>
 
 	<li><a href="https://www.sports-reference.com/blog/">Blog</a></li>
 
@@ -178,7 +338,7 @@ loadJS( _sr_modern_url, function() { vjs_ready(sr_fire_js); });
 
 </ul>
 
-  <a href="/"><img src="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/logos/bbr-logo.svg" onerror="this.src='https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/logos/bbr-logo.png'; this.onerror = null;" alt="Basketball-Reference.com Logo &amp; Link to home page" /></a>
+  <a href="/"><img src="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/logos/bbr-logo.svg" onerror="this.src='https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/logos/bbr-logo.png'; this.onerror = null;" alt="Basketball-Reference.com Logo &amp; Link to home page" /></a>
 <div id="nav_trigger" role="button"><a href="#site_menu_link">MENU</a></div>
 <div id="nav" role="navigation" aria-label="Basketball-Reference.com sections">
 	<ul id="main_nav" class="hoversmooth nohover"><li id="header_players" ><a href="/players/">Players</a></li>
@@ -256,7 +416,7 @@ sr_menus_setupMainNav_button_inline();
 
 
 	<div class="media-item logo loader">
-		<img class="teamlogo" itemscope="image" 			src="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/tlogo/bbr/NBA-2020.png"
+		<img class="teamlogo" itemscope="image" 			src="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/tlogo/bbr/NBA-2020.png"
 			alt="2020  Logo">
 		
 			<p><a href="http://www.sportslogos.net/">via Sports Logos.net</a></p>
@@ -288,7 +448,25 @@ sr_menus_setupMainNav_button_inline();
 			
 			
 			<button id="meta_more_button" class="opener" data-type="hide_after" data-class="open" data-id="info">More league info</button>
-
+<script>
+// see sr.menus.js:sr_menus_checkInfoCookie to explain
+function sr_menus_checkInfoCookie_inline(browserType) {
+    var el_info = document.getElementById('info');
+    var el_button = document.getElementById('meta_more_button');
+    var bling_len = 0;    
+    if (!el_button || !el_info || !el_info.classList) { console.log('no meta_button'); return; }
+    var el = el_button;
+    var siblingsHidden = 0;
+    while (el = el.previousSibling) { if ((el.nodeType === 1) && (el.offsetWidth <= 0 || el.offsetHeight <= 0)) { siblingsHidden++; } }
+    var button_cookie = false;
+    if (browserType === 'desktop') {  button_cookie = vjs_readCookie('meta_more_button');   }
+    // We allow up to four of bling lines or additional player bio data entries in mobile.
+    if (el_info && el_button && (button_cookie || (siblingsHidden + bling_len <= 4))) {el_button.parentNode.removeChild(el_button);	el_info.classList.add('open');  }
+    else { el_button.classList.add('show');  }
+}
+if (Modernizr.desktop || Modernizr.laptop) { sr_menus_checkInfoCookie_inline('desktop'); } else { sr_menus_checkInfoCookie_inline('mobile'); }
+var sr_menus_checkInfoCookie_run_inline = true;
+</script>
 
 		</div>
 	</div>
@@ -352,6 +530,8 @@ sr_menus_setupMainNav_button_inline();
 						<li><a href="/leagues/NBA_2020_per_poss.html" >Per 100 Possessions</a></li>
 						<li><a href="/leagues/NBA_2020_adj_shooting.html" >Adjusted Shooting</a></li>
 						<li><a href="/leagues/NBA_2020_advanced.html" >Advanced</a></li>
+						<li><a href="/leagues/NBA_2020_play-by-play.html" >Play-by-Play</a></li>
+						<li><a href="/leagues/NBA_2020_shooting.html" >Shooting</a></li>
 					</ul>
 
 			</div>		</li>
@@ -360,11 +540,11 @@ sr_menus_setupMainNav_button_inline();
 
 					<ul class="">
 						<li><a href="/leagues/NBA_2020_rookies.html" >Rookies</a></li>
+						<li><a href="/leagues/NBA_2020_final.html" >Final Season</a></li>
 						<li><a href="/leagues/NBA_2020_ratings.html" >Team Ratings</a></li>
 						<li><a href="/leagues/NBA_2020_numbers.html" >Uniform Numbers</a></li>
 						<li><a href="/leagues/NBA_2020_transactions.html" >Transactions</a></li>
 						<li><a href="/leagues/NBA_2020_standings_by_date.html" >Standings by Date</a></li>
-						<li><a href="/friv/proj_draft.html" >Projected Draft Order</a></li>
 						<li><a href="/leagues/NBA_2020_preseason_odds.html" >Preseason Odds</a></li>
 					</ul>
 
@@ -399,16 +579,18 @@ sr_menus_setupMainNav_button_inline();
 						<li><a href="/leagues/NBA_2020_per_poss.html" >Per 100 Possessions</a></li>
 						<li><a href="/leagues/NBA_2020_adj_shooting.html" >Adjusted Shooting</a></li>
 						<li><a href="/leagues/NBA_2020_advanced.html" >Advanced</a></li>
+						<li><a href="/leagues/NBA_2020_play-by-play.html" >Play-by-Play</a></li>
+						<li><a href="/leagues/NBA_2020_shooting.html" >Shooting</a></li>
 					</ul>
 
 <p class="listhead"><strong>Other</strong></p>
 					<ul class="">
 						<li><a href="/leagues/NBA_2020_rookies.html" >Rookies</a></li>
+						<li><a href="/leagues/NBA_2020_final.html" >Final Season</a></li>
 						<li><a href="/leagues/NBA_2020_ratings.html" >Team Ratings</a></li>
 						<li><a href="/leagues/NBA_2020_numbers.html" >Uniform Numbers</a></li>
 						<li><a href="/leagues/NBA_2020_transactions.html" >Transactions</a></li>
 						<li><a href="/leagues/NBA_2020_standings_by_date.html" >Standings by Date</a></li>
-						<li><a href="/friv/proj_draft.html" >Projected Draft Order</a></li>
 						<li><a href="/leagues/NBA_2020_preseason_odds.html" >Preseason Odds</a></li>
 					</ul>
 
@@ -456,22 +638,22 @@ sr_menus_setupMainNav_button_inline();
 <div class="filter">
 
 <div class=" current">
-		<a href="/leagues/NBA_2020_totals.html">Totals</a>
-	</div><div class="">
-		<a href="/leagues/NBA_2020_per_game.html">Per Game</a>
-	</div><div class="">
-		<a href="/leagues/NBA_2020_per_minute.html">Per 36 Min</a>
-	</div><div class="">
-		<a href="/leagues/NBA_2020_per_poss.html">Per 100 Poss</a>
-	</div><div class="">
-		<a href="/leagues/NBA_2020_advanced.html">Advanced</a>
-	</div><div class="">
-		<a href="/leagues/NBA_2020_play-by-play.html">Play-by-Play</a>
-	</div><div class="">
-		<a href="/leagues/NBA_2020_shooting.html">Shooting</a>
-	</div><div class="">
-		<a href="/leagues/NBA_2020_adj_shooting.html">Adjusted Shooting</a>
-	</div></div>
+	<a href="/leagues/NBA_2020_totals.html">Totals</a>
+</div><div class="">
+	<a href="/leagues/NBA_2020_per_game.html">Per Game</a>
+</div><div class="">
+	<a href="/leagues/NBA_2020_per_minute.html">Per 36 Min</a>
+</div><div class="">
+	<a href="/leagues/NBA_2020_per_poss.html">Per 100 Poss</a>
+</div><div class="">
+	<a href="/leagues/NBA_2020_advanced.html">Advanced</a>
+</div><div class="">
+	<a href="/leagues/NBA_2020_play-by-play.html">Play-by-Play</a>
+</div><div class="">
+	<a href="/leagues/NBA_2020_shooting.html">Shooting</a>
+</div><div class="">
+	<a href="/leagues/NBA_2020_adj_shooting.html">Adjusted Shooting</a>
+</div></div>
 
 <div id="all_totals_stats" class="table_wrapper setup_long long">
 
@@ -482,9 +664,9 @@ sr_menus_setupMainNav_button_inline();
     </div>
     		
 </div>   <div class="table_outer_container">
-      <div class="overthrow table_container" id="div_totals_stats">
+      <div class="table_container" id="div_totals_stats">
 	  
-  <table class="sortable stats_table" id="totals_stats" data-cols-to-freeze="2" data-non-qual="1" data-qual-text="" data-qual-label=" When table is sorted, hide non-qualifiers for rate stats"><caption>Player Totals Table</caption>
+  <table class="sortable stats_table" id="totals_stats" data-cols-to-freeze=",2" data-non-qual="1" data-qual-text="" data-qual-label=" When table is sorted, hide non-qualifiers for rate stats"><caption>Player Totals Table</caption>
    <colgroup><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col></colgroup>
    <thead>      
       <tr>
@@ -1027,7 +1209,7 @@ sr_menus_setupMainNav_button_inline();
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="169" >169</th><td class="left " data-append-csv="garlada01" data-stat="player" csk="Garland,Darius" ><a href="/players/g/garlada01.html">Darius Garland</a></td><td class="center " data-stat="pos" >SG</td><td class="right " data-stat="age" >20</td><td class="left " data-stat="team_id" ><a href="/teams/CLE/2020.html">CLE</a></td><td class="right " data-stat="g" >59</td><td class="right " data-stat="gs" >59</td><td class="right " data-stat="mp" >1824</td><td class="right " data-stat="fg" >280</td><td class="right " data-stat="fga" >699</td><td class="right " data-stat="fg_pct" >.401</td><td class="right " data-stat="fg3" >105</td><td class="right " data-stat="fg3a" >296</td><td class="right " data-stat="fg3_pct" >.355</td><td class="right " data-stat="fg2" >175</td><td class="right " data-stat="fg2a" >403</td><td class="right " data-stat="fg2_pct" >.434</td><td class="right " data-stat="efg_pct" >.476</td><td class="right " data-stat="ft" >63</td><td class="right " data-stat="fta" >72</td><td class="right non_qual" data-stat="ft_pct" >.875</td><td class="right " data-stat="orb" >27</td><td class="right " data-stat="drb" >84</td><td class="right " data-stat="trb" >111</td><td class="right " data-stat="ast" >229</td><td class="right " data-stat="stl" >42</td><td class="right " data-stat="blk" >4</td><td class="right " data-stat="tov" >151</td><td class="right " data-stat="pf" >92</td><td class="right " data-stat="pts" >728</td></tr>
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="170" >170</th><td class="left " data-append-csv="gasolma01" data-stat="player" csk="Gasol,Marc" ><a href="/players/g/gasolma01.html">Marc Gasol</a></td><td class="center " data-stat="pos" >C</td><td class="right " data-stat="age" >35</td><td class="left " data-stat="team_id" ><a href="/teams/TOR/2020.html">TOR</a></td><td class="right " data-stat="g" >44</td><td class="right " data-stat="gs" >43</td><td class="right " data-stat="mp" >1161</td><td class="right " data-stat="fg" >119</td><td class="right " data-stat="fga" >279</td><td class="right non_qual" data-stat="fg_pct" >.427</td><td class="right " data-stat="fg3" >57</td><td class="right " data-stat="fg3a" >148</td><td class="right non_qual" data-stat="fg3_pct" >.385</td><td class="right " data-stat="fg2" >62</td><td class="right " data-stat="fg2a" >131</td><td class="right non_qual" data-stat="fg2_pct" >.473</td><td class="right non_qual" data-stat="efg_pct" >.529</td><td class="right " data-stat="ft" >36</td><td class="right " data-stat="fta" >49</td><td class="right non_qual" data-stat="ft_pct" >.735</td><td class="right " data-stat="orb" >31</td><td class="right " data-stat="drb" >244</td><td class="right " data-stat="trb" >275</td><td class="right " data-stat="ast" >147</td><td class="right " data-stat="stl" >34</td><td class="right " data-stat="blk" >38</td><td class="right " data-stat="tov" >59</td><td class="right " data-stat="pf" >124</td><td class="right " data-stat="pts" >331</td></tr>
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="171" >171</th><td class="left " data-append-csv="gayru01" data-stat="player" csk="Gay,Rudy" ><a href="/players/g/gayru01.html">Rudy Gay</a></td><td class="center " data-stat="pos" >PF</td><td class="right " data-stat="age" >33</td><td class="left " data-stat="team_id" ><a href="/teams/SAS/2020.html">SAS</a></td><td class="right " data-stat="g" >67</td><td class="right " data-stat="gs" >5</td><td class="right " data-stat="mp" >1461</td><td class="right " data-stat="fg" >266</td><td class="right " data-stat="fga" >596</td><td class="right " data-stat="fg_pct" >.446</td><td class="right " data-stat="fg3" >74</td><td class="right " data-stat="fg3a" >220</td><td class="right " data-stat="fg3_pct" >.336</td><td class="right " data-stat="fg2" >192</td><td class="right " data-stat="fg2a" >376</td><td class="right " data-stat="fg2_pct" >.511</td><td class="right " data-stat="efg_pct" >.508</td><td class="right " data-stat="ft" >120</td><td class="right " data-stat="fta" >136</td><td class="right " data-stat="ft_pct" >.882</td><td class="right " data-stat="orb" >61</td><td class="right " data-stat="drb" >301</td><td class="right " data-stat="trb" >362</td><td class="right " data-stat="ast" >114</td><td class="right " data-stat="stl" >35</td><td class="right " data-stat="blk" >33</td><td class="right " data-stat="tov" >88</td><td class="right " data-stat="pf" >103</td><td class="right " data-stat="pts" >726</td></tr>
-<tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="172" >172</th><td class="left " data-append-csv="georgpa01" data-stat="player" csk="George,Paul" ><a href="/players/g/georgpa01.html">Paul George</a></td><td class="center " data-stat="pos" >SG</td><td class="right " data-stat="age" >29</td><td class="left " data-stat="team_id" ><a href="/teams/LAC/2020.html">LAC</a></td><td class="right " data-stat="g" >48</td><td class="right " data-stat="gs" >48</td><td class="right " data-stat="mp" >1419</td><td class="right " data-stat="fg" >343</td><td class="right " data-stat="fga" >782</td><td class="right " data-stat="fg_pct" >.439</td><td class="right " data-stat="fg3" >157</td><td class="right " data-stat="fg3a" >381</td><td class="right " data-stat="fg3_pct" >.412</td><td class="right " data-stat="fg2" >186</td><td class="right " data-stat="fg2a" >401</td><td class="right " data-stat="fg2_pct" >.464</td><td class="right " data-stat="efg_pct" >.539</td><td class="right " data-stat="ft" >190</td><td class="right " data-stat="fta" >217</td><td class="right " data-stat="ft_pct" >.876</td><td class="right " data-stat="orb" >24</td><td class="right " data-stat="drb" >248</td><td class="right " data-stat="trb" >272</td><td class="right " data-stat="ast" >185</td><td class="right " data-stat="stl" >68</td><td class="right " data-stat="blk" >20</td><td class="right " data-stat="tov" >125</td><td class="right " data-stat="pf" >113</td><td class="right " data-stat="pts" >1033</td></tr>
+<tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="172" >172</th><td class="left " data-append-csv="georgpa01" data-stat="player" csk="George,Paul" ><a href="/players/g/georgpa01.html">Paul George</a></td><td class="center " data-stat="pos" >SF</td><td class="right " data-stat="age" >29</td><td class="left " data-stat="team_id" ><a href="/teams/LAC/2020.html">LAC</a></td><td class="right " data-stat="g" >48</td><td class="right " data-stat="gs" >48</td><td class="right " data-stat="mp" >1419</td><td class="right " data-stat="fg" >343</td><td class="right " data-stat="fga" >782</td><td class="right " data-stat="fg_pct" >.439</td><td class="right " data-stat="fg3" >157</td><td class="right " data-stat="fg3a" >381</td><td class="right " data-stat="fg3_pct" >.412</td><td class="right " data-stat="fg2" >186</td><td class="right " data-stat="fg2a" >401</td><td class="right " data-stat="fg2_pct" >.464</td><td class="right " data-stat="efg_pct" >.539</td><td class="right " data-stat="ft" >190</td><td class="right " data-stat="fta" >217</td><td class="right " data-stat="ft_pct" >.876</td><td class="right " data-stat="orb" >24</td><td class="right " data-stat="drb" >248</td><td class="right " data-stat="trb" >272</td><td class="right " data-stat="ast" >185</td><td class="right " data-stat="stl" >68</td><td class="right " data-stat="blk" >20</td><td class="right " data-stat="tov" >125</td><td class="right " data-stat="pf" >113</td><td class="right " data-stat="pts" >1033</td></tr>
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="173" >173</th><td class="left " data-append-csv="gibsota01" data-stat="player" csk="Gibson,Taj" ><a href="/players/g/gibsota01.html">Taj Gibson</a></td><td class="center " data-stat="pos" >C</td><td class="right " data-stat="age" >34</td><td class="left " data-stat="team_id" ><a href="/teams/NYK/2020.html">NYK</a></td><td class="right " data-stat="g" >62</td><td class="right " data-stat="gs" >56</td><td class="right " data-stat="mp" >1025</td><td class="right " data-stat="fg" >167</td><td class="right " data-stat="fga" >286</td><td class="right non_qual" data-stat="fg_pct" >.584</td><td class="right " data-stat="fg3" >4</td><td class="right " data-stat="fg3a" >14</td><td class="right non_qual" data-stat="fg3_pct" >.286</td><td class="right " data-stat="fg2" >163</td><td class="right " data-stat="fg2a" >272</td><td class="right non_qual" data-stat="fg2_pct" >.599</td><td class="right non_qual" data-stat="efg_pct" >.591</td><td class="right " data-stat="ft" >41</td><td class="right " data-stat="fta" >56</td><td class="right non_qual" data-stat="ft_pct" >.732</td><td class="right " data-stat="orb" >111</td><td class="right " data-stat="drb" >156</td><td class="right " data-stat="trb" >267</td><td class="right " data-stat="ast" >52</td><td class="right " data-stat="stl" >27</td><td class="right " data-stat="blk" >30</td><td class="right " data-stat="tov" >47</td><td class="right " data-stat="pf" >122</td><td class="right " data-stat="pts" >379</td></tr>
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="174" >174</th><td class="left " data-append-csv="gilesha01" data-stat="player" csk="Giles,Harry" ><a href="/players/g/gilesha01.html">Harry Giles</a></td><td class="center " data-stat="pos" >C</td><td class="right " data-stat="age" >21</td><td class="left " data-stat="team_id" ><a href="/teams/SAC/2020.html">SAC</a></td><td class="right " data-stat="g" >46</td><td class="right " data-stat="gs" >17</td><td class="right " data-stat="mp" >667</td><td class="right " data-stat="fg" >139</td><td class="right " data-stat="fga" >251</td><td class="right non_qual" data-stat="fg_pct" >.554</td><td class="right iz" data-stat="fg3" >0</td><td class="right " data-stat="fg3a" >2</td><td class="right non_qual iz" data-stat="fg3_pct" >.000</td><td class="right " data-stat="fg2" >139</td><td class="right " data-stat="fg2a" >249</td><td class="right non_qual" data-stat="fg2_pct" >.558</td><td class="right non_qual" data-stat="efg_pct" >.554</td><td class="right " data-stat="ft" >38</td><td class="right " data-stat="fta" >49</td><td class="right non_qual" data-stat="ft_pct" >.776</td><td class="right " data-stat="orb" >43</td><td class="right " data-stat="drb" >145</td><td class="right " data-stat="trb" >188</td><td class="right " data-stat="ast" >60</td><td class="right " data-stat="stl" >22</td><td class="right " data-stat="blk" >18</td><td class="right " data-stat="tov" >44</td><td class="right " data-stat="pf" >119</td><td class="right " data-stat="pts" >316</td></tr>
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="175" >175</th><td class="left " data-append-csv="gilgesh01" data-stat="player" csk="Gilgeous-Alexander,Shai" ><a href="/players/g/gilgesh01.html">Shai Gilgeous-Alexander</a></td><td class="center " data-stat="pos" >SG</td><td class="right " data-stat="age" >21</td><td class="left " data-stat="team_id" ><a href="/teams/OKC/2020.html">OKC</a></td><td class="right " data-stat="g" >70</td><td class="right " data-stat="gs" >70</td><td class="right " data-stat="mp" >2428</td><td class="right " data-stat="fg" >478</td><td class="right " data-stat="fga" >1015</td><td class="right " data-stat="fg_pct" >.471</td><td class="right " data-stat="fg3" >87</td><td class="right " data-stat="fg3a" >251</td><td class="right " data-stat="fg3_pct" >.347</td><td class="right " data-stat="fg2" >391</td><td class="right " data-stat="fg2a" >764</td><td class="right " data-stat="fg2_pct" >.512</td><td class="right " data-stat="efg_pct" >.514</td><td class="right " data-stat="ft" >288</td><td class="right " data-stat="fta" >357</td><td class="right " data-stat="ft_pct" >.807</td><td class="right " data-stat="orb" >47</td><td class="right " data-stat="drb" >365</td><td class="right " data-stat="trb" >412</td><td class="right " data-stat="ast" >232</td><td class="right " data-stat="stl" >79</td><td class="right " data-stat="blk" >47</td><td class="right " data-stat="tov" >134</td><td class="right " data-stat="pf" >117</td><td class="right " data-stat="pts" >1331</td></tr>
@@ -1617,7 +1799,7 @@ sr_menus_setupMainNav_button_inline();
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="372" >372</th><td class="left " data-append-csv="ntilila01" data-stat="player" csk="Ntilikina,Frank" ><a href="/players/n/ntilila01.html">Frank Ntilikina</a></td><td class="center " data-stat="pos" >PG</td><td class="right " data-stat="age" >21</td><td class="left " data-stat="team_id" ><a href="/teams/NYK/2020.html">NYK</a></td><td class="right " data-stat="g" >57</td><td class="right " data-stat="gs" >26</td><td class="right " data-stat="mp" >1187</td><td class="right " data-stat="fg" >131</td><td class="right " data-stat="fga" >333</td><td class="right non_qual" data-stat="fg_pct" >.393</td><td class="right " data-stat="fg3" >44</td><td class="right " data-stat="fg3a" >137</td><td class="right non_qual" data-stat="fg3_pct" >.321</td><td class="right " data-stat="fg2" >87</td><td class="right " data-stat="fg2a" >196</td><td class="right non_qual" data-stat="fg2_pct" >.444</td><td class="right non_qual" data-stat="efg_pct" >.459</td><td class="right " data-stat="ft" >51</td><td class="right " data-stat="fta" >59</td><td class="right non_qual" data-stat="ft_pct" >.864</td><td class="right " data-stat="orb" >23</td><td class="right " data-stat="drb" >98</td><td class="right " data-stat="trb" >121</td><td class="right " data-stat="ast" >172</td><td class="right " data-stat="stl" >54</td><td class="right " data-stat="blk" >16</td><td class="right " data-stat="tov" >71</td><td class="right " data-stat="pf" >142</td><td class="right " data-stat="pts" >357</td></tr>
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="373" >373</th><td class="left " data-append-csv="nunnke01" data-stat="player" csk="Nunn,Kendrick" ><a href="/players/n/nunnke01.html">Kendrick Nunn</a></td><td class="center " data-stat="pos" >PG</td><td class="right " data-stat="age" >24</td><td class="left " data-stat="team_id" ><a href="/teams/MIA/2020.html">MIA</a></td><td class="right " data-stat="g" >67</td><td class="right " data-stat="gs" >67</td><td class="right " data-stat="mp" >1962</td><td class="right " data-stat="fg" >401</td><td class="right " data-stat="fga" >914</td><td class="right " data-stat="fg_pct" >.439</td><td class="right " data-stat="fg3" >137</td><td class="right " data-stat="fg3a" >391</td><td class="right " data-stat="fg3_pct" >.350</td><td class="right " data-stat="fg2" >264</td><td class="right " data-stat="fg2a" >523</td><td class="right " data-stat="fg2_pct" >.505</td><td class="right " data-stat="efg_pct" >.514</td><td class="right " data-stat="ft" >85</td><td class="right " data-stat="fta" >100</td><td class="right non_qual" data-stat="ft_pct" >.850</td><td class="right " data-stat="orb" >21</td><td class="right " data-stat="drb" >159</td><td class="right " data-stat="trb" >180</td><td class="right " data-stat="ast" >220</td><td class="right " data-stat="stl" >56</td><td class="right " data-stat="blk" >15</td><td class="right " data-stat="tov" >114</td><td class="right " data-stat="pf" >152</td><td class="right " data-stat="pts" >1024</td></tr>
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="374" >374</th><td class="left " data-append-csv="nurkiju01" data-stat="player" csk="Nurkić,Jusuf" ><a href="/players/n/nurkiju01.html">Jusuf Nurkić</a></td><td class="center " data-stat="pos" >C</td><td class="right " data-stat="age" >25</td><td class="left " data-stat="team_id" ><a href="/teams/POR/2020.html">POR</a></td><td class="right " data-stat="g" >8</td><td class="right " data-stat="gs" >8</td><td class="right " data-stat="mp" >253</td><td class="right " data-stat="fg" >54</td><td class="right " data-stat="fga" >109</td><td class="right non_qual" data-stat="fg_pct" >.495</td><td class="right " data-stat="fg3" >2</td><td class="right " data-stat="fg3a" >10</td><td class="right non_qual" data-stat="fg3_pct" >.200</td><td class="right " data-stat="fg2" >52</td><td class="right " data-stat="fg2a" >99</td><td class="right non_qual" data-stat="fg2_pct" >.525</td><td class="right non_qual" data-stat="efg_pct" >.505</td><td class="right " data-stat="ft" >31</td><td class="right " data-stat="fta" >35</td><td class="right non_qual" data-stat="ft_pct" >.886</td><td class="right " data-stat="orb" >23</td><td class="right " data-stat="drb" >59</td><td class="right " data-stat="trb" >82</td><td class="right " data-stat="ast" >32</td><td class="right " data-stat="stl" >11</td><td class="right " data-stat="blk" >16</td><td class="right " data-stat="tov" >19</td><td class="right " data-stat="pf" >39</td><td class="right " data-stat="pts" >141</td></tr>
-<tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="375" >375</th><td class="left " data-append-csv="nwabada01" data-stat="player" csk="Nwaba,David" ><a href="/players/n/nwabada01.html">David Nwaba</a></td><td class="center " data-stat="pos" >SG</td><td class="right " data-stat="age" >27</td><td class="left " data-stat="team_id" ><a href="/teams/BRK/2020.html">BRK</a></td><td class="right " data-stat="g" >20</td><td class="right iz" data-stat="gs" >0</td><td class="right " data-stat="mp" >268</td><td class="right " data-stat="fg" >37</td><td class="right " data-stat="fga" >71</td><td class="right non_qual" data-stat="fg_pct" >.521</td><td class="right " data-stat="fg3" >12</td><td class="right " data-stat="fg3a" >28</td><td class="right non_qual" data-stat="fg3_pct" >.429</td><td class="right " data-stat="fg2" >25</td><td class="right " data-stat="fg2a" >43</td><td class="right non_qual" data-stat="fg2_pct" >.581</td><td class="right non_qual" data-stat="efg_pct" >.606</td><td class="right " data-stat="ft" >18</td><td class="right " data-stat="fta" >27</td><td class="right non_qual" data-stat="ft_pct" >.667</td><td class="right " data-stat="orb" >8</td><td class="right " data-stat="drb" >37</td><td class="right " data-stat="trb" >45</td><td class="right " data-stat="ast" >8</td><td class="right " data-stat="stl" >11</td><td class="right " data-stat="blk" >12</td><td class="right " data-stat="tov" >8</td><td class="right " data-stat="pf" >32</td><td class="right " data-stat="pts" >104</td></tr>
+<tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="375" >375</th><td class="left " data-append-csv="nwabada01" data-stat="player" csk="Nwaba,David" ><a href="/players/n/nwabada01.html">David Nwaba</a></td><td class="center " data-stat="pos" >SF</td><td class="right " data-stat="age" >27</td><td class="left " data-stat="team_id" ><a href="/teams/BRK/2020.html">BRK</a></td><td class="right " data-stat="g" >20</td><td class="right iz" data-stat="gs" >0</td><td class="right " data-stat="mp" >268</td><td class="right " data-stat="fg" >37</td><td class="right " data-stat="fga" >71</td><td class="right non_qual" data-stat="fg_pct" >.521</td><td class="right " data-stat="fg3" >12</td><td class="right " data-stat="fg3a" >28</td><td class="right non_qual" data-stat="fg3_pct" >.429</td><td class="right " data-stat="fg2" >25</td><td class="right " data-stat="fg2a" >43</td><td class="right non_qual" data-stat="fg2_pct" >.581</td><td class="right non_qual" data-stat="efg_pct" >.606</td><td class="right " data-stat="ft" >18</td><td class="right " data-stat="fta" >27</td><td class="right non_qual" data-stat="ft_pct" >.667</td><td class="right " data-stat="orb" >8</td><td class="right " data-stat="drb" >37</td><td class="right " data-stat="trb" >45</td><td class="right " data-stat="ast" >8</td><td class="right " data-stat="stl" >11</td><td class="right " data-stat="blk" >12</td><td class="right " data-stat="tov" >8</td><td class="right " data-stat="pf" >32</td><td class="right " data-stat="pts" >104</td></tr>
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="376" >376</th><td class="left " data-append-csv="onealro01" data-stat="player" csk="O'Neale,Royce" ><a href="/players/o/onealro01.html">Royce O'Neale</a></td><td class="center " data-stat="pos" >SF</td><td class="right " data-stat="age" >26</td><td class="left " data-stat="team_id" ><a href="/teams/UTA/2020.html">UTA</a></td><td class="right " data-stat="g" >71</td><td class="right " data-stat="gs" >62</td><td class="right " data-stat="mp" >2049</td><td class="right " data-stat="fg" >158</td><td class="right " data-stat="fga" >365</td><td class="right non_qual" data-stat="fg_pct" >.433</td><td class="right " data-stat="fg3" >92</td><td class="right " data-stat="fg3a" >244</td><td class="right " data-stat="fg3_pct" >.377</td><td class="right " data-stat="fg2" >66</td><td class="right " data-stat="fg2a" >121</td><td class="right non_qual" data-stat="fg2_pct" >.545</td><td class="right non_qual" data-stat="efg_pct" >.559</td><td class="right " data-stat="ft" >42</td><td class="right " data-stat="fta" >55</td><td class="right non_qual" data-stat="ft_pct" >.764</td><td class="right " data-stat="orb" >27</td><td class="right " data-stat="drb" >362</td><td class="right " data-stat="trb" >389</td><td class="right " data-stat="ast" >180</td><td class="right " data-stat="stl" >59</td><td class="right " data-stat="blk" >32</td><td class="right " data-stat="tov" >61</td><td class="right " data-stat="pf" >202</td><td class="right " data-stat="pts" >450</td></tr>
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="377" >377</th><td class="left " data-append-csv="oquinky01" data-stat="player" csk="O'Quinn,Kyle" ><a href="/players/o/oquinky01.html">Kyle O'Quinn</a></td><td class="center " data-stat="pos" >C</td><td class="right " data-stat="age" >29</td><td class="left " data-stat="team_id" ><a href="/teams/PHI/2020.html">PHI</a></td><td class="right " data-stat="g" >29</td><td class="right " data-stat="gs" >2</td><td class="right " data-stat="mp" >313</td><td class="right " data-stat="fg" >42</td><td class="right " data-stat="fga" >85</td><td class="right non_qual" data-stat="fg_pct" >.494</td><td class="right " data-stat="fg3" >7</td><td class="right " data-stat="fg3a" >27</td><td class="right non_qual" data-stat="fg3_pct" >.259</td><td class="right " data-stat="fg2" >35</td><td class="right " data-stat="fg2a" >58</td><td class="right non_qual" data-stat="fg2_pct" >.603</td><td class="right non_qual" data-stat="efg_pct" >.535</td><td class="right " data-stat="ft" >11</td><td class="right " data-stat="fta" >20</td><td class="right non_qual" data-stat="ft_pct" >.550</td><td class="right " data-stat="orb" >34</td><td class="right " data-stat="drb" >82</td><td class="right " data-stat="trb" >116</td><td class="right " data-stat="ast" >51</td><td class="right " data-stat="stl" >7</td><td class="right " data-stat="blk" >24</td><td class="right " data-stat="tov" >20</td><td class="right " data-stat="pf" >37</td><td class="right " data-stat="pts" >102</td></tr>
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="378" >378</th><td class="left " data-append-csv="ojelese01" data-stat="player" csk="Ojeleye,Semi" ><a href="/players/o/ojelese01.html">Semi Ojeleye</a></td><td class="center " data-stat="pos" >PF</td><td class="right " data-stat="age" >25</td><td class="left " data-stat="team_id" ><a href="/teams/BOS/2020.html">BOS</a></td><td class="right " data-stat="g" >69</td><td class="right " data-stat="gs" >6</td><td class="right " data-stat="mp" >1011</td><td class="right " data-stat="fg" >80</td><td class="right " data-stat="fga" >196</td><td class="right non_qual" data-stat="fg_pct" >.408</td><td class="right " data-stat="fg3" >48</td><td class="right " data-stat="fg3a" >127</td><td class="right non_qual" data-stat="fg3_pct" >.378</td><td class="right " data-stat="fg2" >32</td><td class="right " data-stat="fg2a" >69</td><td class="right non_qual" data-stat="fg2_pct" >.464</td><td class="right non_qual" data-stat="efg_pct" >.531</td><td class="right " data-stat="ft" >28</td><td class="right " data-stat="fta" >32</td><td class="right non_qual" data-stat="ft_pct" >.875</td><td class="right " data-stat="orb" >26</td><td class="right " data-stat="drb" >119</td><td class="right " data-stat="trb" >145</td><td class="right " data-stat="ast" >37</td><td class="right " data-stat="stl" >21</td><td class="right " data-stat="blk" >5</td><td class="right " data-stat="tov" >19</td><td class="right " data-stat="pf" >80</td><td class="right " data-stat="pts" >236</td></tr>
@@ -1832,7 +2014,7 @@ sr_menus_setupMainNav_button_inline();
       
 
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="441" >441</th><td class="left " data-append-csv="schofad01" data-stat="player" csk="Schofield,Admiral" ><a href="/players/s/schofad01.html">Admiral Schofield</a></td><td class="center " data-stat="pos" >PF</td><td class="right " data-stat="age" >22</td><td class="left " data-stat="team_id" ><a href="/teams/WAS/2020.html">WAS</a></td><td class="right " data-stat="g" >33</td><td class="right " data-stat="gs" >2</td><td class="right " data-stat="mp" >368</td><td class="right " data-stat="fg" >35</td><td class="right " data-stat="fga" >92</td><td class="right non_qual" data-stat="fg_pct" >.380</td><td class="right " data-stat="fg3" >19</td><td class="right " data-stat="fg3a" >61</td><td class="right non_qual" data-stat="fg3_pct" >.311</td><td class="right " data-stat="fg2" >16</td><td class="right " data-stat="fg2a" >31</td><td class="right non_qual" data-stat="fg2_pct" >.516</td><td class="right non_qual" data-stat="efg_pct" >.484</td><td class="right " data-stat="ft" >10</td><td class="right " data-stat="fta" >15</td><td class="right non_qual" data-stat="ft_pct" >.667</td><td class="right " data-stat="orb" >7</td><td class="right " data-stat="drb" >40</td><td class="right " data-stat="trb" >47</td><td class="right " data-stat="ast" >15</td><td class="right " data-stat="stl" >8</td><td class="right " data-stat="blk" >4</td><td class="right " data-stat="tov" >7</td><td class="right " data-stat="pf" >50</td><td class="right " data-stat="pts" >99</td></tr>
-<tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="442" >442</th><td class="left " data-append-csv="schrode01" data-stat="player" csk="Schröder,Dennis" ><a href="/players/s/schrode01.html">Dennis Schröder</a></td><td class="center " data-stat="pos" >SG</td><td class="right " data-stat="age" >26</td><td class="left " data-stat="team_id" ><a href="/teams/OKC/2020.html">OKC</a></td><td class="right " data-stat="g" >65</td><td class="right " data-stat="gs" >2</td><td class="right " data-stat="mp" >1999</td><td class="right " data-stat="fg" >453</td><td class="right " data-stat="fga" >965</td><td class="right " data-stat="fg_pct" >.469</td><td class="right " data-stat="fg3" >125</td><td class="right " data-stat="fg3a" >325</td><td class="right " data-stat="fg3_pct" >.385</td><td class="right " data-stat="fg2" >328</td><td class="right " data-stat="fg2a" >640</td><td class="right " data-stat="fg2_pct" >.513</td><td class="right " data-stat="efg_pct" >.534</td><td class="right " data-stat="ft" >198</td><td class="right " data-stat="fta" >236</td><td class="right " data-stat="ft_pct" >.839</td><td class="right " data-stat="orb" >19</td><td class="right " data-stat="drb" >217</td><td class="right " data-stat="trb" >236</td><td class="right " data-stat="ast" >262</td><td class="right " data-stat="stl" >45</td><td class="right " data-stat="blk" >14</td><td class="right " data-stat="tov" >166</td><td class="right " data-stat="pf" >146</td><td class="right " data-stat="pts" >1229</td></tr>
+<tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="442" >442</th><td class="left " data-append-csv="schrode01" data-stat="player" csk="Schröder,Dennis" ><a href="/players/s/schrode01.html">Dennis Schröder</a></td><td class="center " data-stat="pos" >PG</td><td class="right " data-stat="age" >26</td><td class="left " data-stat="team_id" ><a href="/teams/OKC/2020.html">OKC</a></td><td class="right " data-stat="g" >65</td><td class="right " data-stat="gs" >2</td><td class="right " data-stat="mp" >1999</td><td class="right " data-stat="fg" >453</td><td class="right " data-stat="fga" >965</td><td class="right " data-stat="fg_pct" >.469</td><td class="right " data-stat="fg3" >125</td><td class="right " data-stat="fg3a" >325</td><td class="right " data-stat="fg3_pct" >.385</td><td class="right " data-stat="fg2" >328</td><td class="right " data-stat="fg2a" >640</td><td class="right " data-stat="fg2_pct" >.513</td><td class="right " data-stat="efg_pct" >.534</td><td class="right " data-stat="ft" >198</td><td class="right " data-stat="fta" >236</td><td class="right " data-stat="ft_pct" >.839</td><td class="right " data-stat="orb" >19</td><td class="right " data-stat="drb" >217</td><td class="right " data-stat="trb" >236</td><td class="right " data-stat="ast" >262</td><td class="right " data-stat="stl" >45</td><td class="right " data-stat="blk" >14</td><td class="right " data-stat="tov" >166</td><td class="right " data-stat="pf" >146</td><td class="right " data-stat="pts" >1229</td></tr>
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="443" >443</th><td class="left " data-append-csv="scottmi01" data-stat="player" csk="Scott,Mike" ><a href="/players/s/scottmi01.html">Mike Scott</a></td><td class="center " data-stat="pos" >PF</td><td class="right " data-stat="age" >31</td><td class="left " data-stat="team_id" ><a href="/teams/PHI/2020.html">PHI</a></td><td class="right " data-stat="g" >68</td><td class="right " data-stat="gs" >11</td><td class="right " data-stat="mp" >1207</td><td class="right " data-stat="fg" >149</td><td class="right " data-stat="fga" >350</td><td class="right non_qual" data-stat="fg_pct" >.426</td><td class="right " data-stat="fg3" >80</td><td class="right " data-stat="fg3a" >217</td><td class="right " data-stat="fg3_pct" >.369</td><td class="right " data-stat="fg2" >69</td><td class="right " data-stat="fg2a" >133</td><td class="right non_qual" data-stat="fg2_pct" >.519</td><td class="right non_qual" data-stat="efg_pct" >.540</td><td class="right " data-stat="ft" >30</td><td class="right " data-stat="fta" >37</td><td class="right non_qual" data-stat="ft_pct" >.811</td><td class="right " data-stat="orb" >65</td><td class="right " data-stat="drb" >183</td><td class="right " data-stat="trb" >248</td><td class="right " data-stat="ast" >56</td><td class="right " data-stat="stl" >21</td><td class="right " data-stat="blk" >5</td><td class="right " data-stat="tov" >26</td><td class="right " data-stat="pf" >96</td><td class="right " data-stat="pts" >408</td></tr>
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="444" >444</th><td class="left " data-append-csv="sefolth01" data-stat="player" csk="Sefolosha,Thabo" ><a href="/players/s/sefolth01.html">Thabo Sefolosha</a></td><td class="center " data-stat="pos" >PF</td><td class="right " data-stat="age" >35</td><td class="left " data-stat="team_id" ><a href="/teams/HOU/2020.html">HOU</a></td><td class="right " data-stat="g" >41</td><td class="right iz" data-stat="gs" >0</td><td class="right " data-stat="mp" >436</td><td class="right " data-stat="fg" >37</td><td class="right " data-stat="fga" >91</td><td class="right non_qual" data-stat="fg_pct" >.407</td><td class="right " data-stat="fg3" >15</td><td class="right " data-stat="fg3a" >54</td><td class="right non_qual" data-stat="fg3_pct" >.278</td><td class="right " data-stat="fg2" >22</td><td class="right " data-stat="fg2a" >37</td><td class="right non_qual" data-stat="fg2_pct" >.595</td><td class="right non_qual" data-stat="efg_pct" >.489</td><td class="right " data-stat="ft" >3</td><td class="right " data-stat="fta" >8</td><td class="right non_qual" data-stat="ft_pct" >.375</td><td class="right " data-stat="orb" >21</td><td class="right " data-stat="drb" >72</td><td class="right " data-stat="trb" >93</td><td class="right " data-stat="ast" >25</td><td class="right " data-stat="stl" >24</td><td class="right " data-stat="blk" >12</td><td class="right " data-stat="tov" >15</td><td class="right " data-stat="pf" >43</td><td class="right " data-stat="pts" >92</td></tr>
 <tr class="full_table" ><th scope="row" class="right " data-stat="ranker" csk="445" >445</th><td class="left " data-append-csv="sextoco01" data-stat="player" csk="Sexton,Collin" ><a href="/players/s/sextoco01.html">Collin Sexton</a></td><td class="center " data-stat="pos" >PG</td><td class="right " data-stat="age" >21</td><td class="left " data-stat="team_id" ><a href="/teams/CLE/2020.html">CLE</a></td><td class="right " data-stat="g" >65</td><td class="right " data-stat="gs" >65</td><td class="right " data-stat="mp" >2143</td><td class="right " data-stat="fg" >513</td><td class="right " data-stat="fga" >1086</td><td class="right " data-stat="fg_pct" >.472</td><td class="right " data-stat="fg3" >97</td><td class="right " data-stat="fg3a" >255</td><td class="right " data-stat="fg3_pct" >.380</td><td class="right " data-stat="fg2" >416</td><td class="right " data-stat="fg2a" >831</td><td class="right " data-stat="fg2_pct" >.501</td><td class="right " data-stat="efg_pct" >.517</td><td class="right " data-stat="ft" >226</td><td class="right " data-stat="fta" >267</td><td class="right " data-stat="ft_pct" >.846</td><td class="right " data-stat="orb" >61</td><td class="right " data-stat="drb" >143</td><td class="right " data-stat="trb" >204</td><td class="right " data-stat="ast" >192</td><td class="right " data-stat="stl" >65</td><td class="right " data-stat="blk" >7</td><td class="right " data-stat="tov" >158</td><td class="right " data-stat="pf" >142</td><td class="right " data-stat="pts" >1349</td></tr>
@@ -2125,14 +2307,16 @@ sr_menus_setupMainNav_button_inline();
           <li><a href="/leagues/NBA_2020_per_poss.html">Per 100 Possessions</a></li>
           <li><a href="/leagues/NBA_2020_adj_shooting.html">Adjusted Shooting</a></li>
           <li><a href="/leagues/NBA_2020_advanced.html">Advanced</a></li>
+          <li><a href="/leagues/NBA_2020_play-by-play.html">Play-by-Play</a></li>
+          <li><a href="/leagues/NBA_2020_shooting.html">Shooting</a></li>
         </ul><p class="listhead"><strong>Other</strong></p>
         <ul class="">
           <li><a href="/leagues/NBA_2020_rookies.html">Rookies</a></li>
+          <li><a href="/leagues/NBA_2020_final.html">Final Season</a></li>
           <li><a href="/leagues/NBA_2020_ratings.html">Team Ratings</a></li>
           <li><a href="/leagues/NBA_2020_numbers.html">Uniform Numbers</a></li>
           <li><a href="/leagues/NBA_2020_transactions.html">Transactions</a></li>
           <li><a href="/leagues/NBA_2020_standings_by_date.html">Standings by Date</a></li>
-          <li><a href="/friv/proj_draft.html">Projected Draft Order</a></li>
           <li><a href="/leagues/NBA_2020_preseason_odds.html">Preseason Odds</a></li>
         </ul><p class="listhead"><a href='/playoffs/NBA_2020.html'>2020 Playoffs Summary</a></p>
         <ul class="">
@@ -2170,36 +2354,36 @@ sr_menus_setupMainNav_button_inline();
     <a href="/players/">Players</a>
     <div><strong>In the News</strong>: 
       <!-- Begin:In the News -->
-<a title="LeBron James" href="/players/j/jamesle01.html">L. James</a>,
-<a title="Russell Westbrook" href="/players/w/westbru01.html">R. Westbrook</a>,
 <a title="James Harden" href="/players/h/hardeja01.html">J. Harden</a>,
-<a title="Giannis Antetokounmpo" href="/players/a/antetgi01.html">G. Antetokounmpo</a>,
-<a title="Anthony Davis" href="/players/d/davisan02.html">A. Davis</a>,
-<a title="John Wall" href="/players/w/walljo01.html">J. Wall</a>
+<a title="Kevin Durant" href="/players/d/duranke01.html">K. Durant</a>,
+<a title="Kyrie Irving" href="/players/i/irvinky01.html">K. Irving</a>,
+<a title="LeBron James" href="/players/j/jamesle01.html">L. James</a>,
+<a title="Stephen Curry" href="/players/c/curryst01.html">S. Curry</a>,
+<a title="Ben Simmons" href="/players/s/simmobe01.html">B. Simmons</a>
 <!-- End:In the News -->
       <a href="/players/">...</a>
     </div>
 
 	<div><strong>All-Time Greats</strong>: 
       <!-- Begin:All-Time Greats -->
-<a title="Elgin Baylor" href="/players/b/bayloel01.html">E. Baylor</a>,
-<a title="Dirk Nowitzki" href="/players/n/nowitdi01.html">D. Nowitzki</a>,
-<a title="John Stockton" href="/players/s/stockjo01.html">J. Stockton</a>,
-<a title="John Havlicek" href="/players/h/havlijo01.html">J. Havlicek</a>,
-<a title="Moses Malone" href="/players/m/malonmo01.html">M. Malone</a>,
-<a title="Tim Duncan" href="/players/d/duncati01.html">T. Duncan</a>
+<a title="Dolph Schayes" href="/players/s/schaydo01.html">D. Schayes</a>,
+<a title="Kobe Bryant" href="/players/b/bryanko01.html">K. Bryant</a>,
+<a title="Isiah Thomas" href="/players/t/thomais01.html">I. Thomas</a>,
+<a title="David Robinson" href="/players/r/robinda01.html">D. Robinson</a>,
+<a title="Jerry West" href="/players/w/westje01.html">J. West</a>,
+<a title="Karl Malone" href="/players/m/malonka01.html">K. Malone</a>
 <!-- End:All-Time Greats -->
       <a href="/players/">...</a>
     </div>
 
     <div><strong>Active Greats</strong>: 
       <!-- Begin:Active Greats -->
-<a title="LeBron James" href="/players/j/jamesle01.html">L. James</a>,
-<a title="Chris Paul" href="/players/p/paulch01.html">C. Paul</a>,
-<a title="Kevin Durant" href="/players/d/duranke01.html">K. Durant</a>,
-<a title="LeBron James" href="/players/j/jamesle01.html">L. James</a>,
 <a title="James Harden" href="/players/h/hardeja01.html">J. Harden</a>,
-<a title="Russell Westbrook" href="/players/w/westbru01.html">R. Westbrook</a>
+<a title="Chris Paul" href="/players/p/paulch01.html">C. Paul</a>,
+<a title="Russell Westbrook" href="/players/w/westbru01.html">R. Westbrook</a>,
+<a title="LeBron James" href="/players/j/jamesle01.html">L. James</a>,
+<a title="LeBron James" href="/players/j/jamesle01.html">L. James</a>,
+<a title="Kevin Durant" href="/players/d/duranke01.html">K. Durant</a>
 <!-- End:Active Greats -->
       <a href="/players/">...</a>
     </div>
@@ -2210,56 +2394,56 @@ sr_menus_setupMainNav_button_inline();
     <!-- Begin:Teams -->
     <div class="division">
       <strong>Atlantic</strong>:
-      <a href="/teams/TOR/2020.html">Toronto</a>,
-      <a href="/teams/BOS/2020.html">Boston</a>,
-      <a href="/teams/NYK/2020.html">New York</a>,
-      <a href="/teams/BRK/2020.html">Brooklyn</a>,
-      <a href="/teams/PHI/2020.html">Philadelphia</a>
+      <a href="/teams/TOR/2021.html">Toronto</a>,
+      <a href="/teams/BOS/2021.html">Boston</a>,
+      <a href="/teams/NYK/2021.html">New York</a>,
+      <a href="/teams/BRK/2021.html">Brooklyn</a>,
+      <a href="/teams/PHI/2021.html">Philadelphia</a>
     </div>
 
     <div class="division">
       <strong>Central</strong>:
-      <a href="/teams/CLE/2020.html">Cleveland</a>,
-      <a href="/teams/IND/2020.html">Indiana</a>,
-      <a href="/teams/DET/2020.html">Detroit</a>,
-      <a href="/teams/CHI/2020.html">Chicago</a>,
-      <a href="/teams/MIL/2020.html">Milwaukee</a>
+      <a href="/teams/CLE/2021.html">Cleveland</a>,
+      <a href="/teams/IND/2021.html">Indiana</a>,
+      <a href="/teams/DET/2021.html">Detroit</a>,
+      <a href="/teams/CHI/2021.html">Chicago</a>,
+      <a href="/teams/MIL/2021.html">Milwaukee</a>
     </div>
 
     <div class="division">
       <strong>Southeast</strong>:
-      <a href="/teams/MIA/2020.html">Miami</a>,
-      <a href="/teams/ATL/2020.html">Atlanta</a>,
-      <a href="/teams/CHO/2020.html">Charlotte</a>,
-      <a href="/teams/WAS/2020.html">Washington</a>,
-      <a href="/teams/ORL/2020.html">Orlando</a>
+      <a href="/teams/MIA/2021.html">Miami</a>,
+      <a href="/teams/ATL/2021.html">Atlanta</a>,
+      <a href="/teams/CHO/2021.html">Charlotte</a>,
+      <a href="/teams/WAS/2021.html">Washington</a>,
+      <a href="/teams/ORL/2021.html">Orlando</a>
     </div>
 
     <div class="division">
       <strong>Northwest</strong>:
-      <a href="/teams/OKC/2020.html">Oklahoma City</a>,
-      <a href="/teams/POR/2020.html">Portland</a>,
-      <a href="/teams/UTA/2020.html">Utah</a>,
-      <a href="/teams/DEN/2020.html">Denver</a>,
-      <a href="/teams/MIN/2020.html">Minnesota</a>
+      <a href="/teams/OKC/2021.html">Oklahoma City</a>,
+      <a href="/teams/POR/2021.html">Portland</a>,
+      <a href="/teams/UTA/2021.html">Utah</a>,
+      <a href="/teams/DEN/2021.html">Denver</a>,
+      <a href="/teams/MIN/2021.html">Minnesota</a>
     </div>
 
     <div class="division">
       <strong>Pacific</strong>:
-      <a href="/teams/GSW/2020.html">Golden State</a>,
-      <a href="/teams/LAC/2020.html">Los Angeles Clippers</a>,
-      <a href="/teams/SAC/2020.html">Sacramento</a>,
-      <a href="/teams/PHO/2020.html">Phoenix</a>,
-      <a href="/teams/LAL/2020.html">Los Angeles Lakers</a>
+      <a href="/teams/GSW/2021.html">Golden State</a>,
+      <a href="/teams/LAC/2021.html">Los Angeles Clippers</a>,
+      <a href="/teams/SAC/2021.html">Sacramento</a>,
+      <a href="/teams/PHO/2021.html">Phoenix</a>,
+      <a href="/teams/LAL/2021.html">Los Angeles Lakers</a>
     </div>
 
     <div class="division">
       <strong>Southwest</strong>:
-      <a href="/teams/SAS/2020.html">San Antonio</a>,
-      <a href="/teams/DAL/2020.html">Dallas</a>,
-      <a href="/teams/MEM/2020.html">Memphis</a>,
-      <a href="/teams/HOU/2020.html">Houston</a>,      
-      <a href="/teams/NOP/2020.html">New Orleans</a>
+      <a href="/teams/SAS/2021.html">San Antonio</a>,
+      <a href="/teams/DAL/2021.html">Dallas</a>,
+      <a href="/teams/MEM/2021.html">Memphis</a>,
+      <a href="/teams/HOU/2021.html">Houston</a>,      
+      <a href="/teams/NOP/2021.html">New Orleans</a>
     </div>
 <!-- End:Teams -->
   </li>
@@ -2268,12 +2452,12 @@ sr_menus_setupMainNav_button_inline();
     <a href="/leagues/">Seasons</a>
     <div>
       <!-- Begin:Seasons -->
+<a href="/leagues/NBA_2021.html">2020-21</a>,
 <a href="/leagues/NBA_2020.html">2019-20</a>,
 <a href="/leagues/NBA_2019.html">2018-19</a>,
 <a href="/leagues/NBA_2018.html">2017-18</a>,
 <a href="/leagues/NBA_2017.html">2016-17</a>,
-<a href="/leagues/NBA_2016.html">2015-16</a>,
-<a href="/leagues/NBA_2015.html">2014-15</a>
+<a href="/leagues/NBA_2016.html">2015-16</a>
 <!-- End:Seasons -->
     </div>
   </li>
@@ -2302,9 +2486,9 @@ sr_menus_setupMainNav_button_inline();
 
   <li>
     <!-- Begin:Schedules -->
-<a href='/leagues/NBA_2020_games.html'>NBA Schedules</a>
+<a href='/leagues/NBA_2021_games.html'>NBA Schedules</a>
 <div>
-  <a href="/teams/MIL/2020_games.html">Team Schedules</a> and <a href="/leagues/NBA_2020_games.html">League Schedules</a>
+  <a href="/teams/MIL/2021_games.html">Team Schedules</a> and <a href="/leagues/NBA_2021_games.html">League Schedules</a>
 </div>
 <!-- End:Schedules -->
   </li>
@@ -2312,9 +2496,9 @@ sr_menus_setupMainNav_button_inline();
 
   <li>
     <!-- Begin:Standings -->
-<a href="/leagues/NBA_2020_standings.html">NBA Standings</a>
+<a href="/leagues/NBA_2021_standings.html">NBA Standings</a>
 <div>
-  <a href="/leagues/NBA_2020_standings.html">Today's Standings</a> and <a href="/friv/standings.fcgi">Standings for any date in history</a>
+  <a href="/leagues/NBA_2021_standings.html">Today's Standings</a> and <a href="/friv/standings.fcgi">Standings for any date in history</a>
 </div>
 <!-- End:Standings -->
   </li>
@@ -2401,11 +2585,11 @@ sr_menus_setupMainNav_button_inline();
   <li>
     <a href="/draft/">NBA Draft</a>
     <div>
+      <a href="/draft/NBA_2020.html">2020 Draft</a>, 
       <a href="/draft/NBA_2019.html">2019 Draft</a>, 
       <a href="/draft/NBA_2018.html">2018 Draft</a>, 
       <a href="/draft/NBA_2017.html">2017 Draft</a>, 
       <a href="/draft/NBA_2016.html">2016 Draft</a>, 
-      <a href="/draft/NBA_2015.html">2015 Draft</a>, 
       ...
     </div>
   </li>
@@ -2526,7 +2710,7 @@ sr_menus_setupMainNav_button_inline();
 	<a href="https://www.paypal.me/sportsref" data-tip="Send us money via PayPal" data-label="PayPal" class="poptip"><svg class="icon paypal"><use xlink:href="#ic-paypal"></use></svg></a>
 
 <p>Every <a href="https://www.sports-reference.com/blog/sports-reference-social-media/">Sports Reference Social Media Account</a></p>
-<p><strong>Site Last Updated:</strong> Thursday, January  7,  4:12AM
+<p><strong>Site Last Updated:</strong> Sunday, January 17,  4:16AM
 </p>
 <p><a href="https://www.sports-reference.com/feedback/" class="button alt">Question, Comment, Feedback, or Correction?</a></p>
 
@@ -2563,14 +2747,14 @@ sr_menus_setupMainNav_button_inline();
 				
 <div class="notice">
 <p>Data Provided By
-	<a href="https://www.sportradar.com/" rel="nofollow"><img alt="SportRadar" border=0 width=275 src="https://d2p3bygnnzw9w3.cloudfront.net/req/202012013/images/klecko/sportradar.png"  style="background-color:#666; padding:.5em; border-radius:.25em"></a>
+	<a href="https://www.sportradar.com/" rel="nofollow"><img alt="SportRadar" border=0 width=275 src="https://d2p3bygnnzw9w3.cloudfront.net/req/202101111/images/klecko/sportradar.png"  style="background-color:#666; padding:.5em; border-radius:.25em"></a>
 	the official stats partner of the NBA.</p>
 	
 	
 	
 </div>
 
-     <p>Copyright &copy; 2000-2020 <a href="//www.sports-reference.com/">Sports Reference LLC</a>. All rights reserved.</p>
+     <p>Copyright &copy; 2000-2021 <a href="//www.sports-reference.com/">Sports Reference LLC</a>. All rights reserved.</p>
 
 
 			</div><!-- div#credits -->
@@ -2588,7 +2772,7 @@ sr_menus_setupMainNav_button_inline();
 	
 	
 	
-	<li><a href="https://fbref.com/fr/">Football</a></li>
+	<li><a href="https://fbref.com/en/">Soccer</a></li>
 
 	<li><a href="https://www.sports-reference.com/blog/">Blog</a></li>
 
