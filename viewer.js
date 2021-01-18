@@ -32,6 +32,8 @@
 //    * if it were a log scale, the good shooters would jump out at you
 // * should I thread a single transition object through all the transitions?
 // * checkbox to show all labels no matter what
+// * transitions are a bit broken with multiple same-named players
+//   * harden comes in as a transition because it gets confused
 
 const $ = (s) => document.querySelector(s);
 
