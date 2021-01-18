@@ -71,6 +71,7 @@ def getdata(year, datadir):
         "advanced",
         "shooting",
         "adj_shooting",
+        "rookies",
     ]
 
     for page in pages:
@@ -135,40 +136,33 @@ def parse_team_stats(year):
     json.dump(teamdata, open(output, "w"))
 
 
+def parse_bbref_row(players, player):
+    ignore = ["bpm-dum", "ws-dum"]
+    stats = {
+        t["data-stat"].replace("-", "_"): tryint("".join(str(c) for c in t.children))
+        for t in player.find_all("td")
+        if t["data-stat"] and t["data-stat"] not in ignore
+    }
+    stats["name"] = BeautifulSoup(stats["player"], "html.parser").text
+    stats["team"] = BeautifulSoup(stats["team_id"], "html.parser").text
+    key = stats["name"] + "__" + stats["team"]
+    if key not in players:
+        players[key] = stats
+    else:
+        players[key] = {**players[key], **stats}
+
+
 def parse_player_stats(year):
     datadir = f"data/{year}"
 
     players = {}
 
-    soup = BeautifulSoup(open(f"{datadir}/totals.html"), "html.parser")
+    player_row = re.compile(r".*\b(full_table|partial_table)\b.*")
 
-    for player in soup.find_all(
-        "tr", {"class": re.compile(r".*\b(full_table|partial_table)\b.*")}
-    ):
-        stats = {
-            t["data-stat"].replace("-", "_"): tryint(
-                "".join(str(c) for c in t.children)
-            )
-            for t in player.find_all("td")
-        }
-        stats["name"] = BeautifulSoup(stats["player"], "html.parser").text
-        stats["team"] = BeautifulSoup(stats["team_id"], "html.parser").text
-        players[stats["name"] + "__" + stats["team"]] = stats
-
-    soup = BeautifulSoup(open(f"{datadir}/advanced.html"), "html.parser")
-    for player in soup.find_all(
-        "tr", {"class": re.compile(r".*\b(full_table|partial_table)\b.*")}
-    ):
-        advstats = {
-            t["data-stat"].replace("-", "_"): tryint(
-                "".join(str(c) for c in t.children)
-            )
-            for t in player.find_all("td")
-        }
-        name = BeautifulSoup(advstats["player"], "html.parser").text
-        team = BeautifulSoup(advstats["team_id"], "html.parser").text
-        key = name + "__" + team
-        players[key] = {**players[key], **advstats}
+    for page in ["totals", "advanced", "per_minute", "per_poss"]:
+        soup = BeautifulSoup(open(f"{datadir}/{page}.html"), "html.parser")
+        for player in soup.find_all("tr", {"class": player_row}):
+            parse_bbref_row(players, player)
 
     output = f"data/{year}/stats.json"
     json.dump(list(players.values()), open(output, "w"))

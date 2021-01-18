@@ -52,7 +52,7 @@ function hover(event, tooltip, stats, scales, fields, delaunay, cells) {
   const nearest = delaunay.find(mx, my);
   const closestPlayer = cells[nearest][0];
 
-  var rtext;
+  var rtext = "";
   if (statMeta[fields.r]) {
     rtext = "\n" + statMeta[fields.r].name + ": " + closestPlayer[fields.r];
   }
@@ -601,27 +601,27 @@ const statMeta = {
     type: "float",
   },
   fg3: {
-    name: "3 Point Field Goals Made",
+    name: "3pt Field Goals Made",
     type: "ordinal",
   },
   fg3a: {
-    name: "3 Point Field Goals Attempted",
+    name: "3pt Field Goals Attempted",
     type: "ordinal",
   },
   fg3_pct: {
-    name: "3 Point Field Goal %",
+    name: "3pt Field Goal %",
     type: "float",
   },
   fg2: {
-    name: "2 Point Field Goals Made",
+    name: "2pt Field Goals Made",
     type: "ordinal",
   },
   fg2a: {
-    name: "2 Point Field Goals Attempted",
+    name: "2pt Field Goals Attempted",
     type: "ordinal",
   },
   fg2_pct: {
-    name: "2 Point Field Goal %",
+    name: "2pt Field Goal %",
     type: "float",
   },
   efg_pct: {
@@ -732,10 +732,6 @@ const statMeta = {
     name: "Usage %",
     type: "ordinal",
   },
-  "ws-dum": {
-    name: "",
-    type: "",
-  },
   ows: {
     name: "",
     type: "ordinal",
@@ -752,10 +748,6 @@ const statMeta = {
     name: "",
     type: "ordinal",
   },
-  "bpm-dum": {
-    name: "",
-    type: "",
-  },
   obpm: {
     name: "Offensive Box Plus-Minus",
     type: "ordinal",
@@ -770,6 +762,150 @@ const statMeta = {
   },
   vorp: {
     name: "VORP",
+    type: "ordinal",
+  },
+  fg_per_mp: {
+    name: "Field Goals per 36 minutes",
+    type: "ordinal",
+  },
+  fga_per_mp: {
+    name: "Field Goals Attempted per 36 minutes",
+    type: "ordinal",
+  },
+  fg3_per_mp: {
+    name: "3pt Field Goals per 36 minutes",
+    type: "ordinal",
+  },
+  fg3a_per_mp: {
+    name: "3pt Field Goals Attempted per 36 minutes",
+    type: "ordinal",
+  },
+  fg2_per_mp: {
+    name: "2pt Field Goals per 36 minutes",
+    type: "ordinal",
+  },
+  fg2a_per_mp: {
+    name: "2pt Field Goals Attempted per 36 minutes",
+    type: "ordinal",
+  },
+  ft_per_mp: {
+    name: "Free Throws per 36 minutes",
+    type: "ordinal",
+  },
+  fta_per_mp: {
+    name: "Free Throws Attempted per 36 minutes",
+    type: "ordinal",
+  },
+  orb_per_mp: {
+    name: "Offensive Rebounds per 36 minutes",
+    type: "ordinal",
+  },
+  drb_per_mp: {
+    name: "Defensive Rebounds per 36 minutes",
+    type: "ordinal",
+  },
+  trb_per_mp: {
+    name: "Rebounds per 36 minutes",
+    type: "ordinal",
+  },
+  ast_per_mp: {
+    name: "Assists per 36 minutes",
+    type: "ordinal",
+  },
+  stl_per_mp: {
+    name: "Steals per 36 minutes",
+    type: "ordinal",
+  },
+  blk_per_mp: {
+    name: "Blocks per 36 minutes",
+    type: "ordinal",
+  },
+  tov_per_mp: {
+    name: "Turnovers per 36 minutes",
+    type: "ordinal",
+  },
+  pf_per_mp: {
+    name: "Personal Fouls per 36 minutes",
+    type: "ordinal",
+  },
+  pts_per_mp: {
+    name: "Points per 36 minutes",
+    type: "ordinal",
+  },
+  fg_per_poss: {
+    name: "Fields Goals per 100 possessions",
+    type: "ordinal",
+  },
+  fga_per_poss: {
+    name: "Field Goals Attempted per 100 possessions",
+    type: "ordinal",
+  },
+  fg3_per_poss: {
+    name: "3pt Field Goals per 100 possessions",
+    type: "ordinal",
+  },
+  fg3a_per_poss: {
+    name: "3pt Field Goal Attempts per 100 possessions",
+    type: "ordinal",
+  },
+  fg2_per_poss: {
+    name: "2pt Field Goals per 100 possessions",
+    type: "ordinal",
+  },
+  fg2a_per_poss: {
+    name: "2p Field Goal Attempts per 100 possessions",
+    type: "ordinal",
+  },
+  ft_per_poss: {
+    name: "Free Throws per 100 possessions",
+    type: "ordinal",
+  },
+  fta_per_poss: {
+    name: "Free Throws Attempted per 100 possessions",
+    type: "ordinal",
+  },
+  orb_per_poss: {
+    name: "Offensive Rebounds per 100 possessions",
+    type: "ordinal",
+  },
+  drb_per_poss: {
+    name: "Defensive Rebounds per 100 possessions",
+    type: "ordinal",
+  },
+  trb_per_poss: {
+    name: "Rebounds per 100 possessions",
+    type: "ordinal",
+  },
+  ast_per_poss: {
+    name: "Assists per 100 possessions",
+    type: "ordinal",
+  },
+  stl_per_poss: {
+    name: "Steals per 100 possessions",
+    type: "ordinal",
+  },
+  blk_per_poss: {
+    name: "Blocks per 100 possessions",
+    type: "ordinal",
+  },
+  tov_per_poss: {
+    name: "Turnovers per 100 possessions",
+    type: "ordinal",
+  },
+  pf_per_poss: {
+    name: "Personal Fouls per 100 possessions",
+    type: "ordinal",
+  },
+  pts_per_poss: {
+    name: "Points per 100 possessions",
+    type: "ordinal",
+  },
+  off_rtg: {
+    name: "Offensive Rating",
+    type: "ordinal",
+  },
+  def_rtg: {
+    name: "Defensive Rating",
     type: "ordinal",
   },
 };
@@ -879,7 +1015,7 @@ const teams = {
     name: "Season Total",
     comment:
       "bbref uses TOT to indicate a player's season total if they were on more than one team",
-    colors: ["#888888", "#000000"],
+    colors: ["#888888", "#888888"],
   },
   UTA: { name: "Utah Jazz", colors: ["#002B5C", "#F9A01B", "#00471B"] },
   WAS: {
@@ -889,30 +1025,32 @@ const teams = {
 };
 
 function prepare() {
-  Object.keys(statMeta).forEach((key) => {
-    const meta = statMeta[key];
-    if (meta.name == "") {
-      return;
-    }
-    d3.select("#statx")
-      .append("option")
-      .attr("value", key)
-      .attr("id", `statx_${key}`)
-      .text(meta.name);
-    d3.select("#staty")
-      .append("option")
-      .attr("value", key)
-      .attr("id", `staty_${key}`)
-      .text(meta.name);
-    // TODO: only append fields to radius that make sense... float only maybe?
-    if (["float", "ordinal"].indexOf(meta.type) != -1) {
-      d3.select("#radius")
+  Object.keys(statMeta)
+    .sort()
+    .forEach((key) => {
+      const meta = statMeta[key];
+      if (meta.name == "") {
+        return;
+      }
+      d3.select("#statx")
+        .append("option")
+        .attr("value", key)
+        .attr("id", `statx_${key}`)
+        .text(meta.name);
+      d3.select("#staty")
         .append("option")
         .attr("value", key)
         .attr("id", `staty_${key}`)
         .text(meta.name);
-    }
-  });
+      // TODO: only append fields to radius that make sense... float only maybe?
+      if (["float", "ordinal"].indexOf(meta.type) != -1) {
+        d3.select("#radius")
+          .append("option")
+          .attr("value", key)
+          .attr("id", `staty_${key}`)
+          .text(meta.name);
+      }
+    });
   d3.select("#statx_ts_pct").attr("selected", true);
   d3.select("#staty_usg_pct").attr("selected", true);
 }
