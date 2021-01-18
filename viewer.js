@@ -3,7 +3,6 @@
 //   * sections?
 //   * ability to open and close sections?
 //   * what's a comparable UI?
-// * remove draw button and just optimistically redraw?
 // * show UI indication of legal filters
 // * permalinks to a graph with a given filter/year/resolution/etc
 // * select multiple years
