@@ -43,7 +43,7 @@ const settings = {
   maxRadius: 16,
   minRadius: 4,
   duration: 750,
-  domainPadding: 0.1,
+  domainPadding: 0.05,
 };
 
 function hover(event, tooltip, stats, scales, fields, delaunay, cells) {
@@ -189,16 +189,24 @@ function pointLabels(svg, stats, scales, fields, cells) {
   };
 }
 
-function paddedExtent(lst, fn) {
+function paddedExtent(lst, fn, reversed) {
   var [min, max] = d3.extent(lst, fn);
-  return [
-    min * (1 - settings.domainPadding),
-    max * (1 + settings.domainPadding),
-  ];
+  if (reversed === undefined || !reversed) {
+    return [
+      min * (1 - settings.domainPadding),
+      max * (1 + settings.domainPadding),
+    ];
+  } else {
+    return [
+      max * (1 + settings.domainPadding),
+      min * (1 - settings.domainPadding),
+    ];
+  }
 }
 
 function makeScales(stats, fields) {
   const xAxType = statMeta[fields.x].type;
+  const xreversed = statMeta[fields.x].reversed;
   var x;
   if (xAxType == "categorical") {
     const domain = new Set(stats.map((p) => p[fields.x]));
@@ -209,11 +217,12 @@ function makeScales(stats, fields) {
   } else {
     x = d3
       .scaleLinear()
-      .domain(paddedExtent(stats, (s) => s[fields.x]))
+      .domain(paddedExtent(stats, (s) => s[fields.x], xreversed))
       .range([settings.padding.left, settings.width - settings.padding.right]);
   }
 
   const yAxType = statMeta[fields.y].type;
+  const yreversed = statMeta[fields.x].reversed;
   var y;
   if (yAxType == "categorical") {
     const domain = new Set(stats.map((p) => p[fields.y]));
@@ -224,7 +233,7 @@ function makeScales(stats, fields) {
   } else {
     y = d3
       .scaleLinear()
-      .domain(d3.reverse(paddedExtent(stats, (s) => s[fields.y])))
+      .domain(d3.reverse(paddedExtent(stats, (s) => s[fields.y], yreversed)))
       .range([settings.padding.top, settings.height - settings.padding.bottom]);
   }
 
@@ -491,8 +500,14 @@ function graph(stats, fields) {
   // https://observablehq.com/@d3/dot-plot
   return Object.assign(svg.node(), {
     update(stats, fields) {
-      scales.y.domain(d3.reverse(paddedExtent(stats, (s) => s[fields.y])));
-      scales.x.domain(paddedExtent(stats, (s) => s[fields.x]));
+      scales.y.domain(
+        d3.reverse(
+          paddedExtent(stats, (s) => s[fields.y], statMeta[fields.y].reversed)
+        )
+      );
+      scales.x.domain(
+        paddedExtent(stats, (s) => s[fields.x], statMeta[fields.x].reversed)
+      );
 
       scales = makeScales(stats, fields);
       [delaunay, voronoiCells] = calcVoronoi(stats, scales, fields);
@@ -907,6 +922,7 @@ const statMeta = {
   def_rtg: {
     name: "Defensive Rating",
     type: "ordinal",
+    reversed: true,
   },
 };
 
