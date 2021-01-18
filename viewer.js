@@ -982,6 +982,16 @@ function updateSettings(_evt) {
   graph(applyFilter(window.stats), fields);
 }
 
+function updateAxes(svg) {
+  return (_evt) => {
+    svg.update(applyFilter(window.stats), {
+      x: $("#statx").value,
+      y: $("#staty").value,
+      r: $("#radius").value,
+    });
+  };
+}
+
 window.addEventListener("DOMContentLoaded", async (_evt) => {
   const res = await fetch("./data/2021/stats.json");
   window.stats = await res.json();
@@ -998,14 +1008,6 @@ window.addEventListener("DOMContentLoaded", async (_evt) => {
     y: "usg_pct",
     r: $("#radius").value,
   });
-  // TODO: get the values from the select boxes; this makes it easier to test though
-  $("#draw").addEventListener("click", () =>
-    svg.update(applyFilter(window.stats), {
-      x: $("#statx").value,
-      y: $("#staty").value,
-      r: $("#radius").value,
-    })
-  );
   $("#settings-width").addEventListener("change", updateSettings);
   $("#settings-height").addEventListener("change", updateSettings);
   $("#settings-min-radius").addEventListener("change", updateSettings);
@@ -1014,11 +1016,8 @@ window.addEventListener("DOMContentLoaded", async (_evt) => {
   $("#teamcolors").addEventListener("change", (evt) =>
     changeUseTeamColors(evt)
   );
-  $("#applyFilter").addEventListener("click", () => {
-    svg.update(applyFilter(window.stats), {
-      x: $("#statx").value,
-      y: $("#staty").value,
-      r: $("#radius").value,
-    });
-  });
+  $("#statx").addEventListener("change", updateAxes(svg));
+  $("#staty").addEventListener("change", updateAxes(svg));
+  $("#radius").addEventListener("change", updateAxes(svg));
+  $("#applyFilter").addEventListener("click", updateAxes(svg));
 });
