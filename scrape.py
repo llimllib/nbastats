@@ -187,10 +187,11 @@ def main(args):
         parse_team_stats(year)
     else:
         for year in range(MIN_YEAR, MAX_YEAR):
-            log(f"procesing {year} data")
+            if not one_hour_old(f"data/{year}/totals.html"):
+                log(f"procesing {year} data")
 
-            parse_player_stats(year)
-            parse_team_stats(year)
+                parse_player_stats(year)
+                parse_team_stats(year)
 
 
 if __name__ == "__main__":
