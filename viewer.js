@@ -155,6 +155,7 @@ function pointLabels(svg, stats, scales, fields, cells) {
     .selectAll("text")
     .data(cells, ([p, _]) => p.name)
     .join("text")
+    .attr("class", "pointLabel")
     .each(orienter)
     .attr(
       "transform",
@@ -246,7 +247,7 @@ function makeScales(stats, fields) {
 function axes(svg, stats, scales) {
   var xaxis = d3
     .axisTop(scales.x)
-    .tickSize(settings.height)
+    .tickSize(settings.height - settings.padding.top)
     .tickFormat(d3.format(".2r"));
 
   const xaxisg = svg
@@ -260,12 +261,12 @@ function axes(svg, stats, scales) {
 
   const yaxis = d3
     .axisRight(scales.y)
-    .tickSize(settings.width)
+    .tickSize(settings.width - settings.padding.right)
     .tickFormat(d3.format(".2r"));
 
   const yaxisg = svg
     .append("g")
-    .attr("transform", `translate(10, 0)`)
+    .attr("transform", `translate(20, 0)`)
     .attr("class", "yaxis")
     .call(yaxis)
     .call((g) => g.select(".domain").remove())
