@@ -224,7 +224,7 @@ function makeScales(stats, fields) {
   }
 
   const yAxType = statMeta[fields.y].type;
-  const yreversed = statMeta[fields.x].reversed;
+  const yreversed = statMeta[fields.y].reversed;
   var y;
   if (yAxType == "categorical") {
     const domain = new Set(stats.map((p) => p[fields.y]));
