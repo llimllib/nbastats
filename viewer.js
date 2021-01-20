@@ -34,6 +34,7 @@
 // * checkbox to show all labels no matter what
 // * transitions are a bit broken with multiple same-named players
 //   * harden comes in as a transition because it gets confused
+// * the labels aren't quite where they should be
 
 const $ = (s) => document.querySelector(s);
 
