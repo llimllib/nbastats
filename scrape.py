@@ -2,7 +2,7 @@
 import argparse
 import json
 from os import mkdir, stat
-from os.path import isdir
+from os.path import isdir, isfile
 from time import time
 import re
 
@@ -54,7 +54,7 @@ def save(url, fname):
         f.write(res.text)
 
 
-def getdata(year, datadir):
+def get_bbref_data(year, datadir):
     if not isdir(datadir):
         mkdir(datadir)
 
@@ -168,20 +168,46 @@ def parse_player_stats(year):
     json.dump(list(players.values()), open(output, "w"))
 
 
-def main(args):
+def download_data(no_download=False, force_download=False):
     for year in range(MIN_YEAR, MAX_YEAR):
-        if args.no_download:
+        if no_download:
             continue
         datadir = f"data/{year}"
 
-        if not isdir(datadir) or args.force_download:
-            getdata(year, datadir)
+        if not isdir(datadir) or force_download:
+            get_bbref_data(year, datadir)
         elif year == 2021 and one_hour_old(f"{datadir}/totals.html"):
-            getdata(year, datadir)
+            get_bbref_data(year, datadir)
         else:
             continue
 
-    if args.year_only:
+    # 538 Raptor data
+    # https://github.com/fivethirtyeight/data/tree/master/nba-raptor
+    if (not no_download and not isdir(f"data/raptor")) or force_download:
+        log("downloading raptor")
+        mkdir("data/raptor")
+        save(
+            "https://github.com/fivethirtyeight/data/blob/master/nba-raptor/historical_RAPTOR_by_team.csv",
+            "data/raptor/historical_RAPTOR.csv",
+        )
+        save(
+            "https://github.com/fivethirtyeight/data/blob/master/nba-raptor/modern_RAPTOR_by_team.csv",
+            "data/raptor/modern_RAPTOR.csv",
+        )
+    if (
+        not isfile("data/raptor/latest_RAPTOR.csv")
+        or (not no_download and one_hour_old("data/raptor/latest_RAPTOR.csv"))
+        or force_download
+    ):
+        log("downloading latest raptor")
+        save(
+            "https://projects.fivethirtyeight.com/nba-model/2021/latest_RAPTOR_by_team.csv",
+            "data/raptor/latest_RAPTOR.csv",
+        )
+
+
+def process_data(year_only=False):
+    if year_only:
         log(f"procesing {args.year_only} data")
         parse_player_stats(year)
         parse_team_stats(year)
@@ -192,6 +218,11 @@ def main(args):
 
                 parse_player_stats(year)
                 parse_team_stats(year)
+
+
+def main(args):
+    download_data(args.no_download, args.force_download)
+    process_data(args.year_only)
 
 
 if __name__ == "__main__":
