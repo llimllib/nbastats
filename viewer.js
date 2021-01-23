@@ -32,9 +32,8 @@
 //    * if it were a log scale, the good shooters would jump out at you
 // * should I thread a single transition object through all the transitions?
 // * checkbox to show all labels no matter what
-// * transitions are a bit broken with multiple same-named players
-//   * harden comes in as a transition because it gets confused
 // * the labels aren't quite where they should be
+// * playoffs vs regular season
 
 const $ = (s) => document.querySelector(s);
 
@@ -155,7 +154,7 @@ function pointLabels(svg, stats, scales, fields, cells) {
 
   container
     .selectAll("text")
-    .data(cells, ([p, _]) => p.name)
+    .data(cells, ([p, _]) => p.name + p.team)
     .join("text")
     .attr("class", "pointLabel")
     .each(orienter)
@@ -175,7 +174,7 @@ function pointLabels(svg, stats, scales, fields, cells) {
     // transitioning nicely, though it does move with the point
     container
       .selectAll("text")
-      .data(cells, ([p, _]) => p.name)
+      .data(cells, ([p, _]) => p.name + p.team)
       .join("text")
       .transition()
       .duration(settings.duration)
@@ -339,7 +338,7 @@ function points(svg, stats, scales, fields) {
   // https://observablehq.com/@d3/scatterplot-tour
   const points = container
     .selectAll("g")
-    .data(stats, (d) => d.name)
+    .data(stats, (d) => d.name + d.team)
     .join("g")
     .attr("data-player-name", (d) => d.name)
     .attr(
@@ -372,7 +371,7 @@ function points(svg, stats, scales, fields) {
     // TODO: does this handle entries and exits?
     container
       .selectAll("g")
-      .data(stats, (d) => d.name)
+      .data(stats, (d) => d.name + d.team)
       .join(
         (enter) => {
           var g = enter.append("g");
