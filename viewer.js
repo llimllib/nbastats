@@ -34,6 +34,7 @@
 // * checkbox to show all labels no matter what
 // * the labels aren't quite where they should be
 // * playoffs vs regular season
+// * stats updated date
 
 const $ = (s) => document.querySelector(s);
 
