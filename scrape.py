@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 import argparse
+import csv
 import json
 from os import mkdir, stat
 from os.path import isdir, isfile
-from time import time
 import re
+from time import time
 
 from bs4 import BeautifulSoup
 import requests
@@ -18,6 +19,11 @@ import requests
 #      shit we've done so far
 # * get all-star data
 # * get rookie data
+# * explore saving data as a sqlite database instead and importing into javscript
+# * handle playoff data
+#   * raptor breaks down data into regular season and playoff - currently we're
+#     ignoring playoff. I assume bbref has playoff data? we should scrape that
+#     too
 
 DEBUG = True
 MIN_YEAR = 2010
@@ -143,9 +149,11 @@ def parse_bbref_row(players, player):
         for t in player.find_all("td")
         if t["data-stat"] and t["data-stat"] not in ignore
     }
+
     stats["name"] = BeautifulSoup(stats["player"], "html.parser").text
     stats["team"] = BeautifulSoup(stats["team_id"], "html.parser").text
-    key = stats["name"] + "__" + stats["team"]
+    stats["bb_ref_id"] = player.find("td").attrs["data-append-csv"]
+    key = (stats["bb_ref_id"], stats["team"])
     if key not in players:
         players[key] = stats
     else:
@@ -159,13 +167,12 @@ def parse_player_stats(year):
 
     player_row = re.compile(r".*\b(full_table|partial_table)\b.*")
 
-    for page in ["totals", "advanced", "per_minute", "per_poss"]:
+    for page in ["totals", "advanced", "per_minute", "per_poss", "per_game"]:
         soup = BeautifulSoup(open(f"{datadir}/{page}.html"), "html.parser")
         for player in soup.find_all("tr", {"class": player_row}):
             parse_bbref_row(players, player)
 
-    output = f"data/{year}/stats.json"
-    json.dump(list(players.values()), open(output, "w"))
+    return players
 
 
 def download_data(no_download=False, force_download=False):
@@ -187,11 +194,12 @@ def download_data(no_download=False, force_download=False):
         log("downloading raptor")
         mkdir("data/raptor")
         save(
-            "https://github.com/fivethirtyeight/data/blob/master/nba-raptor/historical_RAPTOR_by_team.csv",
+            "https://raw.githubusercontent.com/fivethirtyeight/data/master/nba-raptor/historical_RAPTOR_by_team.csv",
             "data/raptor/historical_RAPTOR.csv",
         )
+
         save(
-            "https://github.com/fivethirtyeight/data/blob/master/nba-raptor/modern_RAPTOR_by_team.csv",
+            "https://raw.githubusercontent.com/fivethirtyeight/data/master/nba-raptor/modern_RAPTOR_by_team.csv",
             "data/raptor/modern_RAPTOR.csv",
         )
     if (
@@ -206,23 +214,71 @@ def download_data(no_download=False, force_download=False):
         )
 
 
-def process_data(year_only=False):
+# 538 has some different team names than bbref
+def fix_team(team, year):
+    # from 2015 - today, 538 labels Hornets players as CHA while bbref labels
+    # them as CHO
+    if team == "CHA" and year > 2014:
+        return "CHO"
+    return team
+
+
+def parse_raptor_stats(data):
+    for raptorfile in ("latest_RAPTOR", "modern_RAPTOR", "historical_RAPTOR"):
+        for row in csv.DictReader(open(f"data/raptor/{raptorfile}.csv")):
+            if row["season_type"] != "RS":
+                # we're currently not handling playoff data, so skip
+                continue
+            pid = row["player_id"]
+            year = int(row["season"])
+            if year not in data:
+                continue
+            team = fix_team(row["team"], year)
+            for key in set(row.keys()) - set(
+                ["player_name", "player_id", "team", "season", "season_type"]
+            ):
+                if (pid, team) not in data[year]:
+                    # doesn't work because there's a tuple in the data
+                    # json.dump(data, open("/tmp/a.json", "w"))
+                    raise Exception(f"Couldn't find ({pid}, {team}) in {year}")
+                if key in data[year][(pid, team)]:
+                    # prefer bbref data, so skip if we find something that's
+                    # already present. There are discrepancies in the raptor
+                    # and bbref data, though I think there shouldn't be, but
+                    # not gonna deal with it. Ex: raptor has Marcus Morris with
+                    # 1447 minutes in 2017-18, and bbref 1442. :shrug:
+                    continue
+                data[year][(pid, team)][key] = tryint(row[key])
+
+
+def process_data(year_only=False, force_reprocess=False):
+    # data[year:int] => {(bb_ref_id, team): {stats}}
+    data = {}
     if year_only:
-        log(f"procesing {args.year_only} data")
-        parse_player_stats(year)
+        log(f"processing {args.year_only} data")
+        data[year] = parse_player_stats(year)
         parse_team_stats(year)
+        output = f"data/{year}/stats.json"
+        json.dump(list(players.values()), open(output, "w"))
     else:
         for year in range(MIN_YEAR, MAX_YEAR):
-            if not one_hour_old(f"data/{year}/totals.html"):
-                log(f"procesing {year} data")
+            if not one_hour_old(f"data/{year}/totals.html") or force_reprocess:
+                log(f"processing {year} data")
 
-                parse_player_stats(year)
+                data[year] = players = parse_player_stats(year)
                 parse_team_stats(year)
+
+    log("processing raptor")
+    parse_raptor_stats(data)
+
+    for year in data:
+        output = f"data/{year}/stats.json"
+        json.dump(list(players.values()), open(output, "w"))
 
 
 def main(args):
     download_data(args.no_download, args.force_download)
-    process_data(args.year_only)
+    process_data(args.year_only, args.force_reprocess)
 
 
 if __name__ == "__main__":
@@ -251,6 +307,13 @@ if __name__ == "__main__":
         action="store",
         required=False,
         help="only process a particular year",
+    )
+    parser.add_argument(
+        "--force-reprocess",
+        dest="force_reprocess",
+        action="store_true",
+        required=False,
+        help="Force reprocessing of all years",
     )
     args = parser.parse_args()
 
