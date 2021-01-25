@@ -71,10 +71,11 @@ text.pointLabel {
         <p>
         The filter syntax is a work in progress, and I'll add some UI eventually, but here's some you can try:
         <ul>
-          <li><pre>player.usg_pct > 26 && player.fga > 80</pre></li>
-          <li><pre>['BOS', 'MIA', 'BRK'].indexOf(player.team) != -1 && player.fga > 30</pre></li>
+          <li><pre>player.usg_pct &gt; 26 &amp;&amp; player.fga &gt; 80</pre></li>
+          <li><pre>['BOS', 'MIA', 'BRK'].indexOf(player.team) != -1 &amp;&amp; player.fga &gt; 30</pre></li>
           <li><pre>player.team == 'BOS'</pre></li>
           <li><pre>quantile(player, 'fga', 80) || quantile(player, 'trb', 80)</pre></li>
+          <li><pre>player.pts_per_g &gt; 20</pre></li>
         </ul>
       </span>
     </div>

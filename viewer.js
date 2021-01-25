@@ -38,7 +38,7 @@
 const $ = (s) => document.querySelector(s);
 
 const settings = {
-  padding: { left: 60, top: 40, right: 40, bottom: 40 },
+  padding: { left: 60, top: 60, right: 40, bottom: 40 },
   width: 1024,
   height: 768,
   dotRadius: 6,
@@ -591,107 +591,107 @@ const statMeta = {
   },
   age: {
     name: "Age",
-    type: "ordinal",
+    type: "numeric",
   },
   g: {
     name: "Games",
-    type: "ordinal",
+    type: "numeric",
   },
   gs: {
     name: "Games Started",
-    type: "ordinal",
+    type: "numeric",
   },
   mp: {
     name: "Minutes Played",
-    type: "ordinal",
+    type: "numeric",
   },
   fg: {
     name: "Field Goals Made",
-    type: "ordinal",
+    type: "numeric",
   },
   fga: {
     name: "Field Goals Attempted",
-    type: "ordinal",
+    type: "numeric",
   },
   fg_pct: {
     name: "Field Goal %",
-    type: "float",
+    type: "numeric",
   },
   fg3: {
     name: "3pt Field Goals Made",
-    type: "ordinal",
+    type: "numeric",
   },
   fg3a: {
     name: "3pt Field Goals Attempted",
-    type: "ordinal",
+    type: "numeric",
   },
   fg3_pct: {
     name: "3pt Field Goal %",
-    type: "float",
+    type: "numeric",
   },
   fg2: {
     name: "2pt Field Goals Made",
-    type: "ordinal",
+    type: "numeric",
   },
   fg2a: {
     name: "2pt Field Goals Attempted",
-    type: "ordinal",
+    type: "numeric",
   },
   fg2_pct: {
     name: "2pt Field Goal %",
-    type: "float",
+    type: "numeric",
   },
   efg_pct: {
     name: "Effective Field Goal %",
-    type: "ordinal",
+    type: "numeric",
   },
   ft: {
     name: "Free Throws Made",
-    type: "ordinal",
+    type: "numeric",
   },
   fta: {
     name: "Free Throw Attempts",
-    type: "ordinal",
+    type: "numeric",
   },
   ft_pct: {
     name: "Free Throw %",
-    type: "ordinal",
+    type: "numeric",
   },
   orb: {
     name: "Offensive Rebounds",
-    type: "ordinal",
+    type: "numeric",
   },
   drb: {
     name: "Defensive Rebounds",
-    type: "ordinal",
+    type: "numeric",
   },
   trb: {
     name: "Total Rebounds",
-    type: "ordinal",
+    type: "numeric",
   },
   ast: {
     name: "Assists",
-    type: "ordinal",
+    type: "numeric",
   },
   stl: {
     name: "Steals",
-    type: "ordinal",
+    type: "numeric",
   },
   blk: {
     name: "Blocks",
-    type: "ordinal",
+    type: "numeric",
   },
   tov: {
     name: "Turnovers",
-    type: "ordinal",
+    type: "numeric",
   },
   pf: {
     name: "Personal Fouls",
-    type: "ordinal",
+    type: "numeric",
   },
   pts: {
     name: "Points",
-    type: "ordinal",
+    type: "numeric",
   },
   name: {
     name: "name",
@@ -703,228 +703,313 @@ const statMeta = {
   },
   per: {
     name: "PER",
-    type: "ordinal",
+    type: "numeric",
   },
   ts_pct: {
     name: "True Shooting %",
-    type: "float",
+    type: "numeric",
   },
   fg3a_per_fga_pct: {
     name: "3pt Attempted per Field Goal Attempted",
-    type: "float",
+    type: "numeric",
   },
   fta_per_fga_pct: {
     name: "Free Throw Attempted per Field Goal Attempted",
-    type: "float",
+    type: "numeric",
   },
   orb_pct: {
     name: "Offensive Rebound %",
-    type: "float",
+    type: "numeric",
   },
   drb_pct: {
     name: "Defensive Rebound %",
-    type: "float",
+    type: "numeric",
   },
   trb_pct: {
     name: "Total Rebound %",
-    type: "float",
+    type: "numeric",
   },
   ast_pct: {
     name: "",
-    type: "ordinal",
+    type: "numeric",
   },
   stl_pct: {
     name: "",
-    type: "ordinal",
+    type: "numeric",
   },
   blk_pct: {
     name: "",
-    type: "ordinal",
+    type: "numeric",
   },
   tov_pct: {
     name: "",
-    type: "ordinal",
+    type: "numeric",
   },
   usg_pct: {
     name: "Usage %",
-    type: "ordinal",
+    type: "numeric",
   },
   ows: {
-    name: "",
-    type: "ordinal",
+    name: "Offensive Win Shares",
+    type: "numeric",
   },
   dws: {
-    name: "",
-    type: "ordinal",
+    name: "Defensive Win Shares",
+    type: "numeric",
   },
   ws: {
-    name: "",
-    type: "ordinal",
+    name: "Win Shares",
+    type: "numeric",
   },
   ws_per_48: {
-    name: "",
-    type: "ordinal",
+    name: "Win Shares per 48 minutes",
+    type: "numeric",
   },
   obpm: {
     name: "Offensive Box Plus-Minus",
-    type: "ordinal",
+    type: "numeric",
   },
   dbpm: {
     name: "Defensive Box Plus-Minus",
-    type: "ordinal",
+    type: "numeric",
   },
   bpm: {
     name: "Box Plus-Minus",
-    type: "ordinal",
+    type: "numeric",
   },
   vorp: {
     name: "VORP",
-    type: "ordinal",
+    type: "numeric",
   },
   fg_per_mp: {
     name: "Field Goals per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   fga_per_mp: {
     name: "Field Goals Attempted per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   fg3_per_mp: {
     name: "3pt Field Goals per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   fg3a_per_mp: {
     name: "3pt Field Goals Attempted per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   fg2_per_mp: {
     name: "2pt Field Goals per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   fg2a_per_mp: {
     name: "2pt Field Goals Attempted per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   ft_per_mp: {
     name: "Free Throws per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   fta_per_mp: {
     name: "Free Throws Attempted per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   orb_per_mp: {
     name: "Offensive Rebounds per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   drb_per_mp: {
     name: "Defensive Rebounds per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   trb_per_mp: {
     name: "Rebounds per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   ast_per_mp: {
     name: "Assists per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   stl_per_mp: {
     name: "Steals per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   blk_per_mp: {
     name: "Blocks per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   tov_per_mp: {
     name: "Turnovers per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   pf_per_mp: {
     name: "Personal Fouls per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   pts_per_mp: {
     name: "Points per 36 minutes",
-    type: "ordinal",
+    type: "numeric",
   },
   fg_per_poss: {
     name: "Fields Goals per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   fga_per_poss: {
     name: "Field Goals Attempted per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   fg3_per_poss: {
     name: "3pt Field Goals per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   fg3a_per_poss: {
     name: "3pt Field Goal Attempts per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   fg2_per_poss: {
     name: "2pt Field Goals per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   fg2a_per_poss: {
     name: "2p Field Goal Attempts per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   ft_per_poss: {
     name: "Free Throws per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   fta_per_poss: {
     name: "Free Throws Attempted per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   orb_per_poss: {
     name: "Offensive Rebounds per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   drb_per_poss: {
     name: "Defensive Rebounds per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   trb_per_poss: {
     name: "Rebounds per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   ast_per_poss: {
     name: "Assists per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   stl_per_poss: {
     name: "Steals per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   blk_per_poss: {
     name: "Blocks per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   tov_per_poss: {
     name: "Turnovers per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   pf_per_poss: {
     name: "Personal Fouls per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   pts_per_poss: {
     name: "Points per 100 possessions",
-    type: "ordinal",
+    type: "numeric",
   },
   off_rtg: {
     name: "Offensive Rating",
-    type: "ordinal",
+    type: "numeric",
   },
   def_rtg: {
     name: "Defensive Rating",
-    type: "ordinal",
+    type: "numeric",
     reversed: true,
+  },
+  raptor_defense: {
+    name: "Raptor Defensive Rating",
+    type: "numeric",
+    reversed: true,
+  },
+  raptor_offense: {
+    name: "Raptor Offensive Rating",
+    type: "numeric",
+  },
+  war_reg_season: {
+    name: "538 Wins Above Replacement",
+    type: "numeric",
+  },
+  mp_per_g: {
+    name: "Minutes per Game",
+    type: "numeric",
+  },
+  fg_per_g: {
+    name: "Field Goals per Game",
+    type: "numeric",
+  },
+  fga_per_g: {
+    name: "Field Goal Attempts per Game",
+    type: "numeric",
+  },
+  fg3_per_g: {
+    name: "3pt Field Goals per Game",
+    type: "numeric",
+  },
+  fg3a_per_g: {
+    name: "3pt Field Goal Attempts per Game",
+    type: "numeric",
+  },
+  fg2_per_g: {
+    name: "2pt Field Goals per Game",
+    type: "numeric",
+  },
+  fg2a_per_g: {
+    name: "2pt Field Goal Attempts per Game",
+    type: "numeric",
+  },
+  ft_per_g: {
+    name: "Free Throws per Game",
+    type: "numeric",
+  },
+  fta_per_g: {
+    name: "Free Throws Attempted per Game",
+    type: "numeric",
+  },
+  orb_per_g: {
+    name: "Offensive Rebounds per Game",
+    type: "numeric",
+  },
+  drb_per_g: {
+    name: "Defensive Rebounds per Game",
+    type: "numeric",
+  },
+  trb_per_g: {
+    name: "Total Rebounds per Game",
+    type: "numeric",
+  },
+  ast_per_g: {
+    name: "Assists per Game",
+    type: "numeric",
+  },
+  stl_per_g: {
+    name: "Steals per Game",
+    type: "numeric",
+  },
+  blk_per_g: {
+    name: "Blocks per Game",
+    type: "numeric",
+  },
+  tov_per_g: {
+    name: "Turnovers per Game",
+    type: "numeric",
+  },
+  pf_per_g: {
+    name: "Personal Fouls per Game",
+    type: "numeric",
+  },
+  pts_per_g: {
+    name: "Points per Game",
+    type: "numeric",
   },
 };
 
@@ -1061,7 +1146,7 @@ function prepare() {
         .attr("id", `staty_${key}`)
         .text(meta.name);
       // TODO: only append fields to radius that make sense... float only maybe?
-      if (["float", "ordinal"].indexOf(meta.type) != -1) {
+      if (["numeric"].indexOf(meta.type) != -1) {
         d3.select("#radius")
           .append("option")
           .attr("value", key)
