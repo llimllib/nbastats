@@ -175,22 +175,23 @@ def parse_player_stats(year):
     return players
 
 
-def download_data(no_download=False, force_download=False):
-    for year in range(MIN_YEAR, MAX_YEAR):
-        if no_download:
-            continue
-        datadir = f"data/{year}"
+def download_data(no_download=False, force_download=False, year_only=None):
+    if not year_only:
+        for year in range(MIN_YEAR, MAX_YEAR):
+            if no_download:
+                continue
+            datadir = f"data/{year}"
 
-        if not isdir(datadir) or force_download:
-            get_bbref_data(year, datadir)
-        elif year == 2021 and one_hour_old(f"{datadir}/totals.html"):
-            get_bbref_data(year, datadir)
-        else:
-            continue
+            if not isdir(datadir) or force_download:
+                get_bbref_data(year, datadir)
+            elif year == 2021 and one_hour_old(f"{datadir}/totals.html"):
+                get_bbref_data(year, datadir)
+            else:
+                continue
 
     # 538 Raptor data
     # https://github.com/fivethirtyeight/data/tree/master/nba-raptor
-    if (not no_download and not isdir(f"data/raptor")) or force_download:
+    if (not no_download and not isdir("data/raptor")) or force_download:
         log("downloading raptor")
         mkdir("data/raptor")
         save(
@@ -251,21 +252,20 @@ def parse_raptor_stats(data):
                 data[year][(pid, team)][key] = tryint(row[key])
 
 
-def process_data(year_only=False, force_reprocess=False):
+def process_data(year_only=None, force_reprocess=False):
     # data[year:int] => {(bb_ref_id, team): {stats}}
     data = {}
     if year_only:
         log(f"processing {args.year_only} data")
-        data[year] = parse_player_stats(year)
-        parse_team_stats(year)
-        output = f"data/{year}/stats.json"
-        json.dump(list(players.values()), open(output, "w"))
+        data[year_only] = parse_player_stats(year_only)
+        parse_team_stats(year_only)
+        output = f"data/{year_only}/stats.json"
     else:
         for year in range(MIN_YEAR, MAX_YEAR):
             if not one_hour_old(f"data/{year}/totals.html") or force_reprocess:
                 log(f"processing {year} data")
 
-                data[year] = players = parse_player_stats(year)
+                data[year] = parse_player_stats(year)
                 parse_team_stats(year)
 
     log("processing raptor")
@@ -273,11 +273,11 @@ def process_data(year_only=False, force_reprocess=False):
 
     for year in data:
         output = f"data/{year}/stats.json"
-        json.dump(list(players.values()), open(output, "w"))
+        json.dump(list(data[year].values()), open(output, "w"))
 
 
 def main(args):
-    download_data(args.no_download, args.force_download)
+    download_data(args.no_download, args.force_download, args.year_only)
     process_data(args.year_only, args.force_reprocess)
 
 
