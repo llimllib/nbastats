@@ -930,7 +930,6 @@ const statMeta = {
   raptor_defense: {
     name: "Raptor Defensive Rating",
     type: "numeric",
-    reversed: true,
   },
   raptor_offense: {
     name: "Raptor Offensive Rating",
