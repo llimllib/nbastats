@@ -5,6 +5,7 @@ import json
 from os import mkdir, stat
 from os.path import isdir, isfile
 import re
+import sqlite3
 from time import time
 
 from bs4 import BeautifulSoup
@@ -24,6 +25,7 @@ import requests
 #   * raptor breaks down data into regular season and playoff - currently we're
 #     ignoring playoff. I assume bbref has playoff data? we should scrape that
 #     too
+# * speed up processing
 
 DEBUG = True
 MIN_YEAR = 2010
@@ -90,6 +92,47 @@ def get_bbref_data(year, datadir):
         f"{dir_}/teams.html",
     )
 
+def get_key_type(obj):
+    if isinstance(obj, str):
+        return "text"
+    if isinstance(obj, int):
+        return "integer"
+    return "real"
+
+def all_keys(data):
+    '''return a space-separated list of fields and types'''
+    # data[year:int] => {(bb_ref_id, team): {stats}}
+    keys = {}
+    for _, players in data.items():
+        for _, stats in players.items():
+            for key in stats:
+                if key in keys: continue
+                keys[key] = get_key_type(stats[key])
+
+    return keys
+
+def make_database(data):
+    # data[year:int] => {(bb_ref_id, team): {stats}}
+    keys = all_keys(data)
+
+    columns = [' '.join(it) for it in keys.items()]
+    columns = ', '.join(['year integer'] + columns)
+
+    # TODO: this won't currently work when only updating a single year; it will
+    # drop the whole table and replace it instead of updating just that year's
+    # data
+    conn = sqlite3.connect("stats.sqlite3")
+    conn.execute(f'DROP TABLE IF EXISTS stats')
+    conn.execute(f'CREATE TABLE stats ({columns})')
+    rows = []
+    for year in data:
+        for _, stats in data[year].items():
+            rows.append([year] + [stats.get(key) for key in keys])
+
+    placeholders = ('?,'*(len(keys)+1))[:-1]
+    print(f'INSERT INTO stats VALUES({placeholders})')
+    conn.executemany(f'INSERT INTO stats VALUES({placeholders})', rows)
+    conn.commit()
 
 def parse_team_stats(year):
     datadir = f"data/{year}"
@@ -274,6 +317,8 @@ def process_data(year_only=False, force_reprocess=False):
     for year in data:
         output = f"data/{year}/stats.json"
         json.dump(list(players.values()), open(output, "w"))
+
+    make_database(data)
 
 
 def main(args):
