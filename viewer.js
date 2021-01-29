@@ -49,7 +49,7 @@ const settings = {
   domainPadding: 0.05,
 };
 
-function hover(event, tooltip, stats, scales, fields, delaunay, cells) {
+function hover(event, tooltip, scales, fields, delaunay, cells) {
   const [mx, my] = d3.pointer(event, this);
 
   const nearest = delaunay.find(mx, my);
@@ -95,7 +95,7 @@ function orient(pos, r) {
 }
 
 function orientText(scales, fields) {
-  return function ([player, cell]) {
+  return function([player, cell]) {
     // if two players have the same stats on the selected dimension, the
     // voronoi cell will be null. Skip this player for now - do something more
     // intelligent with coincident players later
@@ -110,7 +110,7 @@ function orientText(scales, fields) {
           cx - scales.x(player[fields.x])
         ) /
           Math.PI) *
-          2
+        2
       ) +
         4) %
       4;
@@ -119,10 +119,10 @@ function orientText(scales, fields) {
       angle === 0
         ? orient("right", r)
         : angle === 3
-        ? orient("top", r)
-        : angle === 1
-        ? orient("bottom", r)
-        : orient("left", r)
+          ? orient("top", r)
+          : angle === 1
+            ? orient("bottom", r)
+            : orient("left", r)
     );
   };
 }
@@ -145,7 +145,7 @@ function calcVoronoi(stats, scales, fields) {
   return [delaunay, cells];
 }
 
-function pointLabels(svg, stats, scales, fields, cells) {
+function pointLabels(svg, scales, fields, cells) {
   var orienter = orientText(scales, fields);
 
   const container = svg
@@ -168,7 +168,7 @@ function pointLabels(svg, stats, scales, fields, cells) {
     )
     .text(([p, _]) => p.name);
 
-  return function (stats, scales, fields, cells) {
+  return function(scales, fields, cells) {
     var orienter = orientText(scales, fields);
 
     // TODO the label immediately changes orientation instead of
@@ -255,7 +255,7 @@ function makeScales(stats, fields) {
 }
 
 // https://observablehq.com/@d3/styled-axes
-function axes(svg, stats, scales) {
+function axes(svg, scales) {
   var xaxis = d3
     .axisTop(scales.x)
     .tickSize(settings.height - settings.padding.top)
@@ -285,7 +285,7 @@ function axes(svg, stats, scales) {
     .call((g) => g.selectAll(".tick text").attr("dy", -4).attr("x", 4));
 
   // return an update function
-  return function (stats, scales, fields) {
+  return function(scales, fields) {
     const xAxType = statMeta[fields.x].type;
     if (xAxType == "categorical") {
       xaxis.scale(scales.x).tickFormat((p) => p);
@@ -304,7 +304,7 @@ function axes(svg, stats, scales) {
       .transition()
       .duration(settings.duration)
       .call(xaxis)
-      .on("start", function () {
+      .on("start", function() {
         xaxisg.select(".domain").remove(); // https://stackoverflow.com/a/50254240/42559
       })
       .call((g) => g.select(".domain").remove())
@@ -365,7 +365,7 @@ function points(svg, stats, scales, fields) {
       .attr("r", (d) => scales.r(d[fields.r]));
   }
 
-  return function (stats, scales, fields) {
+  return function(stats, scales, fields) {
     useTeamColors = $("#teamcolors").checked;
     d3.selectAll(".player_label").remove();
 
@@ -468,7 +468,7 @@ function axisLabels(svg, fields) {
     rlabel.style("display", "none");
   }
 
-  return function (fields) {
+  return function(fields) {
     xlabel.text("→" + statMeta[fields.x].name);
     ylabel.text("↑ " + statMeta[fields.y].name);
     // don't add a radius label if the value is constant
@@ -486,16 +486,16 @@ function graph(stats, fields) {
 
   var scales = makeScales(stats, fields);
   var [delaunay, voronoiCells] = calcVoronoi(stats, scales, fields);
-  const updateAxes = axes(svg, stats, scales);
+  const updateAxes = axes(svg, scales);
   const updateAxisLabels = axisLabels(svg, fields);
   const updatePoints = points(svg, stats, scales, fields);
-  const updateLabels = pointLabels(svg, stats, scales, fields, voronoiCells);
+  const updateLabels = pointLabels(svg, scales, fields, voronoiCells);
 
   // https://observablehq.com/@d3/line-chart-with-tooltip
   var tooltip = svg.append("g").attr("class", "tooltip");
 
   svg.on("touchmove mousemove", (evt) =>
-    hover(evt, tooltip, stats, scales, fields, delaunay, voronoiCells)
+    hover(evt, tooltip, scales, fields, delaunay, voronoiCells)
   );
 
   svg.on("touchend mouseleave", () => tooltip.call(callout, null));
@@ -514,10 +514,10 @@ function graph(stats, fields) {
 
       scales = makeScales(stats, fields);
       [delaunay, voronoiCells] = calcVoronoi(stats, scales, fields);
-      updateAxes(stats, scales, fields);
+      updateAxes(scales, fields);
       updateAxisLabels(fields);
       updatePoints(stats, scales, fields);
-      updateLabels(stats, scales, fields, voronoiCells);
+      updateLabels(scales, fields, voronoiCells);
 
       // If an event listener was previously registered for the same typename
       // on a selected element, the old listener is removed before the new
@@ -568,7 +568,7 @@ function callout(g, value) {
         .data((value + "").split(/\n/))
         .join("tspan")
         .attr("x", 0)
-        .attr("y", (d, i) => `${i * 1.1}em`)
+        .attr("y", (_, i) => `${i * 1.1}em`)
         .style("font-weight", (_, i) => (i ? null : "bold"))
         .text((d) => d)
     );
@@ -1186,7 +1186,7 @@ function changeUseTeamColors(_) {
 // return a function (player, field, n) -> bool that will return true if a
 // player is above the nth quantile in the given field and false otherwise
 function makeQuantiler(stats) {
-  return function (player, field, n) {
+  return function(player, field, n) {
     return player[field] > d3.quantile(stats, n / 100, (p) => p[field]);
   };
 }
