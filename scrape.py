@@ -175,11 +175,9 @@ def parse_player_stats(year):
     return players
 
 
-def download_data(no_download=False, force_download=False, year_only=None):
+def download_data(force_download=False, year_only=None):
     if not year_only:
         for year in range(MIN_YEAR, MAX_YEAR):
-            if no_download:
-                continue
             datadir = f"data/{year}"
 
             if not isdir(datadir) or force_download:
@@ -188,12 +186,20 @@ def download_data(no_download=False, force_download=False, year_only=None):
                 get_bbref_data(year, datadir)
             else:
                 continue
+    else:
+        datadir = f"data/{year_only}"
+        if force_download or one_hour_old(f"{datadir}/totals.html"):
+            get_bbref_data(year_only, datadir)
 
     # 538 Raptor data
     # https://github.com/fivethirtyeight/data/tree/master/nba-raptor
-    if (not no_download and not isdir("data/raptor")) or force_download:
+    if not isdir("data/raptor") or force_download:
         log("downloading raptor")
-        mkdir("data/raptor")
+        try:
+            mkdir("data/raptor")
+        except FileExistsError:
+            pass
+
         save(
             "https://raw.githubusercontent.com/fivethirtyeight/data/master/nba-raptor/historical_RAPTOR_by_team.csv",
             "data/raptor/historical_RAPTOR.csv",
@@ -205,7 +211,7 @@ def download_data(no_download=False, force_download=False, year_only=None):
         )
     if (
         not isfile("data/raptor/latest_RAPTOR.csv")
-        or (not no_download and one_hour_old("data/raptor/latest_RAPTOR.csv"))
+        or one_hour_old("data/raptor/latest_RAPTOR.csv")
         or force_download
     ):
         log("downloading latest raptor")
@@ -277,7 +283,8 @@ def process_data(year_only=None, force_reprocess=False):
 
 
 def main(args):
-    download_data(args.no_download, args.force_download, args.year_only)
+    if not args.no_download:
+        download_data(args.force_download, args.year_only)
     process_data(args.year_only, args.force_reprocess)
 
 
