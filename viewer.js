@@ -35,6 +35,10 @@
 // * the labels aren't quite where they should be
 // * playoffs vs regular season
 // * stats updated date
+// * codemirror editor for the textarea if SQL works out?
+// * would it be easier to use a custom javascript function than a window function for percentile?
+//   * pre-calculate percentiles at db creation? db would be quite a bit larger :/
+// * exit animation
 
 const $ = (s) => document.querySelector(s);
 
@@ -527,11 +531,10 @@ function graph(stats, fields) {
         return hover(
           evt,
           tooltip,
-          stats,
           scales,
           fields,
           delaunay,
-          voronoiCells
+          voronoiCells,
         );
       });
 
@@ -1158,20 +1161,6 @@ function prepare() {
   d3.select("#staty_usg_pct").attr("selected", true);
 }
 
-async function changeYear(evt) {
-  const res = await fetch(`./data/${evt.target.value}/stats.json`);
-  window.stats = await res.json();
-
-  const fields = {
-    x: $("#statx").value,
-    y: $("#staty").value,
-    r: $("#radius").value,
-  };
-
-  d3.selectAll("#canvas").html("");
-  graph(applyFilter(window.stats), fields);
-}
-
 function changeUseTeamColors(_) {
   const fields = {
     x: $("#statx").value,
@@ -1180,7 +1169,7 @@ function changeUseTeamColors(_) {
   };
 
   d3.selectAll("#canvas").html("");
-  graph(applyFilter(window.stats), fields);
+  graph(applyFilter(), fields);
 }
 
 // return a function (player, field, n) -> bool that will return true if a
@@ -1191,19 +1180,19 @@ function makeQuantiler(stats) {
   };
 }
 
-function applyFilter(stats) {
-  // This is here to be available for the eval, so it appears unused
-  /* eslint-disable no-unused-vars */
-  const quantile = makeQuantiler(stats);
+function allSQLResults(sqlQuery) {
+  const stmt = window.db.prepare(sqlQuery);
+  const objs = [];
+  while (stmt.step()) {
+    objs.push(stmt.getAsObject());
+  }
+  return objs;
+}
 
-  // example filters:
-  // player.usg_pct > 26 && player.fga > 80
-  // ['BOS', 'MIA', 'BRK'].indexOf(player.team) != -1 && player.fga > 30
-  // player.team == 'BOS'
-  // quantile(player, 'fga', 80) || quantile(player, 'trb', 80)
-  const activeStats = stats.filter((player) => eval($("#filter").value));
-  /* eslint-enable */
-  return activeStats;
+function applyFilter() {
+  // DELETEME debugging
+  window.results = allSQLResults($("#filter").value);
+  return allSQLResults($("#filter").value);
 }
 
 function updateSettings(_evt) {
@@ -1219,12 +1208,12 @@ function updateSettings(_evt) {
   };
 
   d3.selectAll("#canvas").html("");
-  graph(applyFilter(window.stats), fields);
+  graph(applyFilter(), fields);
 }
 
 function updateAxes(svg) {
   return (_evt) => {
-    svg.update(applyFilter(window.stats), {
+    svg.update(applyFilter(), {
       x: $("#statx").value,
       y: $("#staty").value,
       r: $("#radius").value,
@@ -1233,8 +1222,16 @@ function updateAxes(svg) {
 }
 
 window.addEventListener("DOMContentLoaded", async (_evt) => {
-  const res = await fetch("./data/2021/stats.json");
-  window.stats = await res.json();
+  // By default, sql.js uses wasm, and thus needs to load a .wasm file in
+  // addition to the javascript library... use the locateFile property of the
+  // configuration object passed to initSqlJs to indicate where ssshe file is
+  const sqlPromise = initSqlJs({
+    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.4.0/dist/${file}`
+  });
+  const loadPromise = fetch("./stats.sqlite3").then((res) => res.arrayBuffer());
+  const [SQL, buf] = await Promise.all([sqlPromise, loadPromise]);
+  const db = new SQL.Database(new Uint8Array(buf));
+  window.db = db;
 
   $("#settings-width").value = settings.width;
   $("#settings-height").value = settings.height;
@@ -1243,16 +1240,16 @@ window.addEventListener("DOMContentLoaded", async (_evt) => {
 
   prepare();
 
-  const svg = graph(applyFilter(window.stats), {
+  const svg = graph(applyFilter(), {
     x: "ts_pct",
     y: "usg_pct",
     r: $("#radius").value,
   });
+
   $("#settings-width").addEventListener("change", updateSettings);
   $("#settings-height").addEventListener("change", updateSettings);
   $("#settings-min-radius").addEventListener("change", updateSettings);
   $("#settings-max-radius").addEventListener("change", updateSettings);
-  $("#yearChooser").addEventListener("change", changeYear);
   $("#teamcolors").addEventListener("change", (evt) =>
     changeUseTeamColors(evt)
   );

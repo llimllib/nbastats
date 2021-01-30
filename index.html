@@ -1,6 +1,8 @@
 <html><head>
     <title>NBA Statistics Viewer</title>
-    <!-- vendor this? -->
+    <!-- vendor these? -->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.4.0/dist/sql-wasm.js" integrity="sha512-8oJoeo0ykAzuJzQFJDnwz9t4Rr+1xue7LFX+kr0NJMpOHH9QJPC563If+sakheUe3QbLwTTgXIGPC6YZTwp7Iw==" crossorigin="anonymous"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.4.0/dist/sql-wasm.js"></script>
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="viewer.js"></script>
 <style>
@@ -32,20 +34,6 @@ text.pointLabel {
       </span>
     </div>
     <div style="margin-top: 20px">
-      <span>Year: <select id="yearChooser">
-        <option value="2021">2021</option>
-        <option value="2020">2020</option>
-        <option value="2019">2019</option>
-        <option value="2018">2018</option>
-        <option value="2017">2017</option>
-        <option value="2016">2016</option>
-        <option value="2015">2015</option>
-        <option value="2014">2014</option>
-        <option value="2013">2013</option>
-        <option value="2012">2012</option>
-        <option value="2011">2011</option>
-        <option value="2010">2010</option>
-        </select></span>
       <span style="margin-left: 40px">
         <label for="teamcolors">Team Colors</label><input type="checkbox" id="teamcolors" checked></input>
       </span>
@@ -62,21 +50,31 @@ text.pointLabel {
       </span>
     </div>
     <div style="margin-top: 20px">
-      filter: <input type="text"
+      filter: <textarea
         id="filter"
-        value="quantile(player, 'fga', 66)"
-        style="width: 500px"></input>
+        value=""
+        rows=10
+        cols=100
+        style="width: 500px">
+-- select the top 2/3 of the league by fga
+with player_stats as (
+  select *, ntile(100) over (order by fga) as fga_pctile from players
+)
+select * from player_stats
+where fga_pctile > 95;
+      </textarea>
       <span style="margin-left: 40px">
         <button id="applyFilter">filter</button>
         <p>
         The filter syntax is a work in progress, and I'll add some UI eventually, but here's some you can try:
         <ul>
-          <li><pre>player.usg_pct &gt; 26 &amp;&amp; player.fga &gt; 80</pre></li>
-          <li><pre>['BOS', 'MIA', 'BRK'].indexOf(player.team) != -1 &amp;&amp; player.fga &gt; 30</pre></li>
+          <li><pre>select * from players where usg_pct &gt; 26 and fga &gt; 80</pre></li>
+          <li><pre>select * from players where team in ('BOS', 'MIA', 'BRK')</pre></li>
           <li><pre>player.team == 'BOS'</pre></li>
           <li><pre>quantile(player, 'fga', 80) || quantile(player, 'trb', 80)</pre></li>
           <li><pre>player.pts_per_g &gt; 20</pre></li>
         </ul>
+        <a href="https://www.sqlite.org/windowfunctions.html">sqlite window functions documentation</a>
       </span>
     </div>
     <a href="https://github.com/llimllib/nbastats/">source code</a>
