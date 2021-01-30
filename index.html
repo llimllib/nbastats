@@ -70,9 +70,14 @@ where fga_pctile > 95;
         <ul>
           <li><pre>select * from players where usg_pct &gt; 26 and fga &gt; 80</pre></li>
           <li><pre>select * from players where team in ('BOS', 'MIA', 'BRK')</pre></li>
-          <li><pre>player.team == 'BOS'</pre></li>
-          <li><pre>quantile(player, 'fga', 80) || quantile(player, 'trb', 80)</pre></li>
-          <li><pre>player.pts_per_g &gt; 20</pre></li>
+          <li><pre>with player_stats as (
+  select *, ntile(100) over (order by fga) as fga_pctile,
+            ntile(100) over (order by trb) as trb_pctile
+  from players
+)
+select * from player_stats
+where fga_pctile &gt; 80 or trb_pctile &gt; 80</pre></li>
+          <li><pre>select * from players where pts_per_g &gt; 20</pre></li>
         </ul>
         <a href="https://www.sqlite.org/windowfunctions.html">sqlite window functions documentation</a>
       </span>
