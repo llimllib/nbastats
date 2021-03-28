@@ -1,0 +1,40 @@
+<html><head>
+    <title>NBA Statistics Viewer</title>
+    <!-- vendor this? -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="viewer.js"></script>
+<style>
+pre {
+  margin: 0px;
+}
+text.label {
+  font: 12px sans-serif;
+}
+text.pointLabel {
+  font: 10px sans-serif;
+}
+.tooltip {
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple   Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  background: rgba(69,77,93,.9);
+  border-radius: .1rem;
+  color: #fff;
+  display: block;
+  font-size: 14px;
+  max-width: 320px;
+  padding: .2rem .4rem;
+  position: absolute;
+  text-overflow: ellipsis;
+  white-space: pre;
+  z-index: 300;
+  visibility: hidden;
+}
+</style>
+  </head>
+  <body>
+    <div>
+      <svg id="canvas" width="800" height="800"></svg>
+    </div>
+    <div class="tooltip" style="position: absolute; visibility: hidden"></div>
+    <a href="https://github.com/llimllib/nbastats/">source code</a>
+  </body>
+</html>
