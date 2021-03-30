@@ -16,25 +16,20 @@ function graph(stats) {
   const oext = d3.extent(stats, d => d.off_rtg),
     dext = d3.extent(stats, d => d.def_rtg),
     ocenter = (oext[0] + oext[1]) / 2,
-    dcenter = (dext[0] + dext[1]) / 2,
-    // store the sin and cos of 45*. Of course they're equal, but it keeps the
-    // equation clearer to leave them both here
-    sin_th = Math.sin(-Math.PI/4),
-    cos_th = Math.cos(-Math.PI/4);
+    dcenter = (dext[0] + dext[1]) / 2;
 
-  const xt = (x, y) => {
-    return (x - ocenter) * cos_th - (y - dcenter) * sin_th;
+  const xt = (x, y, theta) => {
+    return (x - ocenter) * Math.cos(theta) - (y - dcenter) * Math.sin(theta);
   }
 
-  const yt = (x, y) => {
-    return (x - ocenter) * sin_th + (y - dcenter) * cos_th;
+  const yt = (x, y, theta) => {
+    return (x - ocenter) * Math.sin(theta) + (y - dcenter) * Math.cos(theta);
   }
 
-  // this doesn't work because I'm rotating around the (0,0) origin! need to rotate around the center, but I don't know the center
-  // I now have the center I need to translate to
+  // rotate the off_rtg and def_rtg around the center of the rating space
   stats.forEach(d => {
-    d.off_rtg_trans = xt(d.off_rtg, d.def_rtg);
-    d.def_rtg_trans = yt(d.off_rtg, d.def_rtg);
+    d.off_rtg_trans = xt(d.off_rtg, d.def_rtg, -Math.PI / 4);
+    d.def_rtg_trans = yt(d.off_rtg, d.def_rtg, -Math.PI / 4);
   });
   console.log(stats.map(d => `${d.off_rtg_trans}, ${d.def_rtg_trans}`))
 
@@ -75,27 +70,29 @@ function graph(stats) {
     .attr("height", settings.logoSize)
     .attr("href", d => `../logos/${d.name}.svg`);
 
+  // Here's where this approach gets real tricky: generating the axis lines. This is super wrong because it's a PITA to find the y-intercept for the "x" axis lines.
+  // I'm going to try warping the square area instead.
   g.append("g")
     .attr("class", "xticks")
     .selectAll("line")
     .data([100, 105, 110, 115, 120, 125])
     .join("line")
-    .attr("x1", d => x(xt(d, dext[0])))
-    .attr("y1", d => y(yt(dext[0], d)))
-    .attr("x2", d => x(xt(d, dext[1])))
-    .attr("y2", d => y(yt(dext[1], d)))
+    .attr("x1", 0)
+    .attr("y1", d => y(d))
+    .attr("x2", settings.width)
+    .attr("y2", d => y(yt(settings.width, d)))
     .attr("stroke", "lightgray");
 
-  g.append("g")
-    .attr("class", "yticks")
-    .selectAll("line")
-    .data([100, 105, 110, 115, 120, 125])
-    .join("line")
-    .attr("x1", d => x(xt(oext[0], d)))
-    .attr("y1", d => y(yt(d, oext[0])))
-    .attr("x2", d => x(xt(oext[1], d)))
-    .attr("y2", d => y(yt(d, oext[1])))
-    .attr("stroke", "lightgray");
+  // g.append("g")
+  //   .attr("class", "yticks")
+  //   .selectAll("line")
+  //   .data([100, 105, 110, 115, 120, 125])
+  //   .join("line")
+  //   .attr("x1", d => x(xt(oext[0], d)))
+  //   .attr("y1", d => y(yt(d, oext[0])))
+  //   .attr("x2", d => x(xt(oext[1], d)))
+  //   .attr("y2", d => y(yt(d, oext[1])))
+  //   .attr("stroke", "lightgray");
 
   // tooltip modified from
   // https://next.observablehq.com/@giorgiofighera/histogram-with-tooltips-and-bars-highlighted-on-mouse-over
