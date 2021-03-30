@@ -2,8 +2,11 @@
     <title>NBA Statistics Viewer</title>
     <!-- vendor this? -->
     <script src="https://d3js.org/d3.v6.min.js"></script>
-    <script src="viewer.js"></script>
+    <script src="viewer2.js"></script>
 <style>
+body {
+  padding: 20px;
+}
 pre {
   margin: 0px;
 }
@@ -32,7 +35,7 @@ text.pointLabel {
   </head>
   <body>
     <div>
-      <svg id="canvas" width="800" height="800"></svg>
+      <svg id="canvas" width="600" height="600"></svg>
     </div>
     <div class="tooltip" style="position: absolute; visibility: hidden"></div>
     <a href="https://github.com/llimllib/nbastats/">source code</a>

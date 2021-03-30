@@ -2,18 +2,38 @@ const $ = (s) => document.querySelector(s);
 
 const settings = {
   padding: { left: 60, top: 60, right: 40, bottom: 40 },
-  width: 400,
-  height: 800,
-  size: 800,
+  width: 600,
+  height: 600,
   logoSize: 50,
 };
+
+function centeredText(txt, x, y, l1, l2) {
+  const h = txt.append("text")
+    .attr("y", y)
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "25px")
+    .attr("font-weight", "bold")
+    .attr("fill", "grey")
+    .attr("transform", `translate(${x})`);
+
+  h.append("tspan")
+    .attr("x", "0")
+    .attr("text-anchor", "middle")
+    .text(l1);
+  h.append("tspan")
+    .attr("x", "0")
+    .attr("dy", "25")
+    .attr("text-anchor", "middle")
+    .text(l2);
+}
 
 // stats should be a list of player objects
 function graph(stats) {
   const svg = d3.select('#canvas');
 
   // Rotate the stats through 45* and use that as the domain
-  const oext = d3.extent(stats, d => d.off_rtg),
+  const angle = -Math.PI / 4,
+    oext = d3.extent(stats, d => d.off_rtg),
     dext = d3.extent(stats, d => d.def_rtg),
     ocenter = (oext[0] + oext[1]) / 2,
     dcenter = (dext[0] + dext[1]) / 2;
@@ -28,13 +48,13 @@ function graph(stats) {
 
   // rotate the off_rtg and def_rtg around the center of the rating space
   stats.forEach(d => {
-    d.off_rtg_trans = xt(d.off_rtg, d.def_rtg, -Math.PI / 4);
-    d.def_rtg_trans = yt(d.off_rtg, d.def_rtg, -Math.PI / 4);
+    d.off_rtg_trans = xt(d.off_rtg, d.def_rtg, angle);
+    d.def_rtg_trans = yt(d.off_rtg, d.def_rtg, angle);
   });
   console.log(stats.map(d => `${d.off_rtg_trans}, ${d.def_rtg_trans}`))
 
   const toext = d3.extent(stats, d => d.off_rtg_trans),
-    omargin = (toext[1] - toext[0]) * .2,
+    omargin = (toext[1] - toext[0]) * .1,
     xmin = toext[0] - omargin,
     xmax = toext[1] + omargin;
 
@@ -43,7 +63,7 @@ function graph(stats) {
     .range([0, settings.width]);
 
   const tdext = d3.extent(stats, d => d.def_rtg_trans),
-    dmargin = (tdext[1] - tdext[0]) * .2,
+    dmargin = (tdext[1] - tdext[0]) * .1,
     ymin = tdext[0] - dmargin,
     ymax = tdext[1] + dmargin;
 
@@ -57,9 +77,40 @@ function graph(stats) {
   const yAxis = g => g
     .call(d3.axisLeft(y).tickSizeOuter(0));
 
-  const g = svg.append("g")
+  // TODO: figure out the actual lines instead of just using points that are
+  // definitely out of the range? it's kind of a PITA?
+  svg.append("g")
+    .attr("class", "xticks")
+    .selectAll("line")
+    .data([100, 105, 110, 115, 120, 125])
+    .join("line")
+    .attr("x1", d => x(xt(d, 0, angle)))
+    .attr("y1", d => y(yt(d, 0, angle)))
+    .attr("x2", d => x(xt(d, 200, angle)))
+    .attr("y2", d => y(yt(d, 200, angle)))
+    .attr("stroke", "lightgray");
 
-  g.append("g")
+  svg.append("g")
+    .attr("class", "xticks")
+    .selectAll("line")
+    .data([100, 105, 110, 115, 120, 125])
+    .join("line")
+    .attr("x1", d => x(xt(0, d, angle)))
+    .attr("y1", d => y(yt(0, d, angle)))
+    .attr("x2", d => x(xt(200, d, angle)))
+    .attr("y2", d => y(yt(200, d, angle)))
+    .attr("stroke", "lightgray");
+
+  const txt = svg.append("g")
+    .attr("class", "explanatory_text");
+
+  centeredText(txt, 50, 30, "Better", "Defense");
+  centeredText(txt, settings.width - 50, 30, "Better", "Offense");
+  centeredText(txt, 50, settings.height - 60, "Worse", "Offense");
+  centeredText(txt, settings.width - 50, settings.height - 60, "Worse", "Defense");
+
+  // Needs to be after the ticks to appear over them
+  svg.append("g")
     .attr("class", "logos")
     .selectAll("image")
     .data(stats)
@@ -69,30 +120,6 @@ function graph(stats) {
     .attr("width", settings.logoSize)
     .attr("height", settings.logoSize)
     .attr("href", d => `../logos/${d.name}.svg`);
-
-  // Here's where this approach gets real tricky: generating the axis lines. This is super wrong because it's a PITA to find the y-intercept for the "x" axis lines.
-  // I'm going to try warping the square area instead.
-  g.append("g")
-    .attr("class", "xticks")
-    .selectAll("line")
-    .data([100, 105, 110, 115, 120, 125])
-    .join("line")
-    .attr("x1", 0)
-    .attr("y1", d => y(d))
-    .attr("x2", settings.width)
-    .attr("y2", d => y(yt(settings.width, d)))
-    .attr("stroke", "lightgray");
-
-  // g.append("g")
-  //   .attr("class", "yticks")
-  //   .selectAll("line")
-  //   .data([100, 105, 110, 115, 120, 125])
-  //   .join("line")
-  //   .attr("x1", d => x(xt(oext[0], d)))
-  //   .attr("y1", d => y(yt(d, oext[0])))
-  //   .attr("x2", d => x(xt(oext[1], d)))
-  //   .attr("y2", d => y(yt(d, oext[1])))
-  //   .attr("stroke", "lightgray");
 
   // tooltip modified from
   // https://next.observablehq.com/@giorgiofighera/histogram-with-tooltips-and-bars-highlighted-on-mouse-over
