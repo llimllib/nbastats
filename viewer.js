@@ -37,6 +37,8 @@
 // * stats updated date
 // * show loading spinner
 // * add option to remove traded player stats maybe?
+// * fix transferred player bug: select "raptor defensive rating" as y axis and
+// you get a bunch of undefined coordinates and players at (0,0)
 
 const $ = (s) => document.querySelector(s);
 
@@ -50,6 +52,9 @@ const settings = {
   duration: 750,
   domainPadding: 0.05,
 };
+
+window.DATA_URL = 'https://cdn.billmill.org/nbastats';
+// window.DATA_URL = './data';
 
 function hover(event, tooltip, stats, scales, fields, delaunay, cells) {
   const [mx, my] = d3.pointer(event, this);
@@ -1161,7 +1166,7 @@ function prepare() {
 }
 
 async function changeYear(evt) {
-  const res = await fetch(`https://cdn.billmill.org/nbastats/${evt.target.value}/stats.json`);
+  const res = await fetch(`${window.DATA_URL}/${evt.target.value}/stats.json`);
   window.stats = await res.json();
 
   const fields = {
@@ -1171,7 +1176,7 @@ async function changeYear(evt) {
   };
 
   d3.selectAll('#canvas').html('');
-  graph(applyFilter(window.stats), fields);
+  graph(applyFilter(window.stats.players), fields);
 }
 
 function changeUseTeamColors(_) {
@@ -1182,7 +1187,7 @@ function changeUseTeamColors(_) {
   };
 
   d3.selectAll('#canvas').html('');
-  graph(applyFilter(window.stats), fields);
+  graph(applyFilter(window.stats.players), fields);
 }
 
 // return a function (player, field, n) -> bool that will return true if a
@@ -1221,12 +1226,12 @@ function updateSettings(_evt) {
   };
 
   d3.selectAll('#canvas').html('');
-  graph(applyFilter(window.stats), fields);
+  graph(applyFilter(window.stats.players), fields);
 }
 
 function updateAxes(svg) {
   return (_evt) => {
-    svg.update(applyFilter(window.stats), {
+    svg.update(applyFilter(window.stats.players), {
       x: $('#statx').value,
       y: $('#staty').value,
       r: $('#radius').value,
@@ -1235,7 +1240,7 @@ function updateAxes(svg) {
 }
 
 window.addEventListener('DOMContentLoaded', async (_evt) => {
-  const res = await fetch(`https://cdn.billmill.org/nbastats/2021/stats.json`);
+  const res = await fetch(`${window.DATA_URL}/2021/stats.json`);
   window.stats = await res.json();
 
   $('#settings-width').value = settings.width;
@@ -1245,7 +1250,7 @@ window.addEventListener('DOMContentLoaded', async (_evt) => {
 
   prepare();
 
-  const svg = graph(applyFilter(window.stats), {
+  const svg = graph(applyFilter(window.stats.players), {
     x: 'ts_pct',
     y: 'usg_pct',
     r: $('#radius').value,
