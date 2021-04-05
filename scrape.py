@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse
 import csv
+from datetime import datetime
 import json
 from os import mkdir, stat
 from os.path import isdir, isfile
@@ -40,7 +41,7 @@ def tryint(mayben):
         return int(mayben)
     except ValueError:
         try:
-            return float(mayben)
+            return round(float(mayben), 4)
         except ValueError:
             return mayben
 
@@ -139,7 +140,10 @@ def parse_team_stats(year):
         teamdata[shortname] = {**teamdata[shortname], **miscstats}
 
     output = f"data/{year}/team_stats.json"
-    json.dump(teamdata, open(output, "w"))
+    json.dump(
+        {"updated": datetime.utcnow().isoformat(), "teams": teamdata},
+        open(output, "w"),
+    )
 
 
 def parse_bbref_row(players, player):
@@ -265,7 +269,7 @@ def process_data(year_only=None, force_reprocess=False):
         log(f"processing {args.year_only} data")
         data[year_only] = parse_player_stats(year_only)
         parse_team_stats(year_only)
-        output = f"data/{year_only}/stats.json"
+        year = year_only
     else:
         for year in range(MIN_YEAR, MAX_YEAR):
             if not one_hour_old(f"data/{year}/totals.html") or force_reprocess:
@@ -279,7 +283,13 @@ def process_data(year_only=None, force_reprocess=False):
 
     for year in data:
         output = f"data/{year}/stats.json"
-        json.dump(list(data[year].values()), open(output, "w"))
+        json.dump(
+            {
+                "updated": datetime.utcnow().isoformat(),
+                "players": list(data[year].values()),
+            },
+            open(output, "w"),
+        )
 
 
 def main(args):
