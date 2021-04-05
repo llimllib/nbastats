@@ -1,8 +1,14 @@
 // TODO
+// * data series
+//   * we should be rendering _n_ series of data
+//   * you should be able to style each series as you wish
+//   * but they all should be shown on the same axes
 // * organize all the inputs
 //   * sections?
 //   * ability to open and close sections?
 //   * what's a comparable UI?
+//   * sorting, autocomplete? glossary?
+//     * I tried autocomplete and it wasn't a great experience at first blush
 // * show UI indication of legal filters
 // * permalinks to a graph with a given filter/year/resolution/etc
 // * select multiple years
@@ -15,8 +21,6 @@
 // * teams instead of players
 // * labels sometimes overlap each other, or dots
 //   * collision detect after labelling?
-// * there are a lot of stats - how to give the user better control of them?
-//   * sorting, autocomplete? glossary?
 // * ability to customize x and y domains
 // * handle players that are coincident better
 //   * right now we just have to ensure we ignore null cells anywhere they're used
@@ -34,18 +38,17 @@
 // * checkbox to show all labels no matter what
 // * the labels aren't quite where they should be
 // * playoffs vs regular season
-// * stats updated date
 // * show loading spinner
 // * add option to remove traded player stats maybe?
 // * fix transferred player bug: select "raptor defensive rating" as y axis and
-// you get a bunch of undefined coordinates and players at (0,0)
+//   you get a bunch of undefined coordinates and players at (0,0)
 
 const $ = (s) => document.querySelector(s);
 
 const settings = {
   padding: { left: 60, top: 60, right: 40, bottom: 40 },
-  width: 1024,
-  height: 768,
+  width: 800,
+  height: 800,
   dotRadius: 6,
   maxRadius: 16,
   minRadius: 4,
