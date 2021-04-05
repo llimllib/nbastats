@@ -13,4 +13,7 @@ lint:
 update:
 	./scrape.py
 
-.PHONY: serve publish lint update
+syncdata: update
+	s3cmd sync --acl-public --exclude='*' --include='*.json' data/ s3://llimllib/nbastats/
+
+.PHONY: serve publish lint syncdata update

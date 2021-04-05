@@ -35,6 +35,8 @@
 // * the labels aren't quite where they should be
 // * playoffs vs regular season
 // * stats updated date
+// * show loading spinner
+// * add option to remove traded player stats maybe?
 
 const $ = (s) => document.querySelector(s);
 
@@ -95,7 +97,7 @@ function orient(pos, r) {
 }
 
 function orientText(scales, fields) {
-  return function ([player, cell]) {
+  return function([player, cell]) {
     // if two players have the same stats on the selected dimension, the
     // voronoi cell will be null. Skip this player for now - do something more
     // intelligent with coincident players later
@@ -110,7 +112,7 @@ function orientText(scales, fields) {
           cx - scales.x(player[fields.x])
         ) /
           Math.PI) *
-          2
+        2
       ) +
         4) %
       4;
@@ -119,10 +121,10 @@ function orientText(scales, fields) {
       angle === 0
         ? orient('right', r)
         : angle === 3
-        ? orient('top', r)
-        : angle === 1
-        ? orient('bottom', r)
-        : orient('left', r)
+          ? orient('top', r)
+          : angle === 1
+            ? orient('bottom', r)
+            : orient('left', r)
     );
   };
 }
@@ -168,7 +170,7 @@ function pointLabels(svg, stats, scales, fields, cells) {
     )
     .text(([p, _]) => p.name);
 
-  return function (stats, scales, fields, cells) {
+  return function(stats, scales, fields, cells) {
     var orienter = orientText(scales, fields);
 
     // TODO the label immediately changes orientation instead of
@@ -285,7 +287,7 @@ function axes(svg, stats, scales) {
     .call((g) => g.selectAll('.tick text').attr('dy', -4).attr('x', 4));
 
   // return an update function
-  return function (stats, scales, fields) {
+  return function(stats, scales, fields) {
     const xAxType = statMeta[fields.x].type;
     if (xAxType == 'categorical') {
       xaxis.scale(scales.x).tickFormat((p) => p);
@@ -304,7 +306,7 @@ function axes(svg, stats, scales) {
       .transition()
       .duration(settings.duration)
       .call(xaxis)
-      .on('start', function () {
+      .on('start', function() {
         xaxisg.select('.domain').remove(); // https://stackoverflow.com/a/50254240/42559
       })
       .call((g) => g.select('.domain').remove())
@@ -365,7 +367,7 @@ function points(svg, stats, scales, fields) {
       .attr('r', (d) => scales.r(d[fields.r]));
   }
 
-  return function (stats, scales, fields) {
+  return function(stats, scales, fields) {
     useTeamColors = $('#teamcolors').checked;
     d3.selectAll('.player_label').remove();
 
@@ -468,7 +470,7 @@ function axisLabels(svg, fields) {
     rlabel.style('display', 'none');
   }
 
-  return function (fields) {
+  return function(fields) {
     xlabel.text('→' + statMeta[fields.x].name);
     ylabel.text('↑ ' + statMeta[fields.y].name);
     // don't add a radius label if the value is constant
@@ -1159,7 +1161,7 @@ function prepare() {
 }
 
 async function changeYear(evt) {
-  const res = await fetch(`./data/${evt.target.value}/stats.json`);
+  const res = await fetch(`https://cdn.billmill.org/nbastats/${evt.target.value}/stats.json`);
   window.stats = await res.json();
 
   const fields = {
@@ -1186,7 +1188,7 @@ function changeUseTeamColors(_) {
 // return a function (player, field, n) -> bool that will return true if a
 // player is above the nth quantile in the given field and false otherwise
 function makeQuantiler(stats) {
-  return function (player, field, n) {
+  return function(player, field, n) {
     return player[field] > d3.quantile(stats, n / 100, (p) => p[field]);
   };
 }
@@ -1233,7 +1235,7 @@ function updateAxes(svg) {
 }
 
 window.addEventListener('DOMContentLoaded', async (_evt) => {
-  const res = await fetch('./data/2021/stats.json');
+  const res = await fetch(`https://cdn.billmill.org/nbastats/2021/stats.json`);
   window.stats = await res.json();
 
   $('#settings-width').value = settings.width;
