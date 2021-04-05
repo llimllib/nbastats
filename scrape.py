@@ -21,10 +21,15 @@ import requests
 # * get all-star data
 # * get rookie data
 # * explore saving data as a sqlite database instead and importing into javscript
+#   * I did this, but the queries for quantiles were so so painful. Possibly
+#   worth re-exploring?
+#   * Sadly, custom aggregate functions are not possible:
+#     https://github.com/sql-js/sql.js/issues/204
 # * handle playoff data
 #   * raptor breaks down data into regular season and playoff - currently we're
 #     ignoring playoff. I assume bbref has playoff data? we should scrape that
 #     too
+# * this is just way too slow, needs to be dsped up
 
 DEBUG = True
 MIN_YEAR = 2010
@@ -140,8 +145,11 @@ def parse_team_stats(year):
         teamdata[shortname] = {**teamdata[shortname], **miscstats}
 
     output = f"data/{year}/team_stats.json"
+
+    # python's isoformat is busted and convincing it that the time is UTC
+    # is so painful it's easier just to append a Z
     json.dump(
-        {"updated": datetime.utcnow().isoformat(), "teams": teamdata},
+        {"updated": datetime.utcnow().isoformat() + "Z", "teams": teamdata},
         open(output, "w"),
     )
 
@@ -283,9 +291,11 @@ def process_data(year_only=None, force_reprocess=False):
 
     for year in data:
         output = f"data/{year}/stats.json"
+        # python's isoformat is busted and convincing it that the time is UTC
+        # is so painful it's easier just to append a Z
         json.dump(
             {
-                "updated": datetime.utcnow().isoformat(),
+                "updated": datetime.utcnow().isoformat() + "Z",
                 "players": list(data[year].values()),
             },
             open(output, "w"),

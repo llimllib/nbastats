@@ -1169,6 +1169,10 @@ async function changeYear(evt) {
   const res = await fetch(`${window.DATA_URL}/${evt.target.value}/stats.json`);
   window.stats = await res.json();
 
+  $("#updated").innerHTML = "updated " + new Intl.DateTimeFormat([],
+    { dateStyle: 'medium', timeStyle: 'short' })
+    .format(Date.parse(window.stats.updated));
+
   const fields = {
     x: $('#statx').value,
     y: $('#staty').value,
@@ -1242,6 +1246,10 @@ function updateAxes(svg) {
 window.addEventListener('DOMContentLoaded', async (_evt) => {
   const res = await fetch(`${window.DATA_URL}/2021/stats.json`);
   window.stats = await res.json();
+
+  $("#updated").innerHTML = "updated " + new Intl.DateTimeFormat([],
+    { dateStyle: 'medium', timeStyle: 'short' })
+    .format(Date.parse(window.stats.updated));
 
   $('#settings-width').value = settings.width;
   $('#settings-height').value = settings.height;
