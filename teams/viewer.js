@@ -9,6 +9,9 @@ const settings = {
   logoSize: 50,
 };
 
+window.DATA_URL = 'https://cdn.billmill.org/nbastats';
+// window.DATA_URL = '../data';
+
 function centeredText(txt, x, y, l1, l2) {
   const h = txt.append("text")
     .attr("y", y)
@@ -148,7 +151,7 @@ function graph(stats) {
 }
 
 window.addEventListener('DOMContentLoaded', async (_evt) => {
-  const res = await fetch('../data/2021/team_stats.json');
+  const res = await fetch(`${window.DATA_URL}/2021/team_stats.json`);
   const statsObj = await res.json();
   window.stats = Object.values(statsObj.teams);
 
