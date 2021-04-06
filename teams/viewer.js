@@ -1,3 +1,5 @@
+// TODO:
+// * last 15 games only option
 const $ = (s) => document.querySelector(s);
 
 const settings = {
@@ -148,7 +150,7 @@ function graph(stats) {
 window.addEventListener('DOMContentLoaded', async (_evt) => {
   const res = await fetch('../data/2021/team_stats.json');
   const statsObj = await res.json();
-  window.stats = Object.values(statsObj);
+  window.stats = Object.values(statsObj.teams);
 
   graph(window.stats);
 });

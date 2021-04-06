@@ -30,6 +30,8 @@ import requests
 #     ignoring playoff. I assume bbref has playoff data? we should scrape that
 #     too
 # * this is just way too slow, needs to be dsped up
+# * ingest player salary data
+#   * https://www.basketball-reference.com/contracts/players.html
 
 DEBUG = True
 MIN_YEAR = 2010
