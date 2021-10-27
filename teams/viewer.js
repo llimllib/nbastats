@@ -151,7 +151,7 @@ function graph(stats) {
 }
 
 window.addEventListener('DOMContentLoaded', async (_evt) => {
-  const res = await fetch(`${window.DATA_URL}/2021/team_stats.json`);
+  const res = await fetch(`${window.DATA_URL}/2022/team_stats.json`);
   const statsObj = await res.json();
   window.stats = Object.values(statsObj.teams);
 
