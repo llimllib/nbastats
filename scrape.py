@@ -115,7 +115,7 @@ def parse_team_stats(year):
             )
             for t in team.find_all("td")
         }
-        name = BeautifulSoup(teamstats["team"], "html.parser").text
+        name = BeautifulSoup(teamstats["team"], "html.parser").text.rstrip("*")
         shortname = re.search("teams/(.*?)/", teamstats["team"]).group(1)
 
         teamstats["name"] = name
@@ -131,7 +131,7 @@ def parse_team_stats(year):
             )
             for t in team.find_all("td")
         }
-        name = BeautifulSoup(miscstats["team"], "html.parser").text
+        name = BeautifulSoup(miscstats["team"], "html.parser").text.rstrip("*")
         shortname = re.search("teams/(.*?)/", miscstats["team"]).group(1)
 
         teamdata[shortname] = {**teamdata[shortname], **miscstats}
