@@ -1247,7 +1247,7 @@ function updateAxes(svg) {
 }
 
 window.addEventListener('DOMContentLoaded', async (_evt) => {
-  const res = await fetch(`${window.DATA_URL}/2021/stats.json`);
+  const res = await fetch(`${window.DATA_URL}/2022/stats.json`);
   window.stats = await res.json();
 
   $("#updated").innerHTML = "updated " + new Intl.DateTimeFormat([],
