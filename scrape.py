@@ -3,10 +3,11 @@ import argparse
 import csv
 from datetime import datetime
 import json
-from os import mkdir, stat
+from os import makedirs, stat
 from os.path import isdir, isfile
 import re
 from time import time
+from ipdb import launch_ipdb_on_exception
 
 from bs4 import BeautifulSoup
 import requests
@@ -35,7 +36,7 @@ import requests
 
 DEBUG = True
 MIN_YEAR = 2010
-MAX_YEAR = 2022
+MAX_YEAR = 2023
 
 
 def log(msg):
@@ -70,7 +71,7 @@ def save(url, fname):
 
 def get_bbref_data(year, datadir):
     if not isdir(datadir):
-        mkdir(datadir)
+        makedirs(datadir)
 
     log(f"getting {year} data in {datadir}")
 
@@ -106,13 +107,7 @@ def parse_team_stats(year):
 
     soup = BeautifulSoup(open(f"{datadir}/teams.html"), "html.parser")
 
-    # bbref keeps the table in a comment, and then uses javascript to
-    # actually put it on a page - pull out the table and parse it
-    team_stats_container = soup.find("div", id="all_team-stats-base")
-    team_stats = BeautifulSoup(
-        re.findall(r"<!--(.*?)-->", str(team_stats_container), re.M | re.S)[0],
-        "html.parser",
-    )
+    team_stats = soup.find("div", id="all_totals_team-opponent")
     for team in team_stats.find_all("tr")[1:31]:
         teamstats = {
             t["data-stat"].replace("-", "_"): tryint(
@@ -120,20 +115,15 @@ def parse_team_stats(year):
             )
             for t in team.find_all("td")
         }
-        name = BeautifulSoup(teamstats["team_name"], "html.parser").text
-        shortname = re.search("teams/(.*?)/", teamstats["team_name"]).group(1)
+        name = BeautifulSoup(teamstats["team"], "html.parser").text
+        shortname = re.search("teams/(.*?)/", teamstats["team"]).group(1)
 
         teamstats["name"] = name
         teamstats["shortname"] = shortname
 
         teamdata[shortname] = teamstats
 
-    # bbref keeps the table in a comment, and then uses javascript to
-    # actually put it on a page - pull out the table and parse it
-    misc_container = soup.find("div", id="all_misc_stats")
-    misc_stats = BeautifulSoup(
-        re.findall(r"<!--(.*?)-->", str(misc_container), re.M | re.S)[0], "html.parser",
-    )
+    misc_stats = soup.find("div", id="all_advanced_team")
     for team in misc_stats.find_all("tr")[2:32]:
         miscstats = {
             t["data-stat"].replace("-", "_"): tryint(
@@ -141,8 +131,8 @@ def parse_team_stats(year):
             )
             for t in team.find_all("td")
         }
-        name = BeautifulSoup(miscstats["team_name"], "html.parser").text
-        shortname = re.search("teams/(.*?)/", miscstats["team_name"]).group(1)
+        name = BeautifulSoup(miscstats["team"], "html.parser").text
+        shortname = re.search("teams/(.*?)/", miscstats["team"]).group(1)
 
         teamdata[shortname] = {**teamdata[shortname], **miscstats}
 
@@ -210,7 +200,7 @@ def download_data(force_download=False, year_only=None):
     if not isdir("data/raptor") or force_download:
         log("downloading raptor")
         try:
-            mkdir("data/raptor")
+            makedirs("data/raptor")
         except FileExistsError:
             pass
 
@@ -346,4 +336,5 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    main(args)
+    with launch_ipdb_on_exception():
+        main(args)
