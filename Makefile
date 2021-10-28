@@ -27,4 +27,11 @@ freeze:
 		pip freeze > requirements.txt && \
 		deactivate
 
-.PHONY: serve publish lint syncdata update requirements freeze
+# TODO: I'd like to run this on my remote server but I don't want to deal with
+# setting up doctl
+flush:
+	doctl compute cdn flush \
+		$$(doctl compute cdn list --format ID | tail -n1) \
+		--files nbastats/*
+
+.PHONY: serve publish lint syncdata update requirements freeze flush
