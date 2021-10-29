@@ -186,7 +186,7 @@ def download_data(force_download=False, year_only=None):
 
             if not isdir(datadir) or force_download:
                 get_bbref_data(year, datadir)
-            elif year == 2021 and one_hour_old(f"{datadir}/totals.html"):
+            elif year == 2022 and one_hour_old(f"{datadir}/totals.html"):
                 get_bbref_data(year, datadir)
             else:
                 continue
@@ -220,7 +220,7 @@ def download_data(force_download=False, year_only=None):
     ):
         log("downloading latest raptor")
         save(
-            "https://projects.fivethirtyeight.com/nba-model/2021/latest_RAPTOR_by_team.csv",
+            "https://projects.fivethirtyeight.com/nba-model/2022/latest_RAPTOR_by_team.csv",
             "data/raptor/latest_RAPTOR.csv",
         )
 
