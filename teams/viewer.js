@@ -87,7 +87,7 @@ function graph(stats) {
   svg.append("g")
     .attr("class", "xticks")
     .selectAll("line")
-    .data([100, 105, 110, 115, 120, 125])
+    .data([95, 100, 105, 110, 115, 120, 125])
     .join("line")
     .attr("x1", d => x(xt(d, 0, angle)))
     .attr("y1", d => y(yt(d, 0, angle)))
@@ -96,9 +96,9 @@ function graph(stats) {
     .attr("stroke", "lightgray");
 
   svg.append("g")
-    .attr("class", "xticks")
+    .attr("class", "yticks")
     .selectAll("line")
-    .data([100, 105, 110, 115, 120, 125])
+    .data([95, 100, 105, 110, 115, 120, 125])
     .join("line")
     .attr("x1", d => x(xt(0, d, angle)))
     .attr("y1", d => y(yt(0, d, angle)))
