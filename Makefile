@@ -34,12 +34,15 @@ flush:
 		$$(doctl compute cdn list --format ID | tail -n1) \
 		--files nbastats/*
 
-dist/viewer_duckdb.js: duckdb.js
-	./node_modules/.bin/esbuild viewer.js --bundle --outfile=dist/viewer_duckdb.js
+dist/viewer_duckdb.js: duckdb.js package-lock.json
+	./node_modules/.bin/esbuild viewer.js \
+		--bundle \
+		--format=esm # iife | cjs | esm \
+		--outfile=dist/viewer_duckdb.js
 
 wasm: dist/viewer_duckdb.js
 
 clean:
-	rm dist/*
+	rm -f dist/*
 
 .PHONY: serve publish lint update syncdata requirements freeze flush wasm clean
