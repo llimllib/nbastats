@@ -18,5 +18,8 @@
   "homepage": "https://github.com/llimllib/nbastats#readme",
   "devDependencies": {
     "eslint": "^7.18.0"
+  },
+  "dependencies": {
+    "@duckdb/duckdb-wasm": "^0.1.11"
   }
 }
