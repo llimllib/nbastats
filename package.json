@@ -20,6 +20,15 @@
     "eslint": "^7.18.0"
   },
   "dependencies": {
-    "@duckdb/duckdb-wasm": "^0.1.11"
+    "@duckdb/duckdb-wasm": "^0.1.11",
+    "apache-arrow": "^6.0.0",
+    "crypto": "^1.0.1",
+    "esbuild": "^0.13.10",
+    "fast-glob": "^3.2.7",
+    "fs": "^0.0.1-security",
+    "os": "^0.1.2",
+    "path": "^0.12.7",
+    "stream": "^0.0.2",
+    "wasm-feature-detect": "^1.2.11"
   }
 }

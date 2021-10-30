@@ -1,3 +1,5 @@
+import * as duckdb from '@duckdb/duckdb-wasm/dist/duckdb-esm.js';
+
 // TODO
 // * data series
 //   * we should be rendering _n_ series of data
