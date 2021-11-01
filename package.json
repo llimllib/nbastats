@@ -22,12 +22,7 @@
   "dependencies": {
     "@apache-arrow/esnext-esm": "^6.0.0",
     "@duckdb/duckdb-wasm": "^0.1.11",
-    "crypto": "^1.0.1",
     "esbuild": "^0.13.10",
-    "fast-glob": "^3.2.7",
-    "fs": "^0.0.1-security",
-    "os": "^0.1.2",
-    "path": "^0.12.7",
     "wasm-feature-detect": "^1.2.11"
   }
 }
