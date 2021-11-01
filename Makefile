@@ -34,11 +34,8 @@ flush:
 		$$(doctl compute cdn list --format ID | tail -n1) \
 		--files nbastats/*
 
-dist/viewer_duckdb.js: duckdb.js package-lock.json
-	./node_modules/.bin/esbuild viewer.js \
-		--bundle \
-		--format=esm # iife | cjs | esm \
-		--outfile=dist/viewer_duckdb.js
+dist/viewer_duckdb.js: viewer.js package-lock.json
+	node build.mjs
 
 wasm: dist/viewer_duckdb.js
 
