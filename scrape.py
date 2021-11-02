@@ -7,10 +7,15 @@ from os import makedirs, stat
 from os.path import isdir, isfile
 import re
 from time import time
+from typing import Dict, Tuple, Any
 from ipdb import launch_ipdb_on_exception
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, element
 import requests
+import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
+
 
 # TODO
 # * download team logos
@@ -146,8 +151,10 @@ def parse_team_stats(year):
     )
 
 
-def parse_bbref_row(players, player):
-    ignore = ["bpm-dum", "ws-dum"]
+def parse_bbref_row(
+    players: Dict[Tuple[str, str], Dict[Any, Any]], player: element.Tag
+):
+    ignore = ["bpm-dum", "ws-dum", "DUMMY"]
     stats = {
         t["data-stat"].replace("-", "_"): tryint("".join(str(c) for c in t.children))
         for t in player.find_all("td")
@@ -164,7 +171,7 @@ def parse_bbref_row(players, player):
         players[key] = {**players[key], **stats}
 
 
-def parse_player_stats(year):
+def parse_player_stats(year: str) -> [Dict[Any, Any]]:
     datadir = f"data/{year}"
 
     players = {}
@@ -176,7 +183,7 @@ def parse_player_stats(year):
         for player in soup.find_all("tr", {"class": player_row}):
             parse_bbref_row(players, player)
 
-    return players
+    return players.values()
 
 
 def download_data(force_download=False, year_only=None):
@@ -262,12 +269,12 @@ def parse_raptor_stats(data):
                 data[year][(pid, team)][key] = tryint(row[key])
 
 
-def process_data(year_only=None, force_reprocess=False):
-    # data[year:int] => {(bb_ref_id, team): {stats}}
-    data = {}
+def process_data(year_only: str = None, force_reprocess: bool = False):
+    """Process the requested years' data and write it out as a parquet file"""
+    data = []
     if year_only:
         log(f"processing {args.year_only} data")
-        data[year_only] = parse_player_stats(year_only)
+        data += parse_player_stats(year_only)
         parse_team_stats(year_only)
         year = year_only
     else:
@@ -275,23 +282,16 @@ def process_data(year_only=None, force_reprocess=False):
             if not one_hour_old(f"data/{year}/totals.html") or force_reprocess:
                 log(f"processing {year} data")
 
-                data[year] = parse_player_stats(year)
+                data += parse_player_stats(year)
                 parse_team_stats(year)
 
     log("processing raptor")
     parse_raptor_stats(data)
 
-    for year in data:
-        output = f"data/{year}/stats.json"
-        # python's isoformat is busted and convincing it that the time is UTC
-        # is so painful it's easier just to append a Z
-        json.dump(
-            {
-                "updated": datetime.utcnow().isoformat() + "Z",
-                "players": list(data[year].values()),
-            },
-            open(output, "w"),
-        )
+    output = "data/stats.parquet"
+    df = pd.DataFrame(data)
+    table = pa.Table.from_pandas(df)
+    pq.write_table(table, output)
 
 
 def main(args):
