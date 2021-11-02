@@ -743,19 +743,19 @@ const statMeta = {
     type: 'numeric',
   },
   ast_pct: {
-    name: '',
+    name: 'Assist %',
     type: 'numeric',
   },
   stl_pct: {
-    name: '',
+    name: 'Steal %',
     type: 'numeric',
   },
   blk_pct: {
-    name: '',
+    name: 'Block %',
     type: 'numeric',
   },
   tov_pct: {
-    name: '',
+    name: 'Turnover %',
     type: 'numeric',
   },
   usg_pct: {
