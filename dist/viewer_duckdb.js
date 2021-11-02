@@ -743,42 +743,42 @@ var [BigUint64ArrayCtor, BigUint64ArrayAvailable] = (() => {
   }
   return typeof BigUint64Array !== "undefined" ? [BigUint64Array, true] : [BigUint64ArrayUnavailable, false];
 })();
-var isNumber = (x) => typeof x === "number";
-var isBoolean = (x) => typeof x === "boolean";
-var isFunction = (x) => typeof x === "function";
-var isObject = (x) => x != null && Object(x) === x;
-var isPromise = (x) => {
-  return isObject(x) && isFunction(x.then);
+var isNumber = (x2) => typeof x2 === "number";
+var isBoolean = (x2) => typeof x2 === "boolean";
+var isFunction = (x2) => typeof x2 === "function";
+var isObject = (x2) => x2 != null && Object(x2) === x2;
+var isPromise = (x2) => {
+  return isObject(x2) && isFunction(x2.then);
 };
-var isIterable = (x) => {
-  return isObject(x) && isFunction(x[Symbol.iterator]);
+var isIterable = (x2) => {
+  return isObject(x2) && isFunction(x2[Symbol.iterator]);
 };
-var isAsyncIterable = (x) => {
-  return isObject(x) && isFunction(x[Symbol.asyncIterator]);
+var isAsyncIterable = (x2) => {
+  return isObject(x2) && isFunction(x2[Symbol.asyncIterator]);
 };
-var isArrowJSON = (x) => {
-  return isObject(x) && isObject(x["schema"]);
+var isArrowJSON = (x2) => {
+  return isObject(x2) && isObject(x2["schema"]);
 };
-var isIteratorResult = (x) => {
-  return isObject(x) && "done" in x && "value" in x;
+var isIteratorResult = (x2) => {
+  return isObject(x2) && "done" in x2 && "value" in x2;
 };
-var isFileHandle = (x) => {
-  return isObject(x) && isFunction(x["stat"]) && isNumber(x["fd"]);
+var isFileHandle = (x2) => {
+  return isObject(x2) && isFunction(x2["stat"]) && isNumber(x2["fd"]);
 };
-var isFetchResponse = (x) => {
-  return isObject(x) && isReadableDOMStream(x["body"]);
+var isFetchResponse = (x2) => {
+  return isObject(x2) && isReadableDOMStream(x2["body"]);
 };
-var isWritableDOMStream = (x) => {
-  return isObject(x) && isFunction(x["abort"]) && isFunction(x["getWriter"]) && !(x instanceof ReadableInterop);
+var isWritableDOMStream = (x2) => {
+  return isObject(x2) && isFunction(x2["abort"]) && isFunction(x2["getWriter"]) && !(x2 instanceof ReadableInterop);
 };
-var isReadableDOMStream = (x) => {
-  return isObject(x) && isFunction(x["cancel"]) && isFunction(x["getReader"]) && !(x instanceof ReadableInterop);
+var isReadableDOMStream = (x2) => {
+  return isObject(x2) && isFunction(x2["cancel"]) && isFunction(x2["getReader"]) && !(x2 instanceof ReadableInterop);
 };
-var isWritableNodeStream = (x) => {
-  return isObject(x) && isFunction(x["end"]) && isFunction(x["write"]) && isBoolean(x["writable"]) && !(x instanceof ReadableInterop);
+var isWritableNodeStream = (x2) => {
+  return isObject(x2) && isFunction(x2["end"]) && isFunction(x2["write"]) && isBoolean(x2["writable"]) && !(x2 instanceof ReadableInterop);
 };
-var isReadableNodeStream = (x) => {
-  return isObject(x) && isFunction(x["read"]) && isFunction(x["pipe"]) && isBoolean(x["readable"]) && !(x instanceof ReadableInterop);
+var isReadableNodeStream = (x2) => {
+  return isObject(x2) && isFunction(x2["read"]) && isFunction(x2["pipe"]) && isBoolean(x2["readable"]) && !(x2 instanceof ReadableInterop);
 };
 
 // node_modules/@apache-arrow/esnext-esm/util/buffer.js
@@ -787,20 +787,20 @@ var SharedArrayBuf = typeof SharedArrayBuffer !== "undefined" ? SharedArrayBuffe
 function collapseContiguousByteRanges(chunks) {
   const result = chunks[0] ? [chunks[0]] : [];
   let xOffset, yOffset, xLen, yLen;
-  for (let x, y2, i = 0, j2 = 0, n = chunks.length; ++i < n; ) {
-    x = result[j2];
+  for (let x2, y2, i = 0, j2 = 0, n = chunks.length; ++i < n; ) {
+    x2 = result[j2];
     y2 = chunks[i];
-    if (!x || !y2 || x.buffer !== y2.buffer || y2.byteOffset < x.byteOffset) {
+    if (!x2 || !y2 || x2.buffer !== y2.buffer || y2.byteOffset < x2.byteOffset) {
       y2 && (result[++j2] = y2);
       continue;
     }
-    ({ byteOffset: xOffset, byteLength: xLen } = x);
+    ({ byteOffset: xOffset, byteLength: xLen } = x2);
     ({ byteOffset: yOffset, byteLength: yLen } = y2);
     if (xOffset + xLen < yOffset || yOffset + yLen < xOffset) {
       y2 && (result[++j2] = y2);
       continue;
     }
-    result[j2] = new Uint8Array(x.buffer, xOffset, yOffset - xOffset + yLen);
+    result[j2] = new Uint8Array(x2.buffer, xOffset, yOffset - xOffset + yLen);
   }
   return result;
 }
@@ -813,7 +813,7 @@ function memcpy(target, source, targetByteOffset = 0, sourceByteLength = source.
 }
 function joinUint8Arrays(chunks, size) {
   const result = collapseContiguousByteRanges(chunks);
-  const byteLength = result.reduce((x, b) => x + b.byteLength, 0);
+  const byteLength = result.reduce((x2, b) => x2 + b.byteLength, 0);
   let source, sliced, buffer;
   let offset = 0, index = -1;
   const length = Math.min(size || Infinity, byteLength);
@@ -875,8 +875,8 @@ var pump = (iterator) => {
   return iterator;
 };
 function* toArrayBufferViewIterator(ArrayCtor, source) {
-  const wrap = function* (x) {
-    yield x;
+  const wrap = function* (x2) {
+    yield x2;
   };
   const buffers = typeof source === "string" ? wrap(source) : ArrayBuffer.isView(source) ? wrap(source) : source instanceof ArrayBuffer ? wrap(source) : source instanceof SharedArrayBuf ? wrap(source) : !isIterable(source) ? wrap(source) : source;
   yield* pump(function* (it) {
@@ -900,8 +900,8 @@ async function* toArrayBufferViewAsyncIterator(ArrayCtor, source) {
   if (isPromise(source)) {
     return yield* toArrayBufferViewAsyncIterator(ArrayCtor, await source);
   }
-  const wrap = async function* (x) {
-    yield await x;
+  const wrap = async function* (x2) {
+    yield await x2;
   };
   const emit = async function* (source2) {
     yield* pump(function* (it) {
@@ -1177,7 +1177,7 @@ async function* fromNodeStream(stream) {
     events[1] = onEvent(stream, "error");
     do {
       events[2] = onEvent(stream, "readable");
-      [event, err] = await Promise.race(events.map((x) => x[2]));
+      [event, err] = await Promise.race(events.map((x2) => x2[2]));
       if (event === "error") {
         break;
       }
@@ -2783,59 +2783,59 @@ function popcnt_uint32(uint32) {
 
 // node_modules/@apache-arrow/esnext-esm/type.js
 var DataType = class {
-  static isNull(x) {
-    return x?.typeId === Type2.Null;
+  static isNull(x2) {
+    return x2?.typeId === Type2.Null;
   }
-  static isInt(x) {
-    return x?.typeId === Type2.Int;
+  static isInt(x2) {
+    return x2?.typeId === Type2.Int;
   }
-  static isFloat(x) {
-    return x?.typeId === Type2.Float;
+  static isFloat(x2) {
+    return x2?.typeId === Type2.Float;
   }
-  static isBinary(x) {
-    return x?.typeId === Type2.Binary;
+  static isBinary(x2) {
+    return x2?.typeId === Type2.Binary;
   }
-  static isUtf8(x) {
-    return x?.typeId === Type2.Utf8;
+  static isUtf8(x2) {
+    return x2?.typeId === Type2.Utf8;
   }
-  static isBool(x) {
-    return x?.typeId === Type2.Bool;
+  static isBool(x2) {
+    return x2?.typeId === Type2.Bool;
   }
-  static isDecimal(x) {
-    return x?.typeId === Type2.Decimal;
+  static isDecimal(x2) {
+    return x2?.typeId === Type2.Decimal;
   }
-  static isDate(x) {
-    return x?.typeId === Type2.Date;
+  static isDate(x2) {
+    return x2?.typeId === Type2.Date;
   }
-  static isTime(x) {
-    return x?.typeId === Type2.Time;
+  static isTime(x2) {
+    return x2?.typeId === Type2.Time;
   }
-  static isTimestamp(x) {
-    return x?.typeId === Type2.Timestamp;
+  static isTimestamp(x2) {
+    return x2?.typeId === Type2.Timestamp;
   }
-  static isInterval(x) {
-    return x?.typeId === Type2.Interval;
+  static isInterval(x2) {
+    return x2?.typeId === Type2.Interval;
   }
-  static isList(x) {
-    return x?.typeId === Type2.List;
+  static isList(x2) {
+    return x2?.typeId === Type2.List;
   }
-  static isStruct(x) {
-    return x?.typeId === Type2.Struct;
+  static isStruct(x2) {
+    return x2?.typeId === Type2.Struct;
   }
-  static isUnion(x) {
-    return x?.typeId === Type2.Union;
+  static isUnion(x2) {
+    return x2?.typeId === Type2.Union;
   }
-  static isFixedSizeBinary(x) {
-    return x?.typeId === Type2.FixedSizeBinary;
+  static isFixedSizeBinary(x2) {
+    return x2?.typeId === Type2.FixedSizeBinary;
   }
-  static isFixedSizeList(x) {
-    return x?.typeId === Type2.FixedSizeList;
+  static isFixedSizeList(x2) {
+    return x2?.typeId === Type2.FixedSizeList;
   }
-  static isMap(x) {
-    return x?.typeId === Type2.Map;
+  static isMap(x2) {
+    return x2?.typeId === Type2.Map;
   }
-  static isDictionary(x) {
-    return x?.typeId === Type2.Dictionary;
+  static isDictionary(x2) {
+    return x2?.typeId === Type2.Dictionary;
   }
   get typeId() {
     return Type2.NONE;
@@ -3182,7 +3182,7 @@ var Union_ = class extends DataType {
     return Type2.Union;
   }
   toString() {
-    return `${this[Symbol.toStringTag]}<${this.children.map((x) => `${x.type}`).join(` | `)}>`;
+    return `${this[Symbol.toStringTag]}<${this.children.map((x2) => `${x2.type}`).join(` | `)}>`;
   }
 };
 Union_[Symbol.toStringTag] = ((proto) => {
@@ -3326,7 +3326,7 @@ var Data = class {
     this.offset = Math.floor(Math.max(offset || 0, 0));
     this.length = Math.floor(Math.max(length || 0, 0));
     this._nullCount = Math.floor(Math.max(nullCount || 0, -1));
-    this.childData = (childData || []).map((x) => x instanceof Data ? x : x.data);
+    this.childData = (childData || []).map((x2) => x2 instanceof Data ? x2 : x2.data);
     let buffer;
     if (buffers instanceof Data) {
       this.stride = buffers.stride;
@@ -3519,25 +3519,25 @@ Data.prototype.childData = Object.freeze([]);
 
 // node_modules/@apache-arrow/esnext-esm/util/pretty.js
 var undf = void 0;
-function valueToString(x) {
-  if (x === null) {
+function valueToString(x2) {
+  if (x2 === null) {
     return "null";
   }
-  if (x === undf) {
+  if (x2 === undf) {
     return "undefined";
   }
-  switch (typeof x) {
+  switch (typeof x2) {
     case "number":
-      return `${x}`;
+      return `${x2}`;
     case "bigint":
-      return `${x}`;
+      return `${x2}`;
     case "string":
-      return `"${x}"`;
+      return `"${x2}"`;
   }
-  if (typeof x[Symbol.toPrimitive] === "function") {
-    return x[Symbol.toPrimitive]("string");
+  if (typeof x2[Symbol.toPrimitive] === "function") {
+    return x2[Symbol.toPrimitive]("string");
   }
-  return ArrayBuffer.isView(x) ? `[${x}]` : JSON.stringify(x);
+  return ArrayBuffer.isView(x2) ? `[${x2}]` : JSON.stringify(x2);
 }
 
 // node_modules/@apache-arrow/esnext-esm/builder/valid.js
@@ -3548,11 +3548,11 @@ function createIsValidFunction(nullValues) {
     };
   }
   let fnBody = "";
-  const noNaNs = nullValues.filter((x) => x === x);
+  const noNaNs = nullValues.filter((x2) => x2 === x2);
   if (noNaNs.length > 0) {
     fnBody = `
-    switch (x) {${noNaNs.map((x) => `
-        case ${valueToCase(x)}:`).join("")}
+    switch (x) {${noNaNs.map((x2) => `
+        case ${valueToCase(x2)}:`).join("")}
             return false;
     }`;
   }
@@ -3563,13 +3563,13 @@ ${fnBody}`;
   return new Function(`x`, `${fnBody}
 return true;`);
 }
-function valueToCase(x) {
-  if (typeof x !== "bigint") {
-    return valueToString(x);
+function valueToCase(x2) {
+  if (typeof x2 !== "bigint") {
+    return valueToString(x2);
   } else if (BigIntAvailable) {
-    return `${valueToString(x)}n`;
+    return `${valueToString(x2)}n`;
   }
-  return `"${valueToString(x)}"`;
+  return `"${valueToString(x2)}"`;
 }
 
 // node_modules/@apache-arrow/esnext-esm/builder/buffer.js
@@ -4126,11 +4126,11 @@ __export(bn_exports, {
   isArrowBigNumSymbol: () => isArrowBigNumSymbol
 });
 var isArrowBigNumSymbol = Symbol.for("isArrowBigNum");
-function BigNum(x, ...xs) {
+function BigNum(x2, ...xs) {
   if (xs.length === 0) {
-    return Object.setPrototypeOf(toArrayBufferView(this["TypedArray"], x), this.constructor.prototype);
+    return Object.setPrototypeOf(toArrayBufferView(this["TypedArray"], x2), this.constructor.prototype);
   }
-  return Object.setPrototypeOf(new this["TypedArray"](x, ...xs), this.constructor.prototype);
+  return Object.setPrototypeOf(new this["TypedArray"](x2, ...xs), this.constructor.prototype);
 }
 BigNum.prototype[isArrowBigNumSymbol] = true;
 BigNum.prototype.toJSON = function() {
@@ -4426,7 +4426,7 @@ var Schema2 = class {
     return `Schema<{ ${this.fields.map((f, i) => `${i}: ${f}`).join(", ")} }>`;
   }
   select(...columnNames) {
-    const names = columnNames.reduce((xs, x) => (xs[x] = true) && xs, Object.create(null));
+    const names = columnNames.reduce((xs, x2) => (xs[x2] = true) && xs, Object.create(null));
     return new Schema2(this.fields.filter((f) => names[f.name]), this.metadata);
   }
   selectAt(...columnIndices) {
@@ -4664,7 +4664,7 @@ var DenseUnionBuilder = class extends UnionBuilder {
 // node_modules/@apache-arrow/esnext-esm/visitor.js
 var Visitor = class {
   visitMany(nodes, ...args) {
-    return nodes.map((node, i) => this.visit(node, ...args.map((x) => x[i])));
+    return nodes.map((node, i) => this.visit(node, ...args.map((x2) => x2[i])));
   }
   visit(...args) {
     return this.getVisitFn(args[0], false).apply(this, args);
@@ -5019,9 +5019,9 @@ var setEpochMsToNanosecondsLong = (data, index, epochMs) => {
   data[index + 1] = epochMs * 1e6 / 4294967296 | 0;
 };
 var setVariableWidthBytes = (values, valueOffsets, index, value) => {
-  const { [index]: x, [index + 1]: y2 } = valueOffsets;
-  if (x != null && y2 != null) {
-    values.set(value.subarray(0, y2 - x), x);
+  const { [index]: x2, [index + 1]: y2 } = valueOffsets;
+  if (x2 != null && y2 != null) {
+    values.set(value.subarray(0, y2 - x2), x2);
   }
 };
 var setBool2 = ({ offset, values }, index, val) => {
@@ -6295,7 +6295,7 @@ var JSONVectorLoader = class extends VectorLoader {
     } else if (DataType.isUtf8(type)) {
       return encodeUtf8(sources[offset].join(""));
     }
-    return toArrayBufferView(Uint8Array, toArrayBufferView(type.ArrayType, sources[offset].map((x) => +x)));
+    return toArrayBufferView(Uint8Array, toArrayBufferView(type.ArrayType, sources[offset].map((x2) => +x2)));
   }
 };
 function binaryDataFromJSON(values) {
@@ -6384,7 +6384,7 @@ var Row = class {
   forEach(callbackfn, thisArg) {
     const ki = this.keys();
     const vi = this.values();
-    const callback = thisArg === void 0 ? callbackfn : (v2, k, m) => callbackfn.call(thisArg, v2, k, m);
+    const callback = thisArg === void 0 ? callbackfn : (v2, k, m2) => callbackfn.call(thisArg, v2, k, m2);
     const ktoi = this[kKeyToIdx] || (this[kKeyToIdx] = new Map());
     const itov = this[kIdxToVal] || (this[kIdxToVal] = new Array(this.size));
     for (let k, v2, i = 0, kr, vr; !((kr = ki.next()).done || (vr = vi.next()).done); ++i) {
@@ -6521,7 +6521,7 @@ var createRowProxy = (() => {
       return true;
     },
     ownKeys(row) {
-      return [...row.keys()].map((x) => `${x}`);
+      return [...row.keys()].map((x2) => `${x2}`);
     },
     has(row, key) {
       switch (key) {
@@ -6847,7 +6847,7 @@ function vectorFromTypedArray(array) {
 var selectArgs = (Ctor, vals) => _selectArgs(Ctor, vals, [], 0);
 var selectColumnArgs = (args) => {
   const [fields, values] = _selectFieldArgs(args, [[], []]);
-  return values.map((x, i) => x instanceof Column ? Column.new(x.field.clone(fields[i]), x) : x instanceof AbstractVector ? Column.new(fields[i], x) : isTypedArray(x) ? Column.new(fields[i], vectorFromTypedArray(x)) : Column.new(fields[i], []));
+  return values.map((x2, i) => x2 instanceof Column ? Column.new(x2.field.clone(fields[i]), x2) : x2 instanceof AbstractVector ? Column.new(fields[i], x2) : isTypedArray(x2) ? Column.new(fields[i], vectorFromTypedArray(x2)) : Column.new(fields[i], []));
 };
 var selectFieldArgs = (args) => _selectFieldArgs(args, [[], []]);
 var selectChunkArgs = (Ctor, vals) => _selectChunkArgs(Ctor, vals, [], 0);
@@ -7017,7 +7017,7 @@ var Chunked = class extends AbstractVector {
   get nullCount() {
     let nullCount = this._nullCount;
     if (nullCount < 0) {
-      this._nullCount = nullCount = this._chunks.reduce((x, { nullCount: nullCount2 }) => x + nullCount2, 0);
+      this._nullCount = nullCount = this._chunks.reduce((x2, { nullCount: nullCount2 }) => x2 + nullCount2, 0);
     }
     return nullCount;
   }
@@ -7025,7 +7025,7 @@ var Chunked = class extends AbstractVector {
     if (DataType.isDictionary(this._type)) {
       if (!this._indices) {
         const chunks = this._chunks;
-        this._indices = chunks.length === 1 ? chunks[0].indices : Chunked.concat(...chunks.map((x) => x.indices));
+        this._indices = chunks.length === 1 ? chunks[0].indices : Chunked.concat(...chunks.map((x2) => x2.indices));
       }
       return this._indices;
     }
@@ -8221,7 +8221,7 @@ function compareStruct(type, other) {
   return type === other || compareConstructor(type, other) && type.children.length === other.children.length && instance4.compareManyFields(type.children, other.children);
 }
 function compareUnion(type, other) {
-  return type === other || compareConstructor(type, other) && type.mode === other.mode && type.typeIds.every((x, i) => x === other.typeIds[i]) && instance4.compareManyFields(type.children, other.children);
+  return type === other || compareConstructor(type, other) && type.mode === other.mode && type.typeIds.every((x2, i) => x2 === other.typeIds[i]) && instance4.compareManyFields(type.children, other.children);
 }
 function compareDictionary(type, other) {
   return type === other || compareConstructor(type, other) && type.id === other.id && type.isOrdered === other.isOrdered && instance4.visit(type.indices, other.indices) && instance4.visit(type.dictionary, other.dictionary);
@@ -8353,7 +8353,7 @@ function assembleUnion(vector) {
       addBuffer.call(this, valueOffsets);
       return assembleNestedVector.call(this, vector);
     } else {
-      const maxChildTypeId = typeIds.reduce((x, y2) => Math.max(x, y2), typeIds[0]);
+      const maxChildTypeId = typeIds.reduce((x2, y2) => Math.max(x2, y2), typeIds[0]);
       const childLengths = new Int32Array(maxChildTypeId + 1);
       const childOffsets = new Int32Array(maxChildTypeId + 1).fill(-1);
       const shiftedOffsets = new Int32Array(length);
@@ -8454,7 +8454,7 @@ var RecordBatchWriter = class extends ReadableInterop {
   }
   writeAll(input) {
     if (isPromise(input)) {
-      return input.then((x) => this.writeAll(x));
+      return input.then((x2) => this.writeAll(x2));
     } else if (isAsyncIterable(input)) {
       return writeAllAsync(this, input);
     }
@@ -8627,7 +8627,7 @@ var RecordBatchStreamWriter = class extends RecordBatchWriter {
   static writeAll(input, options) {
     const writer = new RecordBatchStreamWriter(options);
     if (isPromise(input)) {
-      return input.then((x) => writer.writeAll(x));
+      return input.then((x2) => writer.writeAll(x2));
     } else if (isAsyncIterable(input)) {
       return writeAllAsync(writer, input);
     }
@@ -8638,7 +8638,7 @@ var RecordBatchFileWriter = class extends RecordBatchWriter {
   static writeAll(input) {
     const writer = new RecordBatchFileWriter();
     if (isPromise(input)) {
-      return input.then((x) => writer.writeAll(x));
+      return input.then((x2) => writer.writeAll(x2));
     } else if (isAsyncIterable(input)) {
       return writeAllAsync(writer, input);
     }
@@ -9198,8 +9198,8 @@ var epochDaysToDate = (data, index) => epochMillisecondsToDate(epochDaysToMs(dat
 var epochMillisecondsLongToDate = (data, index) => epochMillisecondsToDate(epochMillisecondsLongToMs(data, index));
 var getNull = (_vector, _index) => null;
 var getVariableWidthBytes = (values, valueOffsets, index) => {
-  const { [index]: x, [index + 1]: y2 } = valueOffsets;
-  return x != null && y2 != null ? values.subarray(x, y2) : null;
+  const { [index]: x2, [index + 1]: y2 } = valueOffsets;
+  return x2 != null && y2 != null ? values.subarray(x2, y2) : null;
 };
 var getBool2 = ({ offset, values }, index) => {
   const idx = offset + index;
@@ -9567,7 +9567,7 @@ ToArrayVisitor.prototype.visitMap = arrayOfVector;
 var instance8 = new ToArrayVisitor();
 
 // node_modules/@apache-arrow/esnext-esm/visitor/bytewidth.js
-var sum = (x, y2) => x + y2;
+var sum = (x2, y2) => x2 + y2;
 var variableWidthColumnErrorMessage = (type) => `Cannot compute the byte width of variable-width column ${type}`;
 var ByteWidthVisitor = class extends Visitor {
   visitNull(____) {
@@ -9957,8 +9957,8 @@ var Table = class extends Chunked {
     return this._length;
   }
   select(...columnNames) {
-    const nameToIndex = this._schema.fields.reduce((m, f, i) => m.set(f.name, i), new Map());
-    return this.selectAt(...columnNames.map((columnName) => nameToIndex.get(columnName)).filter((x) => x > -1));
+    const nameToIndex = this._schema.fields.reduce((m2, f, i) => m2.set(f.name, i), new Map());
+    return this.selectAt(...columnNames.map((columnName) => nameToIndex.get(columnName)).filter((x2) => x2 > -1));
   }
   selectAt(...columnIndices) {
     const schema = this._schema.selectAt(...columnIndices);
@@ -10021,8 +10021,8 @@ var RecordBatch3 = class extends StructVector {
   }
   static new(...args) {
     const [fs, xs] = selectFieldArgs(args);
-    const vs = xs.filter((x) => x instanceof AbstractVector);
-    return new RecordBatch3(...ensureSameLengthData(new Schema2(fs), vs.map((x) => x.data)));
+    const vs = xs.filter((x2) => x2 instanceof AbstractVector);
+    return new RecordBatch3(...ensureSameLengthData(new Schema2(fs), vs.map((x2) => x2.data)));
   }
   clone(data, children = this._children) {
     return new RecordBatch3(this._schema, data, children);
@@ -10041,8 +10041,8 @@ var RecordBatch3 = class extends StructVector {
     return this._dictionaries || (this._dictionaries = DictionaryCollector.collect(this));
   }
   select(...columnNames) {
-    const nameToIndex = this._schema.fields.reduce((m, f, i) => m.set(f.name, i), new Map());
-    return this.selectAt(...columnNames.map((columnName) => nameToIndex.get(columnName)).filter((x) => x > -1));
+    const nameToIndex = this._schema.fields.reduce((m2, f, i) => m2.set(f.name, i), new Map());
+    return this.selectAt(...columnNames.map((columnName) => nameToIndex.get(columnName)).filter((x2) => x2 > -1));
   }
   selectAt(...columnIndices) {
     const schema = this._schema.selectAt(...columnIndices);
@@ -11278,7 +11278,25 @@ RecordBatchWriter["throughDOM"] = recordBatchWriterThroughDOMStream;
 RecordBatchFileWriter["throughDOM"] = recordBatchWriterThroughDOMStream;
 RecordBatchStreamWriter["throughDOM"] = recordBatchWriterThroughDOMStream;
 
+// node_modules/wasm-feature-detect/dist/esm/index.js
+var bulkMemory = async () => WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 4, 1, 96, 0, 0, 3, 2, 1, 0, 5, 3, 1, 0, 1, 10, 14, 1, 12, 0, 65, 0, 65, 0, 65, 0, 252, 10, 0, 0, 11]));
+var exceptions = async () => WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 4, 1, 96, 0, 0, 3, 2, 1, 0, 10, 8, 1, 6, 0, 6, 64, 25, 11, 11]));
+var simd = async () => WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 96, 0, 1, 123, 3, 2, 1, 0, 10, 10, 1, 8, 0, 65, 0, 253, 15, 253, 98, 11]));
+var threads = () => (async (e) => {
+  try {
+    return typeof MessageChannel != "undefined" && new MessageChannel().port1.postMessage(new SharedArrayBuffer(1)), WebAssembly.validate(e);
+  } catch (e2) {
+    return false;
+  }
+})(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 4, 1, 96, 0, 0, 3, 2, 1, 0, 5, 4, 1, 3, 1, 1, 10, 11, 1, 9, 0, 65, 0, 254, 16, 2, 0, 26, 11]));
+
 // node_modules/@duckdb/duckdb-wasm/dist/duckdb-esm.js
+var P = class extends AsyncByteQueue {
+  flush() {
+    let e = super.toUint8Array(true);
+    return this._values.length = 0, e;
+  }
+};
 var C = class {
   constructor(e, r, t) {
     this.bindings = e;
@@ -11311,6 +11329,85 @@ var K;
 (function(t) {
   t[t.BUFFER = 0] = "BUFFER", t[t.NATIVE = 1] = "NATIVE", t[t.HTTP = 3] = "HTTP";
 })(K || (K = {}));
+function I(n, e) {
+  switch (e.typeId) {
+    case Type2.Binary:
+      return { name: n, type: "binary" };
+    case Type2.Bool:
+      return { name: n, type: "bool" };
+    case Type2.Date:
+      return { name: n, type: "date" };
+    case Type2.DateDay:
+      return { name: n, type: "date32[d]" };
+    case Type2.DateMillisecond:
+      return { name: n, type: "date64[ms]" };
+    case Type2.Decimal: {
+      let r = e;
+      return { name: n, type: "decimal", precision: r.precision, scale: r.scale };
+    }
+    case Type2.Float:
+      return { name: n, type: "float" };
+    case Type2.Float16:
+      return { name: n, type: "float16" };
+    case Type2.Float32:
+      return { name: n, type: "float32" };
+    case Type2.Float64:
+      return { name: n, type: "float64" };
+    case Type2.Int:
+      return { name: n, type: "int32" };
+    case Type2.Int16:
+      return { name: n, type: "int16" };
+    case Type2.Int32:
+      return { name: n, type: "int32" };
+    case Type2.Int64:
+      return { name: n, type: "int64" };
+    case Type2.Uint16:
+      return { name: n, type: "uint16" };
+    case Type2.Uint32:
+      return { name: n, type: "uint32" };
+    case Type2.Uint64:
+      return { name: n, type: "uint64" };
+    case Type2.Uint8:
+      return { name: n, type: "uint8" };
+    case Type2.IntervalDayTime:
+      return { name: n, type: "interval[dt]" };
+    case Type2.IntervalYearMonth:
+      return { name: n, type: "interval[m]" };
+    case Type2.List: {
+      let r = e;
+      return { name: n, type: "list", children: [I(r.valueField.name, r.valueField.type)] };
+    }
+    case Type2.FixedSizeBinary:
+      return { name: n, type: "fixedsizebinary", byteWidth: e.byteWidth };
+    case Type2.Null:
+      return { name: n, type: "null" };
+    case Type2.Utf8:
+      return { name: n, type: "utf8" };
+    case Type2.Struct:
+      return { name: n, type: "struct", children: e.children.map((t) => I(t.name, t.type)) };
+    case Type2.Time:
+      return { name: n, type: "time[s]" };
+    case Type2.TimeMicrosecond:
+      return { name: n, type: "time[us]" };
+    case Type2.TimeMillisecond:
+      return { name: n, type: "time[ms]" };
+    case Type2.TimeNanosecond:
+      return { name: n, type: "time[ns]" };
+    case Type2.TimeSecond:
+      return { name: n, type: "time[s]" };
+    case Type2.Timestamp:
+      return { name: n, type: "timestamp", timezone: e.timezone || void 0 };
+    case Type2.TimestampSecond:
+      return { name: n, type: "timestamp[s]", timezone: e.timezone || void 0 };
+    case Type2.TimestampMicrosecond:
+      return { name: n, type: "timestamp[us]", timezone: e.timezone || void 0 };
+    case Type2.TimestampNanosecond:
+      return { name: n, type: "timestamp[ns]", timezone: e.timezone || void 0 };
+    case Type2.TimestampMillisecond:
+      return { name: n, type: "timestamp[ms]", timezone: e.timezone || void 0 };
+  }
+  throw new Error(`unsupported arrow type: ${e.toString()}`);
+}
 var ne = new TextEncoder();
 var j;
 (function(i) {
@@ -11340,6 +11437,60 @@ var y;
 (function(i) {
   i[i.NONE = 0] = "NONE", i[i.WEB_WORKER = 1] = "WEB_WORKER", i[i.NODE_WORKER = 2] = "NODE_WORKER", i[i.BINDINGS = 3] = "BINDINGS", i[i.ASYNC_DUCKDB = 4] = "ASYNC_DUCKDB";
 })(y || (y = {}));
+var oe = class {
+  log(e) {
+    console.log(e);
+  }
+};
+var B = class {
+  constructor(e, r) {
+    this._bindings = e, this._conn = r;
+  }
+  get bindings() {
+    return this._bindings;
+  }
+  async close() {
+    return this._bindings.disconnect(this._conn);
+  }
+  useUnsafe(e) {
+    return e(this._bindings, this._conn);
+  }
+  async query(e) {
+    this._bindings.logger.log({ timestamp: new Date(), level: T.INFO, origin: y.ASYNC_DUCKDB, topic: S.QUERY, event: g.RUN, value: e });
+    let r = await this._bindings.runQuery(this._conn, e), t = RecordBatchReader.from(r);
+    return console.assert(t.isSync()), console.assert(t.isFile()), Table.from(t);
+  }
+  async send(e) {
+    this._bindings.logger.log({ timestamp: new Date(), level: T.INFO, origin: y.ASYNC_DUCKDB, topic: S.QUERY, event: g.RUN, value: e });
+    let r = await this._bindings.sendQuery(this._conn, e), t = new v(this._bindings, this._conn, r), s = await RecordBatchReader.from(t);
+    return console.assert(s.isAsync()), console.assert(s.isStream()), s;
+  }
+  async prepare(e) {
+    let r = await this._bindings.createPrepared(this._conn, e);
+    return new q(this._bindings, this._conn, r);
+  }
+  async insertArrowVectors(e, r) {
+    await this.insertArrowTable(Table.new(e), r);
+  }
+  async insertArrowTable(e, r) {
+    e.schema.fields.length == 0 && console.warn("The schema is empty! If you used arrow.Table.from, consider constructing schema and batches manually"), await this.insertArrowBatches(e.schema, e.chunks, r);
+  }
+  async insertArrowBatches(e, r, t) {
+    let s = new P(), i = new RecordBatchStreamWriter().reset(s, e), c = true;
+    for (let b of r)
+      c || await this._bindings.insertArrowFromIPCStream(this._conn, s.flush(), t), c = false, i.write(b);
+    i.finish(), await this._bindings.insertArrowFromIPCStream(this._conn, s.flush(), t);
+  }
+  async insertArrowFromIPCStream(e, r) {
+    await this._bindings.insertArrowFromIPCStream(this._conn, e, r);
+  }
+  async insertCSVFromPath(e, r) {
+    await this._bindings.insertCSVFromPath(this._conn, e, r);
+  }
+  async insertJSONFromPath(e, r) {
+    await this._bindings.insertJSONFromPath(this._conn, e, r);
+  }
+};
 var v = class {
   constructor(e, r, t) {
     this.db = e;
@@ -11359,6 +11510,22 @@ var v = class {
     return this;
   }
 };
+var q = class {
+  constructor(e, r, t) {
+    this.bindings = e, this.connectionId = r, this.statementId = t;
+  }
+  async close() {
+    await this.bindings.closePrepared(this.connectionId, this.statementId);
+  }
+  async query(...e) {
+    let r = await this.bindings.runPrepared(this.connectionId, this.statementId, e), t = RecordBatchReader.from(r);
+    return console.assert(t.isSync()), console.assert(t.isFile()), Table.from(t);
+  }
+  async send(...e) {
+    let r = await this.bindings.sendPrepared(this.connectionId, this.statementId, e), t = new v(this.bindings, this.connectionId, r), s = await RecordBatchReader.from(t);
+    return console.assert(s.isAsync()), console.assert(s.isStream()), s;
+  }
+};
 var o;
 (function(a) {
   a.CLOSE_PREPARED = "CLOSE_PREPARED", a.COLLECT_FILE_STATISTICS = "COLLECT_FILE_STATISTICS", a.CONNECT = "CONNECT", a.COPY_FILE_TO_BUFFER = "COPY_FILE_TO_BUFFER", a.COPY_FILE_TO_PATH = "COPY_FILE_TO_PATH", a.CREATE_PREPARED = "CREATE_PREPARED", a.DISCONNECT = "DISCONNECT", a.DROP_FILE = "DROP_FILE", a.DROP_FILES = "DROP_FILES", a.EXPORT_FILE_STATISTICS = "EXPORT_FILE_STATISTICS", a.FETCH_QUERY_RESULTS = "FETCH_QUERY_RESULTS", a.FLUSH_FILES = "FLUSH_FILES", a.GET_FEATURE_FLAGS = "GET_FEATURE_FLAGS", a.GET_VERSION = "GET_VERSION", a.INSERT_ARROW_FROM_IPC_STREAM = "INSERT_ARROW_FROM_IPC_STREAM", a.INSERT_CSV_FROM_PATH = "IMPORT_CSV_FROM_PATH", a.INSERT_JSON_FROM_PATH = "IMPORT_JSON_FROM_PATH", a.INSTANTIATE = "INSTANTIATE", a.OPEN = "OPEN", a.PING = "PING", a.REGISTER_FILE_BUFFER = "REGISTER_FILE_BUFFER", a.REGISTER_FILE_HANDLE = "REGISTER_FILE_HANDLE", a.REGISTER_FILE_URL = "REGISTER_FILE_URL", a.RESET = "RESET", a.RUN_PREPARED = "RUN_PREPARED", a.RUN_QUERY = "RUN_QUERY", a.SEND_PREPARED = "SEND_PREPARED", a.SEND_QUERY = "SEND_QUERY", a.TOKENIZE = "TOKENIZE";
@@ -11367,7 +11534,314 @@ var u;
 (function(l) {
   l.CONNECTION_INFO = "CONNECTION_INFO", l.ERROR = "ERROR", l.FEATURE_FLAGS = "FEATURE_FLAGS", l.FILE_BUFFER = "FILE_BUFFER", l.FILE_SIZE = "FILE_SIZE", l.FILE_STATISTICS = "FILE_STATISTICS", l.LOG = "LOG", l.OK = "OK", l.PREPARED_STATEMENT_ID = "PREPARED_STATEMENT_ID", l.QUERY_PLAN = "QUERY_PLAN", l.QUERY_RESULT = "QUERY_RESULT", l.QUERY_RESULT_CHUNK = "QUERY_RESULT_CHUNK", l.QUERY_START = "QUERY_START", l.REGISTERED_FILE = "REGISTERED_FILE", l.SCRIPT_TOKENS = "SCRIPT_TOKENS", l.SUCCESS = "SUCCESS", l.VERSION_STRING = "VERSION_STRING";
 })(u || (u = {}));
+var m = class {
+  constructor(e, r) {
+    this.promiseResolver = () => {
+    };
+    this.promiseRejecter = () => {
+    };
+    this.type = e, this.data = r, this.promise = new Promise((t, s) => {
+      this.promiseResolver = t, this.promiseRejecter = s;
+    });
+  }
+};
 var ce = new TextEncoder();
+var de = class {
+  constructor(e, r = null) {
+    this._worker = null;
+    this._workerShutdownPromise = null;
+    this._workerShutdownResolver = () => {
+    };
+    this._nextMessageId = 0;
+    this._pendingRequests = new Map();
+    this._logger = e, this._onMessageHandler = this.onMessage.bind(this), this._onErrorHandler = this.onError.bind(this), this._onCloseHandler = this.onClose.bind(this), r != null && this.attach(r);
+  }
+  get logger() {
+    return this._logger;
+  }
+  attach(e) {
+    this._worker = e, this._worker.addEventListener("message", this._onMessageHandler), this._worker.addEventListener("error", this._onErrorHandler), this._worker.addEventListener("close", this._onCloseHandler), this._workerShutdownPromise = new Promise((r, t) => {
+      this._workerShutdownResolver = r;
+    });
+  }
+  detach() {
+    !this._worker || (this._worker.removeEventListener("message", this._onMessageHandler), this._worker.removeEventListener("error", this._onErrorHandler), this._worker.removeEventListener("close", this._onCloseHandler), this._worker = null, this._workerShutdownResolver(null), this._workerShutdownPromise = null, this._workerShutdownResolver = () => {
+    });
+  }
+  async terminate() {
+    !this._worker || (this._worker.terminate(), this._worker = null, this._workerShutdownPromise = null, this._workerShutdownResolver = () => {
+    });
+  }
+  async postTask(e, r = []) {
+    if (!this._worker) {
+      console.error("cannot send a message since the worker is not set!");
+      return;
+    }
+    let t = this._nextMessageId++;
+    return this._pendingRequests.set(t, e), this._worker.postMessage({ messageId: t, type: e.type, data: e.data }), await e.promise;
+  }
+  onMessage(e) {
+    let r = e.data;
+    r.type == u.LOG && this._logger.log(r.data);
+    let t = this._pendingRequests.get(r.requestId);
+    if (!t) {
+      console.warn(`unassociated response: [${r.requestId}, ${r.type.toString()}]`);
+      return;
+    }
+    if (this._pendingRequests.delete(r.requestId), r.type == u.ERROR) {
+      let s = new Error(r.data.message);
+      s.name = r.data.name, s.stack = r.data.stack, t.promiseRejecter(s);
+      return;
+    }
+    switch (t.type) {
+      case o.CLOSE_PREPARED:
+      case o.COLLECT_FILE_STATISTICS:
+      case o.COPY_FILE_TO_PATH:
+      case o.DISCONNECT:
+      case o.DROP_FILES:
+      case o.FLUSH_FILES:
+      case o.INSERT_ARROW_FROM_IPC_STREAM:
+      case o.INSERT_CSV_FROM_PATH:
+      case o.INSERT_JSON_FROM_PATH:
+      case o.INSTANTIATE:
+      case o.OPEN:
+      case o.PING:
+      case o.REGISTER_FILE_BUFFER:
+      case o.REGISTER_FILE_HANDLE:
+      case o.REGISTER_FILE_URL:
+      case o.RESET:
+        if (r.type == u.OK) {
+          t.promiseResolver(r.data);
+          return;
+        }
+        break;
+      case o.GET_VERSION:
+        if (r.type == u.VERSION_STRING) {
+          t.promiseResolver(r.data);
+          return;
+        }
+        break;
+      case o.GET_FEATURE_FLAGS:
+        if (r.type == u.FEATURE_FLAGS) {
+          t.promiseResolver(r.data);
+          return;
+        }
+        break;
+      case o.TOKENIZE:
+        if (r.type == u.SCRIPT_TOKENS) {
+          t.promiseResolver(r.data);
+          return;
+        }
+        break;
+      case o.DROP_FILE:
+        if (r.type == u.SUCCESS) {
+          t.promiseResolver(r.data);
+          return;
+        }
+        break;
+      case o.COPY_FILE_TO_BUFFER:
+        if (r.type == u.FILE_BUFFER) {
+          t.promiseResolver(r.data);
+          return;
+        }
+        break;
+      case o.EXPORT_FILE_STATISTICS:
+        if (r.type == u.FILE_STATISTICS) {
+          t.promiseResolver(r.data);
+          return;
+        }
+        break;
+      case o.CONNECT:
+        if (r.type == u.CONNECTION_INFO) {
+          t.promiseResolver(r.data);
+          return;
+        }
+        break;
+      case o.RUN_PREPARED:
+      case o.RUN_QUERY:
+        if (r.type == u.QUERY_RESULT) {
+          t.promiseResolver(r.data);
+          return;
+        }
+        break;
+      case o.SEND_PREPARED:
+      case o.SEND_QUERY:
+        if (r.type == u.QUERY_START) {
+          t.promiseResolver(r.data);
+          return;
+        }
+        break;
+      case o.FETCH_QUERY_RESULTS:
+        if (r.type == u.QUERY_RESULT_CHUNK) {
+          t.promiseResolver(r.data);
+          return;
+        }
+        break;
+      case o.CREATE_PREPARED:
+        if (r.type == u.PREPARED_STATEMENT_ID) {
+          t.promiseResolver(r.data);
+          return;
+        }
+        break;
+    }
+    t.promiseRejecter(new Error(`unexpected response type: ${r.type.toString()}`));
+  }
+  onError(e) {
+    console.error(e), console.error(`error in duckdb worker: ${e.message}`), this._pendingRequests.clear();
+  }
+  onClose() {
+    if (this._workerShutdownResolver(null), this._pendingRequests.size != 0) {
+      console.warn(`worker terminated with ${this._pendingRequests.size} pending requests`);
+      return;
+    }
+    this._pendingRequests.clear();
+  }
+  async reset() {
+    let e = new m(o.RESET, null);
+    return await this.postTask(e);
+  }
+  async ping() {
+    let e = new m(o.PING, null);
+    await this.postTask(e);
+  }
+  async dropFile(e) {
+    let r = new m(o.DROP_FILE, e);
+    return await this.postTask(r);
+  }
+  async dropFiles() {
+    let e = new m(o.DROP_FILES, null);
+    return await this.postTask(e);
+  }
+  async flushFiles() {
+    let e = new m(o.FLUSH_FILES, null);
+    return await this.postTask(e);
+  }
+  async instantiate(e, r = null) {
+    let t = new m(o.INSTANTIATE, [e, r]);
+    return await this.postTask(t);
+  }
+  async getVersion() {
+    let e = new m(o.GET_VERSION, null);
+    return await this.postTask(e);
+  }
+  async getFeatureFlags() {
+    let e = new m(o.GET_FEATURE_FLAGS, null);
+    return await this.postTask(e);
+  }
+  async open(e) {
+    let r = new m(o.OPEN, e);
+    await this.postTask(r);
+  }
+  async tokenize(e) {
+    let r = new m(o.TOKENIZE, e);
+    return await this.postTask(r);
+  }
+  async connectInternal() {
+    let e = new m(o.CONNECT, null);
+    return await this.postTask(e);
+  }
+  async connect() {
+    let e = await this.connectInternal();
+    return new B(this, e);
+  }
+  async disconnect(e) {
+    let r = new m(o.DISCONNECT, e);
+    await this.postTask(r);
+  }
+  async runQuery(e, r) {
+    let t = new m(o.RUN_QUERY, [e, r]);
+    return await this.postTask(t);
+  }
+  async sendQuery(e, r) {
+    let t = new m(o.SEND_QUERY, [e, r]);
+    return await this.postTask(t);
+  }
+  async fetchQueryResults(e) {
+    let r = new m(o.FETCH_QUERY_RESULTS, e);
+    return await this.postTask(r);
+  }
+  async createPrepared(e, r) {
+    let t = new m(o.CREATE_PREPARED, [e, r]);
+    return await this.postTask(t);
+  }
+  async closePrepared(e, r) {
+    let t = new m(o.CLOSE_PREPARED, [e, r]);
+    await this.postTask(t);
+  }
+  async runPrepared(e, r, t) {
+    let s = new m(o.RUN_PREPARED, [e, r, t]);
+    return await this.postTask(s);
+  }
+  async sendPrepared(e, r, t) {
+    let s = new m(o.SEND_PREPARED, [e, r, t]);
+    return await this.postTask(s);
+  }
+  async registerFileText(e, r) {
+    let t = ce.encode(r);
+    await this.registerFileBuffer(e, t);
+  }
+  async registerFileURL(e, r) {
+    r === void 0 && (r = e);
+    let t = new m(o.REGISTER_FILE_URL, [e, r]);
+    await this.postTask(t);
+  }
+  async registerEmptyFileBuffer(e) {
+    let r = new m(o.REGISTER_FILE_BUFFER, [e, new Uint8Array()]);
+    await this.postTask(r);
+  }
+  async registerFileBuffer(e, r) {
+    let t = new m(o.REGISTER_FILE_BUFFER, [e, r]);
+    await this.postTask(t, [r.buffer]);
+  }
+  async registerFileHandle(e, r) {
+    let t = new m(o.REGISTER_FILE_HANDLE, [e, r]);
+    await this.postTask(t, []);
+  }
+  async collectFileStatistics(e, r) {
+    let t = new m(o.COLLECT_FILE_STATISTICS, [e, r]);
+    await this.postTask(t, []);
+  }
+  async exportFileStatistics(e) {
+    let r = new m(o.EXPORT_FILE_STATISTICS, e);
+    return await this.postTask(r, []);
+  }
+  async copyFileToBuffer(e) {
+    let r = new m(o.COPY_FILE_TO_BUFFER, e);
+    return await this.postTask(r);
+  }
+  async copyFileToPath(e, r) {
+    let t = new m(o.COPY_FILE_TO_PATH, [e, r]);
+    await this.postTask(t);
+  }
+  async insertArrowFromIPCStream(e, r, t) {
+    let s = new m(o.INSERT_ARROW_FROM_IPC_STREAM, [e, r, t]);
+    await this.postTask(s, [r.buffer]);
+  }
+  async insertCSVFromPath(e, r, t) {
+    if (t.columns !== void 0) {
+      let i = [];
+      for (let c in t.columns) {
+        let b = t.columns[c];
+        i.push(I(c, b));
+      }
+      t.columnsFlat = i, delete t.columns;
+    }
+    let s = new m(o.INSERT_CSV_FROM_PATH, [e, r, t]);
+    await this.postTask(s);
+  }
+  async insertJSONFromPath(e, r, t) {
+    if (t.columns !== void 0) {
+      let i = [];
+      for (let c in t.columns) {
+        let b = t.columns[c];
+        i.push(I(c, b));
+      }
+      t.columnsFlat = i, delete t.columns;
+    }
+    let s = new m(o.INSERT_JSON_FROM_PATH, [e, r, t]);
+    await this.postTask(s);
+  }
+};
 var ue = "@duckdb/duckdb-wasm";
 var me = "0.1.11";
 var pe = "DuckDB powered by WebAssembly";
@@ -11389,6 +11863,35 @@ var M = O.version.split(".");
 var Kr = M[0];
 var jr = M[1];
 var Jr = M[2];
+function D(n) {
+  let e = `importScripts("${n}");`;
+  return URL.createObjectURL(new Blob([e], { type: "text/javascript" }));
+}
+function Xr() {
+  let n = `https://cdn.jsdelivr.net/npm/${$}@${X}/dist/`;
+  return { asyncDefault: { mainModule: `${n}duckdb.wasm`, mainWorker: D(`${n}duckdb-browser-async.worker.js`) }, asyncNext: { mainModule: `${n}duckdb-next.wasm`, mainWorker: D(`${n}duckdb-browser-async-next.worker.js`) }, asyncNextCOI: { mainModule: `${n}duckdb-next-coi.wasm`, mainWorker: D(`${n}duckdb-browser-async-next-coi.worker.js`), pthreadWorker: D(`${n}duckdb-browser-async-next-coi.pthread.worker.js`) } };
+}
+var x = null;
+var G = null;
+var H = null;
+var V = null;
+var Y = null;
+function ke() {
+  return typeof process != "undefined" && process.release.name === "node";
+}
+async function we() {
+  return x == null && (x = typeof BigInt64Array != "undefined"), G == null && (G = await exceptions()), H == null && (H = await threads()), V == null && (V = await simd()), Y == null && (Y = await bulkMemory()), { bigInt64Array: x, crossOriginIsolated: ke() || globalThis.crossOriginIsolated || false, wasmExceptions: G, wasmSIMD: V, wasmThreads: H, wasmBulkMemory: Y };
+}
+async function Zr(n) {
+  let e = await we();
+  if (e.wasmExceptions && e.wasmSIMD) {
+    if (e.wasmThreads && e.crossOriginIsolated && n.asyncNextCOI)
+      return { mainModule: n.asyncNextCOI.mainModule, mainWorker: n.asyncNextCOI.mainWorker, pthreadWorker: n.asyncNextCOI.pthreadWorker };
+    if (n.asyncNext)
+      return { mainModule: n.asyncNext.mainModule, mainWorker: n.asyncNext.mainWorker, pthreadWorker: null };
+  }
+  return { mainModule: n.asyncDefault.mainModule, mainWorker: n.asyncDefault.mainWorker, pthreadWorker: null };
+}
 
 // viewer.js
 var $2 = (s) => document.querySelector(s);
@@ -11475,15 +11978,15 @@ function paddedExtent(lst, fn2, reversed) {
 function makeScales(stats2, fields) {
   const xAxType = statMeta[fields.x].type;
   const xreversed = statMeta[fields.x].reversed;
-  var x;
+  var x2;
   if (xAxType == "categorical") {
     const domain = new Set(stats2.map((p2) => p2[fields.x]));
-    x = d3.scaleBand(domain, [
+    x2 = d3.scaleBand(domain, [
       settings.padding.left,
       settings.width - settings.padding.right
     ]);
   } else {
-    x = d3.scaleLinear().domain(paddedExtent(stats2, (s) => s[fields.x], xreversed)).range([settings.padding.left, settings.width - settings.padding.right]);
+    x2 = d3.scaleLinear().domain(paddedExtent(stats2, (s) => s[fields.x], xreversed)).range([settings.padding.left, settings.width - settings.padding.right]);
   }
   const yAxType = statMeta[fields.y].type;
   const yreversed = statMeta[fields.y].reversed;
@@ -11503,7 +12006,7 @@ function makeScales(stats2, fields) {
   } else {
     r = d3.scaleLinear().domain(d3.extent(stats2, (s) => s[fields.r])).range([settings.minRadius, settings.maxRadius]);
   }
-  return { x, y: y2, r };
+  return { x: x2, y: y2, r };
 }
 function axes(svg, stats2, scales) {
   var xaxis = d3.axisTop(scales.x).tickSize(settings.height - settings.padding.top).tickFormat(d3.format(".2r"));
@@ -11764,19 +12267,19 @@ var statMeta = {
     type: "numeric"
   },
   ast_pct: {
-    name: "",
+    name: "Assist %",
     type: "numeric"
   },
   stl_pct: {
-    name: "",
+    name: "Steal %",
     type: "numeric"
   },
   blk_pct: {
-    name: "",
+    name: "Block %",
     type: "numeric"
   },
   tov_pct: {
-    name: "",
+    name: "Turnover %",
     type: "numeric"
   },
   usg_pct: {
@@ -12243,4 +12746,24 @@ window.addEventListener("DOMContentLoaded", async (_evt) => {
   $2("#staty").addEventListener("change", updateAxes(svg));
   $2("#radius").addEventListener("change", updateAxes(svg));
   $2("#applyFilter").addEventListener("click", updateAxes(svg));
+  const JSDELIVR_BUNDLES = Xr();
+  const bundle = await Zr(JSDELIVR_BUNDLES);
+  const worker = new Worker(bundle.mainWorker);
+  const logger = new oe();
+  const db = new de(logger, worker);
+  await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
+  window.db = db;
+  await db.registerFileText("stats", JSON.stringify(stats.players));
+  const c = await db.connect();
+  await c.insertJSONFromPath("stats", { name: "rows" });
+  window.conn = c;
+  await c.query(`CREATE TABLE weather (
+    city VARCHAR,
+    temp_lo INTEGER, -- minimum temperature on a day
+    temp_hi INTEGER, -- maximum temperature on a day
+    prcp REAL,
+    date DATE );`);
+  let cur = await c.query("INSERT INTO weather VALUES ('San Francisco', 46, 50, 0.25, '1994-11-27');");
+  cur = await c.query("SELECT * from weather");
+  window.cur = cur;
 });
