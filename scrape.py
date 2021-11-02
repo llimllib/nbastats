@@ -3,11 +3,11 @@ import argparse
 import csv
 from datetime import datetime
 import json
-from os import makedirs, stat
+from os import makedirs, stat, mkdir
 from os.path import isdir, isfile
 import re
 from time import time
-from typing import Dict, Tuple, Any
+from typing import Dict, Tuple, Any, Mapping, Sequence
 from ipdb import launch_ipdb_on_exception
 
 from bs4 import BeautifulSoup, element
@@ -59,9 +59,15 @@ def tryint(mayben):
             return mayben
 
 
-def one_hour_old(fname):
-    """return True if the file given by fname was modified more than an hour ago and
-    false otherwise"""
+def stale(fname):
+    """
+    Return whether a file is stale and should be re-downloaded
+
+    It should be re-downloaded if the file given by fname was modified more than
+    an hour ago or does not exist
+    """
+    if not isfile(fname):
+        return True
     return (time() - stat(fname).st_mtime) / (60 * 60) > 1
 
 
@@ -113,33 +119,35 @@ def parse_team_stats(year):
     soup = BeautifulSoup(open(f"{datadir}/teams.html"), "html.parser")
 
     team_stats = soup.find("div", id="all_totals_team-opponent")
-    for team in team_stats.find_all("tr")[1:31]:
-        teamstats = {
-            t["data-stat"].replace("-", "_"): tryint(
-                "".join(str(c) for c in t.children)
-            )
-            for t in team.find_all("td")
-        }
-        name = BeautifulSoup(teamstats["team"], "html.parser").text.rstrip("*")
-        shortname = re.search("teams/(.*?)/", teamstats["team"]).group(1)
+    if isinstance(team_stats, element.Tag):
+        for team in team_stats.find_all("tr")[1:31]:
+            teamstats = {
+                t["data-stat"].replace("-", "_"): tryint(
+                    "".join(str(c) for c in t.children)
+                )
+                for t in team.find_all("td")
+            }
+            name = BeautifulSoup(teamstats["team"], "html.parser").text.rstrip("*")
+            shortname = re.search("teams/(.*?)/", teamstats["team"]).group(1)
 
-        teamstats["name"] = name
-        teamstats["shortname"] = shortname
+            teamstats["name"] = name
+            teamstats["shortname"] = shortname
 
-        teamdata[shortname] = teamstats
+            teamdata[shortname] = teamstats
 
     misc_stats = soup.find("div", id="all_advanced_team")
-    for team in misc_stats.find_all("tr")[2:32]:
-        miscstats = {
-            t["data-stat"].replace("-", "_"): tryint(
-                "".join(str(c) for c in t.children)
-            )
-            for t in team.find_all("td")
-        }
-        name = BeautifulSoup(miscstats["team"], "html.parser").text.rstrip("*")
-        shortname = re.search("teams/(.*?)/", miscstats["team"]).group(1)
+    if isinstance(misc_stats, element.Tag):
+        for team in misc_stats.find_all("tr")[2:32]:
+            miscstats = {
+                t["data-stat"].replace("-", "_"): tryint(
+                    "".join(str(c) for c in t.children)
+                )
+                for t in team.find_all("td")
+            }
+            name = BeautifulSoup(miscstats["team"], "html.parser").text.rstrip("*")
+            shortname = re.search("teams/(.*?)/", miscstats["team"]).group(1)
 
-        teamdata[shortname] = {**teamdata[shortname], **miscstats}
+            teamdata[shortname] = {**teamdata[shortname], **miscstats}
 
     output = f"data/{year}/team_stats.json"
 
@@ -152,7 +160,7 @@ def parse_team_stats(year):
 
 
 def parse_bbref_row(
-    players: Dict[Tuple[str, str], Dict[Any, Any]], player: element.Tag
+    players: Dict[Tuple[str, str], Dict[str, Any]], player: element.Tag
 ):
     ignore = ["bpm-dum", "ws-dum", "DUMMY"]
     stats = {
@@ -161,9 +169,15 @@ def parse_bbref_row(
         if t["data-stat"] and t["data-stat"] not in ignore
     }
 
+    assert isinstance(stats["player"], str)
+    assert isinstance(stats["team_id"], str)
     stats["name"] = BeautifulSoup(stats["player"], "html.parser").text
     stats["team"] = BeautifulSoup(stats["team_id"], "html.parser").text
-    stats["bb_ref_id"] = player.find("td").attrs["data-append-csv"]
+
+    player_id = player.find("td")
+    assert isinstance(player_id, element.Tag)
+    stats["bb_ref_id"] = player_id.attrs["data-append-csv"]
+
     key = (stats["bb_ref_id"], stats["team"])
     if key not in players:
         players[key] = stats
@@ -171,7 +185,8 @@ def parse_bbref_row(
         players[key] = {**players[key], **stats}
 
 
-def parse_player_stats(year: str) -> [Dict[Any, Any]]:
+# TODO: type the player object?
+def parse_player_stats(year: str) -> Sequence[Mapping[str, Any]]:
     datadir = f"data/{year}"
 
     players = {}
@@ -183,23 +198,25 @@ def parse_player_stats(year: str) -> [Dict[Any, Any]]:
         for player in soup.find_all("tr", {"class": player_row}):
             parse_bbref_row(players, player)
 
-    return players.values()
+    return list(players.values())
 
 
-def download_data(force_download=False, year_only=None):
+def download_data(force_download:bool=False, year_only:str=None):
     if not year_only:
         for year in range(MIN_YEAR, MAX_YEAR):
             datadir = f"data/{year}"
+            if not isdir(datadir):
+                mkdir(datadir)
 
-            if not isdir(datadir) or force_download:
+            if force_download:
                 get_bbref_data(year, datadir)
-            elif year == 2022 and one_hour_old(f"{datadir}/totals.html"):
+            elif year == 2022 and stale(f"{datadir}/totals.html"):
                 get_bbref_data(year, datadir)
             else:
                 continue
     else:
         datadir = f"data/{year_only}"
-        if force_download or one_hour_old(f"{datadir}/totals.html"):
+        if force_download or stale(f"{datadir}/totals.html"):
             get_bbref_data(year_only, datadir)
 
     # 538 Raptor data
@@ -222,7 +239,7 @@ def download_data(force_download=False, year_only=None):
         )
     if (
         not isfile("data/raptor/latest_RAPTOR.csv")
-        or one_hour_old("data/raptor/latest_RAPTOR.csv")
+        or stale("data/raptor/latest_RAPTOR.csv")
         or force_download
     ):
         log("downloading latest raptor")
@@ -279,10 +296,10 @@ def process_data(year_only: str = None, force_reprocess: bool = False):
         year = year_only
     else:
         for year in range(MIN_YEAR, MAX_YEAR):
-            if not one_hour_old(f"data/{year}/totals.html") or force_reprocess:
+            if not stale(f"data/{year}/totals.html") or force_reprocess:
                 log(f"processing {year} data")
 
-                data += parse_player_stats(year)
+                data += parse_player_stats(str(year))
                 parse_team_stats(year)
 
     log("processing raptor")
