@@ -1,4 +1,5 @@
 import * as duckdb from '@duckdb/duckdb-wasm/dist/duckdb-esm.js';
+import { Table, DataFrame } from '@apache-arrow/esnext-esm';
 
 // TODO
 // * data series
@@ -1280,4 +1281,46 @@ window.addEventListener('DOMContentLoaded', async (_evt) => {
   $('#staty').addEventListener('change', updateAxes(svg));
   $('#radius').addEventListener('change', updateAxes(svg));
   $('#applyFilter').addEventListener('click', updateAxes(svg));
+
+  // set up duckdb-wasm
+  //
+  // copied from https://www.npmjs.com/package/@duckdb/duckdb-wasm, I don't
+  // really have any idea what this is supposed to be doing
+  //
+  // OK, the result of this on my browser is that two files get loaded from jsdelivr:
+  //  - duckdb-browser-async.worker.js
+  //  - duckdb.wasm
+  //
+  // We will want to load this locally somehow but I'm going to put that off for now
+  //
+  // Select a bundle based on browser checks
+  const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
+  const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
+
+  // Instantiate the asynchronus version of DuckDB-wasm
+  const worker = new Worker(bundle.mainWorker);
+  const logger = new duckdb.ConsoleLogger();
+  const db = new duckdb.AsyncDuckDB(logger, worker);
+  await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
+
+  // set a global db variable for easy access
+  window.db = db;
+
+  // can I import the json directly rather than by downloading it then re-stringifying?
+  await db.registerFileText('stats', JSON.stringify(stats.players))
+
+  const c = await db.connect();
+  await c.insertJSONFromPath('stats', { name: 'rows' });
+
+  window.conn = c;
+  await c.query(`CREATE TABLE weather (
+    city VARCHAR,
+    temp_lo INTEGER, -- minimum temperature on a day
+    temp_hi INTEGER, -- maximum temperature on a day
+    prcp REAL,
+    date DATE );`);
+  let cur = await c.query("INSERT INTO weather VALUES ('San Francisco', 46, 50, 0.25, '1994-11-27');");
+  cur = await c.query("SELECT * from weather");
+  window.cur = cur;
+
 });
