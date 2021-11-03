@@ -59,8 +59,9 @@ const settings = {
   domainPadding: 0.05,
 };
 
-window.DATA_URL = 'https://cdn.billmill.org/nbastats';
+// window.DATA_URL = 'https://cdn.billmill.org/nbastats';
 // window.DATA_URL = './data';
+window.DATA_URL = 'http://localhost:9001/data';
 
 function hover(event, tooltip, stats, scales, fields, delaunay, cells) {
   const [mx, my] = d3.pointer(event, this);
@@ -1306,21 +1307,39 @@ window.addEventListener('DOMContentLoaded', async (_evt) => {
   // set a global db variable for easy access
   window.db = db;
 
+  // this doesn't work because the JSON is poorly typed - for example
+  // percentage fields have empty strings instead of zeroes
   // can I import the json directly rather than by downloading it then re-stringifying?
-  await db.registerFileText('stats', JSON.stringify(stats.players))
+  // await db.registerFileText('stats', JSON.stringify(stats.players))
+  // const c = await db.connect();
+  // await c.insertJSONFromPath('stats', { name: 'rows' });
 
-  const c = await db.connect();
-  await c.insertJSONFromPath('stats', { name: 'rows' });
+  // console.log("regsitering")
+  // stats_handle = 'stats.parquet'
+  // await db.registerFileURL(stats_handle, `${window.DATA_URL}/stats.parquet`);
+  // console.log("opening")
+  // await db.open({ path: 'stats.parquet' })
+  // console.log("connecting")
 
-  window.conn = c;
-  await c.query(`CREATE TABLE weather (
-    city VARCHAR,
-    temp_lo INTEGER, -- minimum temperature on a day
-    temp_hi INTEGER, -- maximum temperature on a day
-    prcp REAL,
-    date DATE );`);
-  let cur = await c.query("INSERT INTO weather VALUES ('San Francisco', 46, 50, 0.25, '1994-11-27');");
-  cur = await c.query("SELECT * from weather");
-  window.cur = cur;
+  const conn = await db.connect();
+  window.conn = conn
+
+  console.log("creating stats table")
+  await conn.query(`
+      CREATE TABLE stats AS
+          SELECT * FROM "${window.DATA_URL}/stats.parquet"
+  `);
+
+  const table = await conn.query("SELECT * FROM stats LIMIT 5");
+  const rows = table.toArray();
+  console.log(rows, rows[0].name, rows[0].fga);
+
+  // https://github.com/duckdb/duckdb-wasm/blob/dc65c71e5c19e2aa36a4f4d11ed3ccbc28a04bbf/packages/duckdb-wasm/test/bindings.test.ts#L162
+  // const table = await conn.query<{
+  //     a: arrow.Int;
+  // }>('select count(*)::INTEGER as a from lineitem');
+  // const rows = table.toArray();
+  // expect(rows.length).toEqual(1);
+  // expect(rows[0].a).toEqual(60175);
 
 });

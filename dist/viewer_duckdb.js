@@ -11843,12 +11843,12 @@ var de = class {
   }
 };
 var ue = "@duckdb/duckdb-wasm";
-var me = "0.1.11";
+var me = "0.1.12-dev8.0";
 var pe = "DuckDB powered by WebAssembly";
 var _e = "MPL-2.0";
 var Ee = { type: "git", url: "https://github.com/duckdb/duckdb-wasm.git" };
 var be = { "@apache-arrow/esnext-esm": "^6.0.0", "wasm-feature-detect": "^1.2.11" };
-var he = { "@types/emscripten": "^1.39.4", "@types/jasmine": "^3.10.1", "@typescript-eslint/eslint-plugin": "^5.2.0", "@typescript-eslint/parser": "^5.2.0", esbuild: "^0.13.10", eslint: "^8.1.0", "eslint-plugin-jasmine": "^4.1.2", "eslint-plugin-react": "^7.26.1", jasmine: "^3.10.0", "jasmine-core": "^3.10.1", "jasmine-spec-reporter": "^7.0.0", karma: "^6.3.6", "karma-chrome-launcher": "^3.1.0", "karma-coverage": "^2.0.3", "karma-firefox-launcher": "^2.1.1", "karma-jasmine": "^4.0.1", "karma-jasmine-html-reporter": "^1.7.0", "karma-sourcemap-loader": "^0.3.8", "karma-spec-reporter": "^0.0.32", "make-dir": "^3.1.0", nyc: "^15.1.0", prettier: "^2.4.1", puppeteer: "^10.4.0", rimraf: "^3.0.2", typedoc: "^0.22.7", typescript: "^4.4.4", "web-worker": "^1.1.0" };
+var he = { "@types/emscripten": "^1.39.4", "@types/jasmine": "^3.10.1", "@typescript-eslint/eslint-plugin": "^5.2.0", "@typescript-eslint/parser": "^5.2.0", esbuild: "^0.13.12", eslint: "^8.1.0", "eslint-plugin-jasmine": "^4.1.2", "eslint-plugin-react": "^7.26.1", jasmine: "^3.10.0", "jasmine-core": "^3.10.1", "jasmine-spec-reporter": "^7.0.0", karma: "^6.3.6", "karma-chrome-launcher": "^3.1.0", "karma-coverage": "^2.0.3", "karma-firefox-launcher": "^2.1.1", "karma-jasmine": "^4.0.1", "karma-jasmine-html-reporter": "^1.7.0", "karma-sourcemap-loader": "^0.3.8", "karma-spec-reporter": "^0.0.32", "make-dir": "^3.1.0", nyc: "^15.1.0", prettier: "^2.4.1", puppeteer: "^10.4.0", rimraf: "^3.0.2", typedoc: "^0.22.7", typescript: "^4.4.4", "web-worker": "^1.1.0" };
 var Re = { fsevents: "*" };
 var ge = { "build:debug": "node bundle.mjs debug && tsc --emitDeclarationOnly", "build:release": "node bundle.mjs release && tsc --emitDeclarationOnly", docs: "typedoc", report: "node ./coverage.mjs", "test:node": "node --enable-source-maps --experimental-wasm-eh ../../node_modules/jasmine/bin/jasmine ./dist/tests-node.js", "test:node:debug": "node --inspect-brk --enable-source-maps --experimental-wasm-eh ../../node_modules/jasmine/bin/jasmine ./dist/tests-node.js", "test:node:filter": 'node --enable-source-maps --experimental-wasm-eh ../../node_modules/jasmine/bin/jasmine ./dist/tests-node.js --filter="CSV"', "test:node:coverage": "nyc -r json --report-dir ./coverage/node node --experimental-wasm-eh ../../node_modules/jasmine/bin/jasmine ./dist/tests-node.js", "test:firefox": "karma start ./karma/tests-firefox.cjs", "test:chrome": "karma start ./karma/tests-chrome.cjs", "test:chrome:eh": "karma start ./karma/tests-chrome-eh.cjs", "test:chrome:coverage": "karma start ./karma/tests-chrome-coverage.cjs", "test:browsers": "karma start ./karma/tests-all.cjs", "test:debug": "karma start ./karma/tests-debug.cjs", test: "npm run test:chrome && npm run test:node", "test:coverage": "npm run test:chrome:coverage && npm run test:node:coverage && npm run report", lint: "eslint src test" };
 var Te = ["dist", "!dist/types/test"];
@@ -11905,7 +11905,7 @@ var settings = {
   duration: 750,
   domainPadding: 0.05
 };
-window.DATA_URL = "https://cdn.billmill.org/nbastats";
+window.DATA_URL = "http://localhost:9001/data";
 function hover(event, tooltip, stats2, scales, fields, delaunay, cells) {
   const [mx, my] = d3.pointer(event, this);
   const nearest = delaunay.find(mx, my);
@@ -12753,17 +12753,14 @@ window.addEventListener("DOMContentLoaded", async (_evt) => {
   const db = new de(logger, worker);
   await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
   window.db = db;
-  await db.registerFileText("stats", JSON.stringify(stats.players));
-  const c = await db.connect();
-  await c.insertJSONFromPath("stats", { name: "rows" });
-  window.conn = c;
-  await c.query(`CREATE TABLE weather (
-    city VARCHAR,
-    temp_lo INTEGER, -- minimum temperature on a day
-    temp_hi INTEGER, -- maximum temperature on a day
-    prcp REAL,
-    date DATE );`);
-  let cur = await c.query("INSERT INTO weather VALUES ('San Francisco', 46, 50, 0.25, '1994-11-27');");
-  cur = await c.query("SELECT * from weather");
-  window.cur = cur;
+  const conn = await db.connect();
+  window.conn = conn;
+  console.log("creating stats table");
+  await conn.query(`
+      CREATE TABLE stats AS
+          SELECT * FROM "${window.DATA_URL}/stats.parquet"
+  `);
+  const table = await conn.query("SELECT * FROM stats LIMIT 5");
+  const rows = table.toArray();
+  console.log(rows, rows[0].name, rows[0].fga);
 });

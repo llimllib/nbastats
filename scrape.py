@@ -8,7 +8,7 @@ from os.path import isdir, isfile
 import re
 from time import time
 from typing import Dict, Tuple, Any, Mapping, Sequence
-from ipdb import launch_ipdb_on_exception
+import ipdb
 
 from bs4 import BeautifulSoup, element
 import requests
@@ -43,6 +43,14 @@ DEBUG = True
 MIN_YEAR = 2010
 MAX_YEAR = 2023
 
+# a player key is a 3-tuple of (bb_ref_id, team, year)
+PlayerKey = Tuple[str, str, str]
+
+# a player's stats is a mapping of strings to... things
+PlayerStats = Mapping[str, Any]
+
+# a StatDict is a mapping from player keys to player stats
+StatDict = Mapping[PlayerKey, PlayerStats]
 
 def log(msg):
     if DEBUG:
@@ -59,6 +67,7 @@ def tryint(mayben):
             return mayben
 
 
+# TODO: stale still isn't the right word
 def stale(fname):
     """
     Return whether a file is stale and should be re-downloaded
@@ -159,9 +168,7 @@ def parse_team_stats(year):
     )
 
 
-def parse_bbref_row(
-    players: Dict[Tuple[str, str], Dict[str, Any]], player: element.Tag
-):
+def parse_bbref_row(players: StatDict, player: element.Tag, year: str) -> StatDict:
     ignore = ["bpm-dum", "ws-dum", "DUMMY"]
     stats = {
         t["data-stat"].replace("-", "_"): tryint("".join(str(c) for c in t.children))
@@ -177,16 +184,16 @@ def parse_bbref_row(
     player_id = player.find("td")
     assert isinstance(player_id, element.Tag)
     stats["bb_ref_id"] = player_id.attrs["data-append-csv"]
+    stats["year"] = year
 
-    key = (stats["bb_ref_id"], stats["team"])
+    key = (stats["bb_ref_id"], stats["team"], year)
     if key not in players:
         players[key] = stats
     else:
         players[key] = {**players[key], **stats}
 
 
-# TODO: type the player object?
-def parse_player_stats(year: str) -> Sequence[Mapping[str, Any]]:
+def parse_player_stats(year: str) -> StatDict:
     datadir = f"data/{year}"
 
     players = {}
@@ -196,28 +203,23 @@ def parse_player_stats(year: str) -> Sequence[Mapping[str, Any]]:
     for page in ["totals", "advanced", "per_minute", "per_poss", "per_game"]:
         soup = BeautifulSoup(open(f"{datadir}/{page}.html"), "html.parser")
         for player in soup.find_all("tr", {"class": player_row}):
-            parse_bbref_row(players, player)
+            parse_bbref_row(players, player, year)
 
-    return list(players.values())
+    return players
 
 
-def download_data(force_download:bool=False, year_only:str=None):
-    if not year_only:
-        for year in range(MIN_YEAR, MAX_YEAR):
-            datadir = f"data/{year}"
-            if not isdir(datadir):
-                mkdir(datadir)
+def download_data(years: Sequence[str], force_download: bool = False):
+    for year in years:
+        datadir = f"data/{year}"
+        if not isdir(datadir):
+            mkdir(datadir)
 
-            if force_download:
-                get_bbref_data(year, datadir)
-            elif year == 2022 and stale(f"{datadir}/totals.html"):
-                get_bbref_data(year, datadir)
-            else:
-                continue
-    else:
-        datadir = f"data/{year_only}"
-        if force_download or stale(f"{datadir}/totals.html"):
-            get_bbref_data(year_only, datadir)
+        if force_download:
+            get_bbref_data(year, datadir)
+        elif year == "2022" and stale(f"{datadir}/totals.html"):
+            get_bbref_data(year, datadir)
+        else:
+            continue
 
     # 538 Raptor data
     # https://github.com/fivethirtyeight/data/tree/master/nba-raptor
@@ -250,71 +252,83 @@ def download_data(force_download:bool=False, year_only:str=None):
 
 
 # 538 has some different team names than bbref
-def fix_team(team, year):
+def fix_team(team: str, year: str) -> str:
     # from 2015 - today, 538 labels Hornets players as CHA while bbref labels
     # them as CHO
-    if team == "CHA" and year > 2014:
+    if team == "CHA" and int(year) > 2014:
         return "CHO"
     return team
 
 
-def parse_raptor_stats(data):
+def parse_raptor_stats(data: StatDict, years: Sequence[str]):
     for raptorfile in ("latest_RAPTOR", "modern_RAPTOR", "historical_RAPTOR"):
         for row in csv.DictReader(open(f"data/raptor/{raptorfile}.csv")):
             if row["season_type"] != "RS":
                 # we're currently not handling playoff data, so skip
                 continue
             pid = row["player_id"]
-            year = int(row["season"])
-            if year not in data:
+            year = row["season"]
+            if year not in years:
                 continue
+
             team = fix_team(row["team"], year)
             for key in set(row.keys()) - set(
                 ["player_name", "player_id", "team", "season", "season_type"]
             ):
-                if (pid, team) not in data[year]:
+                if (pid, team, year) not in data:
                     # doesn't work because there's a tuple in the data
                     # json.dump(data, open("/tmp/a.json", "w"))
-                    raise Exception(f"Couldn't find ({pid}, {team}) in {year}")
-                if key in data[year][(pid, team)]:
+                    raise Exception(f"Couldn't find ({pid}, {team}, {year}) in data")
+                if key in data[(pid, team, year)]:
                     # prefer bbref data, so skip if we find something that's
                     # already present. There are discrepancies in the raptor
                     # and bbref data, though I think there shouldn't be, but
                     # not gonna deal with it. Ex: raptor has Marcus Morris with
                     # 1447 minutes in 2017-18, and bbref 1442. :shrug:
                     continue
-                data[year][(pid, team)][key] = tryint(row[key])
+                data[(pid, team, year)][key] = tryint(row[key])
 
 
-def process_data(year_only: str = None, force_reprocess: bool = False):
+def process_data(years: Sequence[str], force_reprocess: bool = False):
     """Process the requested years' data and write it out as a parquet file"""
-    data = []
-    if year_only:
-        log(f"processing {args.year_only} data")
-        data += parse_player_stats(year_only)
-        parse_team_stats(year_only)
-        year = year_only
-    else:
-        for year in range(MIN_YEAR, MAX_YEAR):
-            if not stale(f"data/{year}/totals.html") or force_reprocess:
-                log(f"processing {year} data")
+    data = {}
 
-                data += parse_player_stats(str(year))
-                parse_team_stats(year)
+    for year in years:
+        log(f"processing {year} data")
+        data = {**parse_player_stats(year), **data}
+        parse_team_stats(year)
 
     log("processing raptor")
-    parse_raptor_stats(data)
+    parse_raptor_stats(data, years)
 
     output = "data/stats.parquet"
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(data.values())
+
+    # if any one of the first 20 rows in a column is numeric, assume the whole
+    # column ought to be numeric
+    #
+    # I'd like to avoid specifying the type for every column manually, because
+    # that makes breaking changes much more likely, but I might have to do that
+    # eventually
+    for col in df.columns:
+        for elt in df.head(20)[col]:
+            if isinstance(elt, (float, int)):
+                df[col].replace("", 0.0, inplace=True)
+                break
+
     table = pa.Table.from_pandas(df)
     pq.write_table(table, output)
 
 
 def main(args):
+    if args.year_only:
+        years = [args.year_only]
+    else:
+        years = [str(year) for year in range(MIN_YEAR, MAX_YEAR)]
+
     if not args.no_download:
-        download_data(args.force_download, args.year_only)
-    process_data(args.year_only, args.force_reprocess)
+        download_data(years, args.force_download)
+    process_data(years, args.force_reprocess)
 
 
 if __name__ == "__main__":
@@ -353,5 +367,5 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    with launch_ipdb_on_exception():
+    with ipdb.launch_ipdb_on_exception():
         main(args)
