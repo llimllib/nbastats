@@ -7,7 +7,7 @@ from os import makedirs, stat, mkdir
 from os.path import isdir, isfile
 import re
 from time import time
-from typing import Dict, Tuple, Any, Mapping, Sequence
+from typing import Dict, Tuple, Any, Sequence
 import ipdb
 
 from bs4 import BeautifulSoup, element
@@ -289,7 +289,7 @@ def parse_raptor_stats(data: StatDict, years: Sequence[str]):
                 data[(pid, team, year)][key] = tryint(row[key])
 
 
-def process_data(years: Sequence[str], force_reprocess: bool = False):
+def process_data(years: Sequence[str]):
     """Process the requested years' data and write it out as a parquet file"""
     data: StatDict = {}
 
@@ -328,7 +328,7 @@ def main(args):
 
     if not args.no_download:
         download_data(years, args.force_download)
-    process_data(years, args.force_reprocess)
+    process_data(years)
 
 
 if __name__ == "__main__":
