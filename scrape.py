@@ -47,10 +47,10 @@ MAX_YEAR = 2023
 PlayerKey = Tuple[str, str, str]
 
 # a player's stats is a mapping of strings to... things
-PlayerStats = Mapping[str, Any]
+PlayerStats = Dict[str, Any]
 
 # a StatDict is a mapping from player keys to player stats
-StatDict = Mapping[PlayerKey, PlayerStats]
+StatDict = Dict[PlayerKey, PlayerStats]
 
 def log(msg):
     if DEBUG:
@@ -168,7 +168,7 @@ def parse_team_stats(year):
     )
 
 
-def parse_bbref_row(players: StatDict, player: element.Tag, year: str) -> StatDict:
+def parse_bbref_row(players: StatDict, player: element.Tag, year: str):
     ignore = ["bpm-dum", "ws-dum", "DUMMY"]
     stats = {
         t["data-stat"].replace("-", "_"): tryint("".join(str(c) for c in t.children))
@@ -196,7 +196,7 @@ def parse_bbref_row(players: StatDict, player: element.Tag, year: str) -> StatDi
 def parse_player_stats(year: str) -> StatDict:
     datadir = f"data/{year}"
 
-    players = {}
+    players: StatDict = {}
 
     player_row = re.compile(r".*\b(full_table|partial_table)\b.*")
 
@@ -291,7 +291,7 @@ def parse_raptor_stats(data: StatDict, years: Sequence[str]):
 
 def process_data(years: Sequence[str], force_reprocess: bool = False):
     """Process the requested years' data and write it out as a parquet file"""
-    data = {}
+    data: StatDict = {}
 
     for year in years:
         log(f"processing {year} data")
