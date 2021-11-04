@@ -46,6 +46,12 @@ import { Table, DataFrame } from '@apache-arrow/esnext-esm';
 // * add option to remove traded player stats maybe?
 // * fix transferred player bug: select "raptor defensive rating" as y axis and
 //   you get a bunch of undefined coordinates and players at (0,0)
+// * add year as an axis possibility
+//   * I think there's a lot more possible UI around time, but for now this
+//     would be helpful
+// * default to current season only
+//   * allow filter to range on all years
+//   * possibly a check box for "current year only"?
 
 const $ = (s) => document.querySelector(s);
 
@@ -1190,12 +1196,62 @@ function changeUseTeamColors(_) {
   graph(applyFilter(window.stats.players), fields);
 }
 
+// ultimately if we have more functions we want to support we could actually
+// parse a query language? for now let's hack like whoa
+// TODO: instead of \w we should use whatever the valid characters are in a
+// postgres column name? but honestly all of our column names are very simple
+// so who cares
+//
+// XXX: I would really like the expression just to be `quantile(<field)`, so
+// that you could do nicer things like:
+//
+// quantile(fga) < 35
+//
+// rather than what we have, which is a "quantile greater than" function. The
+// problem is that it's tricky to parse - we need to pull out the entire
+// expression "quantile(fga) < 35" so taht we can replace it in the CTE with
+// "true" (or elimiate it), but that basically reduces to a complicated parsing
+// problem. So for now, for simplicity, just leave well enough alone
+const QUANTILE_RE = /quantile\((\w+), (\d+)\)/
+function parseQuantiles(filter) {
+  const quantiles = []
+  let nullfilter = `${filter}`
+  while ((res = QUANTILE_RE.exec(filter)) !== null) {
+    [call, field, value] = res;
+    filter = filter.replace(call, `_${field}_ntile > ${value}`);
+    nullfilter = nullfilter.replace(call, "true");
+    quantiles.push(field);
+  }
+  console.log(filter, nullfilter);
+  return [filter, nullfilter, quantiles];
+}
+
 async function applyFilter(conn) {
   // select the top 5 percentile in fga, over all years:
   // https://duckdb.org/2021/10/13/windowing.html
   // with player_stats as ( select *, ntile(100) over (order by fga) as fga_pctile from stats) select * from player_stats where fga_pctile > 95;
   const queryCondition = $('#filter').value;
-  const stats = await query(conn, `SELECT * FROM stats WHERE ${queryCondition}`);
+
+  [cond, nullcond, medians] = parseQuantiles(queryCondition);
+
+  let stats = {};
+  if (medians.length > 0) {
+    median_stmts = medians.map(x => `ntile(100) OVER (ORDER BY ${x}) AS _${x}_ntile`).join(', ');
+    stats = await query(conn, `
+      WITH mstats AS (
+        SELECT *, ${median_stmts}
+        FROM stats
+        WHERE ${nullcond}
+      )
+      SELECT *
+      FROM mstats
+      WHERE ${cond}`);
+  } else {
+    stats = await query(conn, `
+      SELECT *
+      FROM stats
+      WHERE ${queryCondition}`);
+  }
   window.stats = stats;
   return stats;
 }
