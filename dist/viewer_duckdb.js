@@ -11417,10 +11417,10 @@ var J;
 (function(r) {
   r.ROW_ARRAY = "row-array", r.COLUMN_OBJECT = "column-object";
 })(J || (J = {}));
-var z;
+var q;
 (function(r) {
   r[r.APPEND = 0] = "APPEND", r[r.IMPORT = 1] = "IMPORT";
-})(z || (z = {}));
+})(q || (q = {}));
 var T;
 (function(i) {
   i[i.NONE = 0] = "NONE", i[i.DEBUG = 1] = "DEBUG", i[i.INFO = 2] = "INFO", i[i.WARNING = 3] = "WARNING", i[i.ERROR = 4] = "ERROR";
@@ -11467,7 +11467,7 @@ var B = class {
   }
   async prepare(e) {
     let r = await this._bindings.createPrepared(this._conn, e);
-    return new q(this._bindings, this._conn, r);
+    return new z(this._bindings, this._conn, r);
   }
   async insertArrowVectors(e, r) {
     await this.insertArrowTable(Table.new(e), r);
@@ -11510,7 +11510,7 @@ var v = class {
     return this;
   }
 };
-var q = class {
+var z = class {
   constructor(e, r, t) {
     this.bindings = e, this.connectionId = r, this.statementId = t;
   }
@@ -11843,14 +11843,14 @@ var de = class {
   }
 };
 var ue = "@duckdb/duckdb-wasm";
-var me = "0.1.12-dev8.0";
+var me = "0.1.12-dev26.0";
 var pe = "DuckDB powered by WebAssembly";
 var _e = "MPL-2.0";
 var Ee = { type: "git", url: "https://github.com/duckdb/duckdb-wasm.git" };
 var be = { "@apache-arrow/esnext-esm": "^6.0.0", "wasm-feature-detect": "^1.2.11" };
-var he = { "@types/emscripten": "^1.39.4", "@types/jasmine": "^3.10.1", "@typescript-eslint/eslint-plugin": "^5.2.0", "@typescript-eslint/parser": "^5.2.0", esbuild: "^0.13.12", eslint: "^8.1.0", "eslint-plugin-jasmine": "^4.1.2", "eslint-plugin-react": "^7.26.1", jasmine: "^3.10.0", "jasmine-core": "^3.10.1", "jasmine-spec-reporter": "^7.0.0", karma: "^6.3.6", "karma-chrome-launcher": "^3.1.0", "karma-coverage": "^2.0.3", "karma-firefox-launcher": "^2.1.1", "karma-jasmine": "^4.0.1", "karma-jasmine-html-reporter": "^1.7.0", "karma-sourcemap-loader": "^0.3.8", "karma-spec-reporter": "^0.0.32", "make-dir": "^3.1.0", nyc: "^15.1.0", prettier: "^2.4.1", puppeteer: "^10.4.0", rimraf: "^3.0.2", typedoc: "^0.22.7", typescript: "^4.4.4", "web-worker": "^1.1.0" };
+var he = { "@types/emscripten": "^1.39.4", "@types/jasmine": "^3.10.2", "@typescript-eslint/eslint-plugin": "^5.3.0", "@typescript-eslint/parser": "^5.3.0", esbuild: "^0.13.12", eslint: "^8.1.0", "eslint-plugin-jasmine": "^4.1.2", "eslint-plugin-react": "^7.26.1", jasmine: "^3.10.0", "jasmine-core": "^3.10.1", "jasmine-spec-reporter": "^7.0.0", karma: "^6.3.7", "karma-chrome-launcher": "^3.1.0", "karma-coverage": "^2.0.3", "karma-firefox-launcher": "^2.1.2", "karma-jasmine": "^4.0.1", "karma-jasmine-html-reporter": "^1.7.0", "karma-sourcemap-loader": "^0.3.8", "karma-spec-reporter": "^0.0.32", "make-dir": "^3.1.0", nyc: "^15.1.0", prettier: "^2.4.1", puppeteer: "^10.4.0", rimraf: "^3.0.2", typedoc: "^0.22.7", typescript: "^4.4.4", "web-worker": "^1.1.0" };
 var Re = { fsevents: "*" };
-var ge = { "build:debug": "node bundle.mjs debug && tsc --emitDeclarationOnly", "build:release": "node bundle.mjs release && tsc --emitDeclarationOnly", docs: "typedoc", report: "node ./coverage.mjs", "test:node": "node --enable-source-maps --experimental-wasm-eh ../../node_modules/jasmine/bin/jasmine ./dist/tests-node.js", "test:node:debug": "node --inspect-brk --enable-source-maps --experimental-wasm-eh ../../node_modules/jasmine/bin/jasmine ./dist/tests-node.js", "test:node:filter": 'node --enable-source-maps --experimental-wasm-eh ../../node_modules/jasmine/bin/jasmine ./dist/tests-node.js --filter="CSV"', "test:node:coverage": "nyc -r json --report-dir ./coverage/node node --experimental-wasm-eh ../../node_modules/jasmine/bin/jasmine ./dist/tests-node.js", "test:firefox": "karma start ./karma/tests-firefox.cjs", "test:chrome": "karma start ./karma/tests-chrome.cjs", "test:chrome:eh": "karma start ./karma/tests-chrome-eh.cjs", "test:chrome:coverage": "karma start ./karma/tests-chrome-coverage.cjs", "test:browsers": "karma start ./karma/tests-all.cjs", "test:debug": "karma start ./karma/tests-debug.cjs", test: "npm run test:chrome && npm run test:node", "test:coverage": "npm run test:chrome:coverage && npm run test:node:coverage && npm run report", lint: "eslint src test" };
+var ge = { "build:debug": "node bundle.mjs debug && tsc --emitDeclarationOnly", "build:release": "node bundle.mjs release && tsc --emitDeclarationOnly", docs: "typedoc", report: "node ./coverage.mjs", "test:node": "node --enable-source-maps --experimental-wasm-eh ../../node_modules/jasmine/bin/jasmine ./dist/tests-node.js", "test:node:debug": "node --inspect-brk --enable-source-maps --experimental-wasm-eh ../../node_modules/jasmine/bin/jasmine ./dist/tests-node.js", "test:node:coverage": "nyc -r json --report-dir ./coverage/node node --experimental-wasm-eh ../../node_modules/jasmine/bin/jasmine ./dist/tests-node.js", "test:firefox": "karma start ./karma/tests-firefox.cjs", "test:chrome": "karma start ./karma/tests-chrome.cjs", "test:chrome:eh": "karma start ./karma/tests-chrome-eh.cjs", "test:chrome:coverage": "karma start ./karma/tests-chrome-coverage.cjs", "test:browser": "karma start ./karma/tests-all.cjs", "test:browser:debug": "karma start ./karma/tests-debug.cjs", test: "npm run test:chrome && npm run test:node", "test:coverage": "npm run test:chrome:coverage && npm run test:node:coverage && npm run report", lint: "eslint src test" };
 var Te = ["dist", "!dist/types/test"];
 var ye = "./dist/duckdb-node-async.js";
 var Se = "./dist/duckdb-node-async.d.ts";
@@ -11905,8 +11905,12 @@ var settings = {
   duration: 750,
   domainPadding: 0.05
 };
-window.DATA_URL = "http://localhost:9001/data";
-function hover(event, tooltip, stats2, scales, fields, delaunay, cells) {
+window.DATA_URL = "http://devd.io:8000/data";
+async function query(conn, query2) {
+  const table = await conn.query(query2);
+  return table.toArray().map((x2) => x2.toJSON());
+}
+function hover(event, tooltip, stats, scales, fields, delaunay, cells) {
   const [mx, my] = d3.pointer(event, this);
   const nearest = delaunay.find(mx, my);
   const closestPlayer = cells[nearest][0];
@@ -11931,32 +11935,32 @@ function orient(pos, r) {
   }
 }
 function orientText(scales, fields) {
-  return function([player2, cell]) {
+  return function([player, cell]) {
     if (!cell) {
       return;
     }
     const [cx, cy] = d3.polygonCentroid(cell);
-    const angle = (Math.round(Math.atan2(cy - scales.y(player2[fields.y]), cx - scales.x(player2[fields.x])) / Math.PI * 2) + 4) % 4;
-    const r = scales.r(player2[fields.r]) * 1.1;
+    const angle = (Math.round(Math.atan2(cy - scales.y(player[fields.y]), cx - scales.x(player[fields.x])) / Math.PI * 2) + 4) % 4;
+    const r = scales.r(player[fields.r]) * 1.1;
     d3.select(this).call(angle === 0 ? orient("right", r) : angle === 3 ? orient("top", r) : angle === 1 ? orient("bottom", r) : orient("left", r));
   };
 }
-function calcVoronoi(stats2, scales, fields) {
-  const delaunay = d3.Delaunay.from(stats2, (p2) => scales.x(p2[fields.x]), (p2) => scales.y(p2[fields.y]));
+function calcVoronoi(stats, scales, fields) {
+  const delaunay = d3.Delaunay.from(stats, (p2) => scales.x(p2[fields.x]), (p2) => scales.y(p2[fields.y]));
   const voronoi = delaunay.voronoi([
     -1,
     -1,
     settings.width + 1,
     settings.height + 1
   ]);
-  var cells = stats2.map((d, i) => [d, voronoi.cellPolygon(i)]);
+  var cells = stats.map((d, i) => [d, voronoi.cellPolygon(i)]);
   return [delaunay, cells];
 }
-function pointLabels(svg, stats2, scales, fields, cells) {
+function pointLabels(svg, stats, scales, fields, cells) {
   var orienter = orientText(scales, fields);
   const container = svg.append("g").attr("class", "labels").style("font", "10px sans-serif");
   container.selectAll("text").data(cells, ([p2, _]) => p2.name + p2.team).join("text").attr("class", "pointLabel").each(orienter).attr("transform", ([p2, _]) => `translate(${scales.x(p2[fields.x])},${scales.y(p2[fields.y])})`).attr("display", ([, cell]) => !cell || -d3.polygonArea(cell) > 3e3 ? null : "none").text(([p2, _]) => p2.name);
-  return function(stats3, scales2, fields2, cells2) {
+  return function(stats2, scales2, fields2, cells2) {
     var orienter2 = orientText(scales2, fields2);
     container.selectAll("text").data(cells2, ([p2, _]) => p2.name + p2.team).join("text").transition().duration(settings.duration).each(orienter2).attr("transform", ([p2, _]) => `translate(${scales2.x(p2[fields2.x])},${scales2.y(p2[fields2.y])})`).attr("display", ([, cell]) => !cell || -d3.polygonArea(cell) > 3e3 ? null : "none").text(([p2, _]) => p2.name);
   };
@@ -11975,45 +11979,45 @@ function paddedExtent(lst, fn2, reversed) {
     ];
   }
 }
-function makeScales(stats2, fields) {
+function makeScales(stats, fields) {
   const xAxType = statMeta[fields.x].type;
   const xreversed = statMeta[fields.x].reversed;
   var x2;
   if (xAxType == "categorical") {
-    const domain = new Set(stats2.map((p2) => p2[fields.x]));
+    const domain = new Set(stats.map((p2) => p2[fields.x]));
     x2 = d3.scaleBand(domain, [
       settings.padding.left,
       settings.width - settings.padding.right
     ]);
   } else {
-    x2 = d3.scaleLinear().domain(paddedExtent(stats2, (s) => s[fields.x], xreversed)).range([settings.padding.left, settings.width - settings.padding.right]);
+    x2 = d3.scaleLinear().domain(paddedExtent(stats, (s) => s[fields.x], xreversed)).range([settings.padding.left, settings.width - settings.padding.right]);
   }
   const yAxType = statMeta[fields.y].type;
   const yreversed = statMeta[fields.y].reversed;
   var y2;
   if (yAxType == "categorical") {
-    const domain = new Set(stats2.map((p2) => p2[fields.y]));
+    const domain = new Set(stats.map((p2) => p2[fields.y]));
     y2 = d3.scaleBand(domain, [
       settings.padding.top,
       settings.height - settings.padding.bottom
     ]);
   } else {
-    y2 = d3.scaleLinear().domain(d3.reverse(paddedExtent(stats2, (s) => s[fields.y], yreversed))).range([settings.padding.top, settings.height - settings.padding.bottom]);
+    y2 = d3.scaleLinear().domain(d3.reverse(paddedExtent(stats, (s) => s[fields.y], yreversed))).range([settings.padding.top, settings.height - settings.padding.bottom]);
   }
   var r;
   if (!isNaN(fields.r)) {
     r = (_) => parseFloat(fields.r);
   } else {
-    r = d3.scaleLinear().domain(d3.extent(stats2, (s) => s[fields.r])).range([settings.minRadius, settings.maxRadius]);
+    r = d3.scaleLinear().domain(d3.extent(stats, (s) => s[fields.r])).range([settings.minRadius, settings.maxRadius]);
   }
   return { x: x2, y: y2, r };
 }
-function axes(svg, stats2, scales) {
+function axes(svg, stats, scales) {
   var xaxis = d3.axisTop(scales.x).tickSize(settings.height - settings.padding.top).tickFormat(d3.format(".2r"));
   const xaxisg = svg.append("g").attr("transform", `translate(0, ${settings.height - 20})`).attr("class", "xaxis").call(xaxis).call((g2) => g2.select(".domain").remove()).call((g2) => g2.selectAll(".tick line").attr("stroke-opacity", 0.1)).call((g2) => g2.selectAll(".tick text").attr("y", 0).attr("dx", -15));
   const yaxis = d3.axisRight(scales.y).tickSize(settings.width - settings.padding.right).tickFormat(d3.format(".2r"));
   const yaxisg = svg.append("g").attr("transform", `translate(20, 0)`).attr("class", "yaxis").call(yaxis).call((g2) => g2.select(".domain").remove()).call((g2) => g2.selectAll(".tick line").attr("stroke-opacity", 0.1)).call((g2) => g2.selectAll(".tick text").attr("dy", -4).attr("x", 4));
-  return function(stats3, scales2, fields) {
+  return function(stats2, scales2, fields) {
     const xAxType = statMeta[fields.x].type;
     if (xAxType == "categorical") {
       xaxis.scale(scales2.x).tickFormat((p2) => p2);
@@ -12032,20 +12036,20 @@ function axes(svg, stats2, scales) {
     yaxisg.transition().duration(settings.duration).call(yaxis).on("start", () => yaxisg.select(".domain").remove()).call((g2) => g2.select(".domain").remove()).call((g2) => g2.selectAll(".tick line").attr("stroke-opacity", 0.1)).call((g2) => g2.selectAll(".tick text").attr("x", 4).attr("dy", -4));
   };
 }
-function points(svg, stats2, scales, fields) {
+function points(svg, stats, scales, fields) {
   var useTeamColors = $2("#teamcolors").checked;
   const container = svg.append("g").attr("class", "points");
-  const points2 = container.selectAll("g").data(stats2, (d) => d.name + d.team).join("g").attr("data-player-name", (d) => d.name).attr("transform", (d) => `translate(${scales.x(d[fields.x])},${scales.y(d[fields.y])})`);
+  const points2 = container.selectAll("g").data(stats, (d) => d.name + d.team).join("g").attr("data-player-name", (d) => d.name).attr("transform", (d) => `translate(${scales.x(d[fields.x])},${scales.y(d[fields.y])})`);
   if (useTeamColors) {
     points2.append("circle").attr("class", "outer").attr("fill", (d) => teams[d.team].colors[0]).attr("r", (d) => scales.r(d[fields.r]));
     points2.append("circle").attr("class", "inner").attr("fill", (d) => teams[d.team].colors[1]).attr("r", (d) => scales.r(d[fields.r]) / 2);
   } else {
     points2.append("circle").attr("class", "outer").attr("fill", "#1f77b4").attr("r", (d) => scales.r(d[fields.r]));
   }
-  return function(stats3, scales2, fields2) {
+  return function(stats2, scales2, fields2) {
     useTeamColors = $2("#teamcolors").checked;
     d3.selectAll(".player_label").remove();
-    container.selectAll("g").data(stats3, (d) => d.name + d.team).join((enter) => {
+    container.selectAll("g").data(stats2, (d) => d.name + d.team).join((enter) => {
       var g2 = enter.append("g");
       if (useTeamColors) {
         g2.append("circle").attr("class", "outer").attr("fill", (d) => teams[d.team].colors[0]).attr("r", (d) => scales2.r(d[fields2.r]));
@@ -12082,29 +12086,30 @@ function axisLabels(svg, fields) {
     }
   };
 }
-function graph(stats2, fields) {
+function graph(stats, fields) {
+  console.log(stats);
   const svg = d3.select("#canvas");
-  var scales = makeScales(stats2, fields);
-  var [delaunay, voronoiCells] = calcVoronoi(stats2, scales, fields);
-  const updateAxes2 = axes(svg, stats2, scales);
+  var scales = makeScales(stats, fields);
+  var [delaunay, voronoiCells] = calcVoronoi(stats, scales, fields);
+  const updateAxes2 = axes(svg, stats, scales);
   const updateAxisLabels = axisLabels(svg, fields);
-  const updatePoints = points(svg, stats2, scales, fields);
-  const updateLabels = pointLabels(svg, stats2, scales, fields, voronoiCells);
+  const updatePoints = points(svg, stats, scales, fields);
+  const updateLabels = pointLabels(svg, stats, scales, fields, voronoiCells);
   var tooltip = svg.append("g").attr("class", "tooltip");
-  svg.on("touchmove mousemove", (evt) => hover(evt, tooltip, stats2, scales, fields, delaunay, voronoiCells));
+  svg.on("touchmove mousemove", (evt) => hover(evt, tooltip, stats, scales, fields, delaunay, voronoiCells));
   svg.on("touchend mouseleave", () => tooltip.call(callout, null));
   return Object.assign(svg.node(), {
-    update(stats3, fields2) {
-      scales.y.domain(d3.reverse(paddedExtent(stats3, (s) => s[fields2.y], statMeta[fields2.y].reversed)));
-      scales.x.domain(paddedExtent(stats3, (s) => s[fields2.x], statMeta[fields2.x].reversed));
-      scales = makeScales(stats3, fields2);
-      [delaunay, voronoiCells] = calcVoronoi(stats3, scales, fields2);
-      updateAxes2(stats3, scales, fields2);
+    update(stats2, fields2) {
+      scales.y.domain(d3.reverse(paddedExtent(stats2, (s) => s[fields2.y], statMeta[fields2.y].reversed)));
+      scales.x.domain(paddedExtent(stats2, (s) => s[fields2.x], statMeta[fields2.x].reversed));
+      scales = makeScales(stats2, fields2);
+      [delaunay, voronoiCells] = calcVoronoi(stats2, scales, fields2);
+      updateAxes2(stats2, scales, fields2);
       updateAxisLabels(fields2);
-      updatePoints(stats3, scales, fields2);
-      updateLabels(stats3, scales, fields2, voronoiCells);
+      updatePoints(stats2, scales, fields2);
+      updateLabels(stats2, scales, fields2, voronoiCells);
       svg.on("touchmove mousemove", (evt) => {
-        return hover(evt, tooltip, stats3, scales, fields2, delaunay, voronoiCells);
+        return hover(evt, tooltip, stats2, scales, fields2, delaunay, voronoiCells);
       });
       tooltip.remove();
       tooltip = svg.append("g").attr("class", "tooltip");
@@ -12669,18 +12674,6 @@ function prepare() {
   d3.select("#statx_ts_pct").attr("selected", true);
   d3.select("#staty_usg_pct").attr("selected", true);
 }
-async function changeYear(evt) {
-  const res = await fetch(`${window.DATA_URL}/${evt.target.value}/stats.json`);
-  window.stats = await res.json();
-  $2("#updated").innerHTML = "updated " + new Intl.DateTimeFormat([], { dateStyle: "medium", timeStyle: "short" }).format(Date.parse(window.stats.updated));
-  const fields = {
-    x: $2("#statx").value,
-    y: $2("#staty").value,
-    r: $2("#radius").value
-  };
-  d3.selectAll("#canvas").html("");
-  graph(applyFilter(window.stats.players), fields);
-}
 function changeUseTeamColors(_) {
   const fields = {
     x: $2("#statx").value,
@@ -12690,17 +12683,13 @@ function changeUseTeamColors(_) {
   d3.selectAll("#canvas").html("");
   graph(applyFilter(window.stats.players), fields);
 }
-function makeQuantiler(stats2) {
-  return function(player2, field, n) {
-    return player2[field] > d3.quantile(stats2, n / 100, (p2) => p2[field]);
-  };
+async function applyFilter(conn) {
+  const queryCondition = $2("#filterrr").value;
+  const stats = await query(conn, `SELECT * FROM stats WHERE ${queryCondition}`);
+  window.stats = stats;
+  return stats;
 }
-function applyFilter(stats) {
-  const quantile = makeQuantiler(stats);
-  const activeStats = stats.filter((player) => eval($2("#filter").value));
-  return activeStats;
-}
-function updateSettings(_evt) {
+async function updateSettings(_evt) {
   settings.width = $2("#settings-width").value;
   settings.height = $2("#settings-height").value;
   settings.minRadius = $2("#settings-min-radius").value;
@@ -12711,11 +12700,11 @@ function updateSettings(_evt) {
     r: $2("#radius").value
   };
   d3.selectAll("#canvas").html("");
-  graph(applyFilter(window.stats.players), fields);
+  graph(await applyFilter(window.conn), fields);
 }
 function updateAxes(svg) {
-  return (_evt) => {
-    svg.update(applyFilter(window.stats.players), {
+  return async (_evt) => {
+    svg.update(await applyFilter(window.conn), {
       x: $2("#statx").value,
       y: $2("#staty").value,
       r: $2("#radius").value
@@ -12723,29 +12712,6 @@ function updateAxes(svg) {
   };
 }
 window.addEventListener("DOMContentLoaded", async (_evt) => {
-  const res = await fetch(`${window.DATA_URL}/2022/stats.json`);
-  window.stats = await res.json();
-  $2("#updated").innerHTML = "updated " + new Intl.DateTimeFormat([], { dateStyle: "medium", timeStyle: "short" }).format(Date.parse(window.stats.updated));
-  $2("#settings-width").value = settings.width;
-  $2("#settings-height").value = settings.height;
-  $2("#settings-min-radius").value = settings.minRadius;
-  $2("#settings-max-radius").value = settings.maxRadius;
-  prepare();
-  const svg = graph(applyFilter(window.stats.players), {
-    x: "ts_pct",
-    y: "usg_pct",
-    r: $2("#radius").value
-  });
-  $2("#settings-width").addEventListener("change", updateSettings);
-  $2("#settings-height").addEventListener("change", updateSettings);
-  $2("#settings-min-radius").addEventListener("change", updateSettings);
-  $2("#settings-max-radius").addEventListener("change", updateSettings);
-  $2("#yearChooser").addEventListener("change", changeYear);
-  $2("#teamcolors").addEventListener("change", (evt) => changeUseTeamColors(evt));
-  $2("#statx").addEventListener("change", updateAxes(svg));
-  $2("#staty").addEventListener("change", updateAxes(svg));
-  $2("#radius").addEventListener("change", updateAxes(svg));
-  $2("#applyFilter").addEventListener("click", updateAxes(svg));
   const JSDELIVR_BUNDLES = Xr();
   const bundle = await Zr(JSDELIVR_BUNDLES);
   const worker = new Worker(bundle.mainWorker);
@@ -12760,7 +12726,24 @@ window.addEventListener("DOMContentLoaded", async (_evt) => {
       CREATE TABLE stats AS
           SELECT * FROM "${window.DATA_URL}/stats.parquet"
   `);
-  const table = await conn.query("SELECT * FROM stats LIMIT 5");
-  const rows = table.toArray();
-  console.log(rows, rows[0].name, rows[0].fga);
+  $2("#settings-width").value = settings.width;
+  $2("#settings-height").value = settings.height;
+  $2("#settings-min-radius").value = settings.minRadius;
+  $2("#settings-max-radius").value = settings.maxRadius;
+  prepare();
+  const svg = graph(await applyFilter(conn), {
+    x: "ts_pct",
+    y: "usg_pct",
+    r: $2("#radius").value
+  });
+  $2("#settings-width").addEventListener("change", updateSettings);
+  $2("#settings-height").addEventListener("change", updateSettings);
+  $2("#settings-min-radius").addEventListener("change", updateSettings);
+  $2("#settings-max-radius").addEventListener("change", updateSettings);
+  $2("#teamcolors").addEventListener("change", (evt) => changeUseTeamColors(evt));
+  $2("#statx").addEventListener("change", updateAxes(svg));
+  $2("#staty").addEventListener("change", updateAxes(svg));
+  $2("#radius").addEventListener("change", updateAxes(svg));
+  $2("#applyFilter").addEventListener("click", updateAxes(svg));
 });
+//# sourceMappingURL=viewer_duckdb.js.map
