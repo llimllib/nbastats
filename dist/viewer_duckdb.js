@@ -132,93 +132,93 @@ flatbuffers.Builder.prototype.pad = function(byte_size) {
     this.bb.writeInt8(--this.space, 0);
   }
 };
-flatbuffers.Builder.prototype.writeInt8 = function(value) {
-  this.bb.writeInt8(this.space -= 1, value);
+flatbuffers.Builder.prototype.writeInt8 = function(value2) {
+  this.bb.writeInt8(this.space -= 1, value2);
 };
-flatbuffers.Builder.prototype.writeInt16 = function(value) {
-  this.bb.writeInt16(this.space -= 2, value);
+flatbuffers.Builder.prototype.writeInt16 = function(value2) {
+  this.bb.writeInt16(this.space -= 2, value2);
 };
-flatbuffers.Builder.prototype.writeInt32 = function(value) {
-  this.bb.writeInt32(this.space -= 4, value);
+flatbuffers.Builder.prototype.writeInt32 = function(value2) {
+  this.bb.writeInt32(this.space -= 4, value2);
 };
-flatbuffers.Builder.prototype.writeInt64 = function(value) {
-  this.bb.writeInt64(this.space -= 8, value);
+flatbuffers.Builder.prototype.writeInt64 = function(value2) {
+  this.bb.writeInt64(this.space -= 8, value2);
 };
-flatbuffers.Builder.prototype.writeFloat32 = function(value) {
-  this.bb.writeFloat32(this.space -= 4, value);
+flatbuffers.Builder.prototype.writeFloat32 = function(value2) {
+  this.bb.writeFloat32(this.space -= 4, value2);
 };
-flatbuffers.Builder.prototype.writeFloat64 = function(value) {
-  this.bb.writeFloat64(this.space -= 8, value);
+flatbuffers.Builder.prototype.writeFloat64 = function(value2) {
+  this.bb.writeFloat64(this.space -= 8, value2);
 };
-flatbuffers.Builder.prototype.addInt8 = function(value) {
+flatbuffers.Builder.prototype.addInt8 = function(value2) {
   this.prep(1, 0);
-  this.writeInt8(value);
+  this.writeInt8(value2);
 };
-flatbuffers.Builder.prototype.addInt16 = function(value) {
+flatbuffers.Builder.prototype.addInt16 = function(value2) {
   this.prep(2, 0);
-  this.writeInt16(value);
+  this.writeInt16(value2);
 };
-flatbuffers.Builder.prototype.addInt32 = function(value) {
+flatbuffers.Builder.prototype.addInt32 = function(value2) {
   this.prep(4, 0);
-  this.writeInt32(value);
+  this.writeInt32(value2);
 };
-flatbuffers.Builder.prototype.addInt64 = function(value) {
+flatbuffers.Builder.prototype.addInt64 = function(value2) {
   this.prep(8, 0);
-  this.writeInt64(value);
+  this.writeInt64(value2);
 };
-flatbuffers.Builder.prototype.addFloat32 = function(value) {
+flatbuffers.Builder.prototype.addFloat32 = function(value2) {
   this.prep(4, 0);
-  this.writeFloat32(value);
+  this.writeFloat32(value2);
 };
-flatbuffers.Builder.prototype.addFloat64 = function(value) {
+flatbuffers.Builder.prototype.addFloat64 = function(value2) {
   this.prep(8, 0);
-  this.writeFloat64(value);
+  this.writeFloat64(value2);
 };
-flatbuffers.Builder.prototype.addFieldInt8 = function(voffset, value, defaultValue) {
-  if (this.force_defaults || value != defaultValue) {
-    this.addInt8(value);
+flatbuffers.Builder.prototype.addFieldInt8 = function(voffset, value2, defaultValue) {
+  if (this.force_defaults || value2 != defaultValue) {
+    this.addInt8(value2);
     this.slot(voffset);
   }
 };
-flatbuffers.Builder.prototype.addFieldInt16 = function(voffset, value, defaultValue) {
-  if (this.force_defaults || value != defaultValue) {
-    this.addInt16(value);
+flatbuffers.Builder.prototype.addFieldInt16 = function(voffset, value2, defaultValue) {
+  if (this.force_defaults || value2 != defaultValue) {
+    this.addInt16(value2);
     this.slot(voffset);
   }
 };
-flatbuffers.Builder.prototype.addFieldInt32 = function(voffset, value, defaultValue) {
-  if (this.force_defaults || value != defaultValue) {
-    this.addInt32(value);
+flatbuffers.Builder.prototype.addFieldInt32 = function(voffset, value2, defaultValue) {
+  if (this.force_defaults || value2 != defaultValue) {
+    this.addInt32(value2);
     this.slot(voffset);
   }
 };
-flatbuffers.Builder.prototype.addFieldInt64 = function(voffset, value, defaultValue) {
-  if (this.force_defaults || !value.equals(defaultValue)) {
-    this.addInt64(value);
+flatbuffers.Builder.prototype.addFieldInt64 = function(voffset, value2, defaultValue) {
+  if (this.force_defaults || !value2.equals(defaultValue)) {
+    this.addInt64(value2);
     this.slot(voffset);
   }
 };
-flatbuffers.Builder.prototype.addFieldFloat32 = function(voffset, value, defaultValue) {
-  if (this.force_defaults || value != defaultValue) {
-    this.addFloat32(value);
+flatbuffers.Builder.prototype.addFieldFloat32 = function(voffset, value2, defaultValue) {
+  if (this.force_defaults || value2 != defaultValue) {
+    this.addFloat32(value2);
     this.slot(voffset);
   }
 };
-flatbuffers.Builder.prototype.addFieldFloat64 = function(voffset, value, defaultValue) {
-  if (this.force_defaults || value != defaultValue) {
-    this.addFloat64(value);
+flatbuffers.Builder.prototype.addFieldFloat64 = function(voffset, value2, defaultValue) {
+  if (this.force_defaults || value2 != defaultValue) {
+    this.addFloat64(value2);
     this.slot(voffset);
   }
 };
-flatbuffers.Builder.prototype.addFieldOffset = function(voffset, value, defaultValue) {
-  if (this.force_defaults || value != defaultValue) {
-    this.addOffset(value);
+flatbuffers.Builder.prototype.addFieldOffset = function(voffset, value2, defaultValue) {
+  if (this.force_defaults || value2 != defaultValue) {
+    this.addOffset(value2);
     this.slot(voffset);
   }
 };
-flatbuffers.Builder.prototype.addFieldStruct = function(voffset, value, defaultValue) {
-  if (value != defaultValue) {
-    this.nested(value);
+flatbuffers.Builder.prototype.addFieldStruct = function(voffset, value2, defaultValue) {
+  if (value2 != defaultValue) {
+    this.nested(value2);
     this.slot(voffset);
   }
 };
@@ -329,12 +329,12 @@ flatbuffers.Builder.prototype.finish = function(root_table, opt_file_identifier,
 flatbuffers.Builder.prototype.finishSizePrefixed = function(root_table, opt_file_identifier) {
   this.finish(root_table, opt_file_identifier, true);
 };
-flatbuffers.Builder.prototype.requiredField = function(table, field) {
+flatbuffers.Builder.prototype.requiredField = function(table, field2) {
   var table_start = this.bb.capacity() - table;
   var vtable_start = table_start - this.bb.readInt32(table_start);
-  var ok = this.bb.readInt16(vtable_start + field) != 0;
+  var ok = this.bb.readInt16(vtable_start + field2) != 0;
   if (!ok) {
-    throw new Error("FlatBuffers: field " + field + " must be set");
+    throw new Error("FlatBuffers: field " + field2 + " must be set");
   }
 };
 flatbuffers.Builder.prototype.startVector = function(elem_size, num_elems, alignment) {
@@ -445,46 +445,46 @@ flatbuffers.ByteBuffer.prototype.readFloat64 = function(offset) {
   flatbuffers.int32[flatbuffers.isLittleEndian ? 1 : 0] = this.readInt32(offset + 4);
   return flatbuffers.float64[0];
 };
-flatbuffers.ByteBuffer.prototype.writeInt8 = function(offset, value) {
-  this.bytes_[offset] = value;
+flatbuffers.ByteBuffer.prototype.writeInt8 = function(offset, value2) {
+  this.bytes_[offset] = value2;
 };
-flatbuffers.ByteBuffer.prototype.writeUint8 = function(offset, value) {
-  this.bytes_[offset] = value;
+flatbuffers.ByteBuffer.prototype.writeUint8 = function(offset, value2) {
+  this.bytes_[offset] = value2;
 };
-flatbuffers.ByteBuffer.prototype.writeInt16 = function(offset, value) {
-  this.bytes_[offset] = value;
-  this.bytes_[offset + 1] = value >> 8;
+flatbuffers.ByteBuffer.prototype.writeInt16 = function(offset, value2) {
+  this.bytes_[offset] = value2;
+  this.bytes_[offset + 1] = value2 >> 8;
 };
-flatbuffers.ByteBuffer.prototype.writeUint16 = function(offset, value) {
-  this.bytes_[offset] = value;
-  this.bytes_[offset + 1] = value >> 8;
+flatbuffers.ByteBuffer.prototype.writeUint16 = function(offset, value2) {
+  this.bytes_[offset] = value2;
+  this.bytes_[offset + 1] = value2 >> 8;
 };
-flatbuffers.ByteBuffer.prototype.writeInt32 = function(offset, value) {
-  this.bytes_[offset] = value;
-  this.bytes_[offset + 1] = value >> 8;
-  this.bytes_[offset + 2] = value >> 16;
-  this.bytes_[offset + 3] = value >> 24;
+flatbuffers.ByteBuffer.prototype.writeInt32 = function(offset, value2) {
+  this.bytes_[offset] = value2;
+  this.bytes_[offset + 1] = value2 >> 8;
+  this.bytes_[offset + 2] = value2 >> 16;
+  this.bytes_[offset + 3] = value2 >> 24;
 };
-flatbuffers.ByteBuffer.prototype.writeUint32 = function(offset, value) {
-  this.bytes_[offset] = value;
-  this.bytes_[offset + 1] = value >> 8;
-  this.bytes_[offset + 2] = value >> 16;
-  this.bytes_[offset + 3] = value >> 24;
+flatbuffers.ByteBuffer.prototype.writeUint32 = function(offset, value2) {
+  this.bytes_[offset] = value2;
+  this.bytes_[offset + 1] = value2 >> 8;
+  this.bytes_[offset + 2] = value2 >> 16;
+  this.bytes_[offset + 3] = value2 >> 24;
 };
-flatbuffers.ByteBuffer.prototype.writeInt64 = function(offset, value) {
-  this.writeInt32(offset, value.low);
-  this.writeInt32(offset + 4, value.high);
+flatbuffers.ByteBuffer.prototype.writeInt64 = function(offset, value2) {
+  this.writeInt32(offset, value2.low);
+  this.writeInt32(offset + 4, value2.high);
 };
-flatbuffers.ByteBuffer.prototype.writeUint64 = function(offset, value) {
-  this.writeUint32(offset, value.low);
-  this.writeUint32(offset + 4, value.high);
+flatbuffers.ByteBuffer.prototype.writeUint64 = function(offset, value2) {
+  this.writeUint32(offset, value2.low);
+  this.writeUint32(offset + 4, value2.high);
 };
-flatbuffers.ByteBuffer.prototype.writeFloat32 = function(offset, value) {
-  flatbuffers.float32[0] = value;
+flatbuffers.ByteBuffer.prototype.writeFloat32 = function(offset, value2) {
+  flatbuffers.float32[0] = value2;
   this.writeInt32(offset, flatbuffers.int32[0]);
 };
-flatbuffers.ByteBuffer.prototype.writeFloat64 = function(offset, value) {
-  flatbuffers.float64[0] = value;
+flatbuffers.ByteBuffer.prototype.writeFloat64 = function(offset, value2) {
+  flatbuffers.float64[0] = value2;
   this.writeInt32(offset, flatbuffers.int32[flatbuffers.isLittleEndian ? 0 : 1]);
   this.writeInt32(offset + 4, flatbuffers.int32[flatbuffers.isLittleEndian ? 1 : 0]);
 };
@@ -572,7 +572,7 @@ flatbuffers.ByteBuffer.prototype.createLong = function(low, high) {
 var decoder = new TextDecoder("utf-8");
 var decodeUtf8 = (buffer) => decoder.decode(buffer);
 var encoder = new TextEncoder();
-var encodeUtf8 = (value) => encoder.encode(value);
+var encodeUtf8 = (value2) => encoder.encode(value2);
 
 // node_modules/@apache-arrow/esnext-esm/io/interfaces.js
 var ITERATOR_DONE = Object.freeze({ done: true, value: void 0 });
@@ -623,14 +623,14 @@ var AsyncQueue = class extends ReadableInterop {
   async cancel(reason) {
     await this.return(reason);
   }
-  write(value) {
+  write(value2) {
     if (this._ensureOpen()) {
-      this.resolvers.length <= 0 ? this._values.push(value) : this.resolvers.shift().resolve({ done: false, value });
+      this.resolvers.length <= 0 ? this._values.push(value2) : this.resolvers.shift().resolve({ done: false, value: value2 });
     }
   }
-  abort(value) {
+  abort(value2) {
     if (this._closedPromiseResolve) {
-      this.resolvers.length <= 0 ? this._error = { error: value } : this.resolvers.shift().reject({ done: true, value });
+      this.resolvers.length <= 0 ? this._error = { error: value2 } : this.resolvers.shift().reject({ done: true, value: value2 });
     }
   }
   close() {
@@ -835,29 +835,29 @@ function joinUint8Arrays(chunks, size) {
   return [buffer || new Uint8Array(0), result.slice(index), byteLength - (buffer ? buffer.byteLength : 0)];
 }
 function toArrayBufferView(ArrayBufferViewCtor, input) {
-  let value = isIteratorResult(input) ? input.value : input;
-  if (value instanceof ArrayBufferViewCtor) {
+  let value2 = isIteratorResult(input) ? input.value : input;
+  if (value2 instanceof ArrayBufferViewCtor) {
     if (ArrayBufferViewCtor === Uint8Array) {
-      return new ArrayBufferViewCtor(value.buffer, value.byteOffset, value.byteLength);
+      return new ArrayBufferViewCtor(value2.buffer, value2.byteOffset, value2.byteLength);
     }
-    return value;
+    return value2;
   }
-  if (!value) {
+  if (!value2) {
     return new ArrayBufferViewCtor(0);
   }
-  if (typeof value === "string") {
-    value = encodeUtf8(value);
+  if (typeof value2 === "string") {
+    value2 = encodeUtf8(value2);
   }
-  if (value instanceof ArrayBuffer) {
-    return new ArrayBufferViewCtor(value);
+  if (value2 instanceof ArrayBuffer) {
+    return new ArrayBufferViewCtor(value2);
   }
-  if (value instanceof SharedArrayBuf) {
-    return new ArrayBufferViewCtor(value);
+  if (value2 instanceof SharedArrayBuf) {
+    return new ArrayBufferViewCtor(value2);
   }
-  if (value instanceof ByteBuffer) {
-    return toArrayBufferView(ArrayBufferViewCtor, value.bytes());
+  if (value2 instanceof ByteBuffer) {
+    return toArrayBufferView(ArrayBufferViewCtor, value2.bytes());
   }
-  return !ArrayBuffer.isView(value) ? ArrayBufferViewCtor.from(value) : value.byteLength <= 0 ? new ArrayBufferViewCtor(0) : new ArrayBufferViewCtor(value.buffer, value.byteOffset, value.byteLength / ArrayBufferViewCtor.BYTES_PER_ELEMENT);
+  return !ArrayBuffer.isView(value2) ? ArrayBufferViewCtor.from(value2) : value2.byteLength <= 0 ? new ArrayBufferViewCtor(0) : new ArrayBufferViewCtor(value2.buffer, value2.byteOffset, value2.byteLength / ArrayBufferViewCtor.BYTES_PER_ELEMENT);
 }
 var toInt8Array = (input) => toArrayBufferView(Int8Array, input);
 var toInt16Array = (input) => toArrayBufferView(Int16Array, input);
@@ -1143,11 +1143,11 @@ async function readInto(reader, buffer, offset, size) {
   if (offset >= size) {
     return { done: false, value: new Uint8Array(buffer, 0, size) };
   }
-  const { done, value } = await reader.read(new Uint8Array(buffer, offset, size - offset));
-  if ((offset += value.byteLength) < size && !done) {
-    return await readInto(reader, value.buffer, offset, size);
+  const { done, value: value2 } = await reader.read(new Uint8Array(buffer, offset, size - offset));
+  if ((offset += value2.byteLength) < size && !done) {
+    return await readInto(reader, value2.buffer, offset, size);
   }
-  return { done, value: new Uint8Array(value.buffer, 0, offset) };
+  return { done, value: new Uint8Array(value2.buffer, 0, offset) };
 }
 var onEvent = (stream, event) => {
   const handler = (_) => resolve([event, _]);
@@ -2685,8 +2685,8 @@ function getBool(_data, _index, byte, bit) {
 function getBit(_data, _index, byte, bit) {
   return (byte & 1 << bit) >> bit;
 }
-function setBool(bytes, index, value) {
-  return value ? !!(bytes[index >> 3] |= 1 << index % 8) || true : !(bytes[index >> 3] &= ~(1 << index % 8)) && false;
+function setBool(bytes, index, value2) {
+  return value2 ? !!(bytes[index >> 3] |= 1 << index % 8) || true : !(bytes[index >> 3] &= ~(1 << index % 8)) && false;
 }
 function truncateBitmap(offset, length, bitmap) {
   const alignedSize = bitmap.byteLength + 7 & ~7;
@@ -2700,8 +2700,8 @@ function truncateBitmap(offset, length, bitmap) {
 function packBools(values) {
   const xs = [];
   let i = 0, bit = 0, byte = 0;
-  for (const value of values) {
-    value && (byte |= 1 << bit);
+  for (const value2 of values) {
+    value2 && (byte |= 1 << bit);
     if (++bit === 8) {
       xs[i++] = byte;
       byte = bit = 0;
@@ -3543,7 +3543,7 @@ function valueToString(x2) {
 // node_modules/@apache-arrow/esnext-esm/builder/valid.js
 function createIsValidFunction(nullValues) {
   if (!nullValues || nullValues.length <= 0) {
-    return function isValid(value) {
+    return function isValid(value2) {
       return true;
     };
   }
@@ -3592,11 +3592,11 @@ var BufferBuilder = class {
   get reservedByteLength() {
     return this.buffer.byteLength;
   }
-  set(index, value) {
+  set(index, value2) {
     return this;
   }
-  append(value) {
-    return this.set(this.length, value);
+  append(value2) {
+    return this.set(this.length, value2);
   }
   reserve(extra) {
     if (extra > 0) {
@@ -3633,9 +3633,9 @@ var DataBufferBuilder = class extends BufferBuilder {
   get(index) {
     return this.buffer[index];
   }
-  set(index, value) {
+  set(index, value2) {
     this.reserve(index - this.length + 1);
-    this.buffer[index * this.stride] = value;
+    this.buffer[index * this.stride] = value2;
     return this;
   }
 };
@@ -3665,16 +3665,16 @@ var OffsetsBufferBuilder = class extends DataBufferBuilder {
   constructor(data = new Int32Array(1)) {
     super(data, 1);
   }
-  append(value) {
-    return this.set(this.length - 1, value);
+  append(value2) {
+    return this.set(this.length - 1, value2);
   }
-  set(index, value) {
+  set(index, value2) {
     const offset = this.length - 1;
     const buffer = this.reserve(index - offset + 1).buffer;
     if (offset < index++) {
       buffer.fill(buffer[offset], offset, index);
     }
-    buffer[index] = buffer[index - 1] + value;
+    buffer[index] = buffer[index - 1] + value2;
     return this;
   }
   flush(length = this.length - 1) {
@@ -3688,17 +3688,17 @@ var WideBufferBuilder = class extends BufferBuilder {
   get ArrayType64() {
     return this._ArrayType64 || (this._ArrayType64 = this.buffer instanceof Int32Array ? BigInt64ArrayCtor : BigUint64ArrayCtor);
   }
-  set(index, value) {
+  set(index, value2) {
     this.reserve(index - this.length + 1);
-    switch (typeof value) {
+    switch (typeof value2) {
       case "bigint":
-        this.buffer64[index] = value;
+        this.buffer64[index] = value2;
         break;
       case "number":
-        this.buffer[index * this.stride] = value;
+        this.buffer[index * this.stride] = value2;
         break;
       default:
-        this.buffer.set(value, index * this.stride);
+        this.buffer.set(value2, index * this.stride);
     }
     return this;
   }
@@ -3783,20 +3783,20 @@ var Builder = class {
   get typeIds() {
     return this._typeIds ? this._typeIds.buffer : null;
   }
-  append(value) {
-    return this.set(this.length, value);
+  append(value2) {
+    return this.set(this.length, value2);
   }
-  isValid(value) {
-    return this._isValid(value);
+  isValid(value2) {
+    return this._isValid(value2);
   }
-  set(index, value) {
-    if (this.setValid(index, this.isValid(value))) {
-      this.setValue(index, value);
+  set(index, value2) {
+    if (this.setValid(index, this.isValid(value2))) {
+      this.setValue(index, value2);
     }
     return this;
   }
-  setValue(index, value) {
-    this._setValue(this, index, value);
+  setValue(index, value2) {
+    this._setValue(this, index, value2);
   }
   setValid(index, valid) {
     this.length = this._nulls.set(index, +valid).length;
@@ -3854,10 +3854,10 @@ var FixedWidthBuilder = class extends Builder {
     super(opts);
     this._values = new DataBufferBuilder(new this.ArrayType(0), this.stride);
   }
-  setValue(index, value) {
+  setValue(index, value2) {
     const values = this._values;
     values.reserve(index - values.length + 1);
-    return super.setValue(index, value);
+    return super.setValue(index, value2);
   }
 };
 var VariableWidthBuilder = class extends Builder {
@@ -3866,12 +3866,12 @@ var VariableWidthBuilder = class extends Builder {
     this._pendingLength = 0;
     this._offsets = new OffsetsBufferBuilder();
   }
-  setValue(index, value) {
+  setValue(index, value2) {
     const pending = this._pending || (this._pending = new Map());
     const current = pending.get(index);
     current && (this._pendingLength -= current.length);
-    this._pendingLength += value.length;
-    pending.set(index, value);
+    this._pendingLength += value2.length;
+    pending.set(index, value2);
   }
   setValid(index, isValid) {
     if (!super.setValid(index, isValid)) {
@@ -3911,8 +3911,8 @@ function throughIterable(options) {
   return function* (source) {
     let numChunks = 0;
     const builder = Builder.new(options);
-    for (const value of source) {
-      if (builder.append(value)[sizeProperty] >= highWaterMark) {
+    for (const value2 of source) {
+      if (builder.append(value2)[sizeProperty] >= highWaterMark) {
         ++numChunks && (yield builder.toVector());
       }
     }
@@ -3928,8 +3928,8 @@ function throughAsyncIterable(options) {
   return async function* (source) {
     let numChunks = 0;
     const builder = Builder.new(options);
-    for await (const value of source) {
-      if (builder.append(value)[sizeProperty] >= highWaterMark) {
+    for await (const value2 of source) {
+      if (builder.append(value2)[sizeProperty] >= highWaterMark) {
         ++numChunks && (yield builder.toVector());
       }
     }
@@ -3945,14 +3945,14 @@ var BoolBuilder = class extends Builder {
     super(options);
     this._values = new BitmapBufferBuilder();
   }
-  setValue(index, value) {
-    this._values.set(index, +value);
+  setValue(index, value2) {
+    this._values.set(index, +value2);
   }
 };
 
 // node_modules/@apache-arrow/esnext-esm/builder/null.js
 var NullBuilder = class extends Builder {
-  setValue(index, value) {
+  setValue(index, value2) {
   }
   setValid(index, valid) {
     this.length = Math.max(index + 1, this.length);
@@ -4003,8 +4003,8 @@ var DictionaryBuilder = class extends Builder {
   get reservedByteLength() {
     return this.indices.reservedByteLength + this.dictionary.reservedByteLength;
   }
-  isValid(value) {
-    return this.indices.isValid(value);
+  isValid(value2) {
+    return this.indices.isValid(value2);
   }
   setValid(index, valid) {
     const indices = this.indices;
@@ -4012,12 +4012,12 @@ var DictionaryBuilder = class extends Builder {
     this.length = indices.length;
     return valid;
   }
-  setValue(index, value) {
+  setValue(index, value2) {
     const keysToIndices = this._keysToIndices;
-    const key = this.valueToKey(value);
+    const key = this.valueToKey(value2);
     let idx = keysToIndices[key];
     if (idx === void 0) {
-      keysToIndices[key] = idx = this._dictionaryOffset + this.dictionary.append(value).length - 1;
+      keysToIndices[key] = idx = this._dictionaryOffset + this.dictionary.append(value2).length - 1;
     }
     return this.indices.setValue(index, idx);
   }
@@ -4102,18 +4102,18 @@ function float64ToUint16(d) {
 var FloatBuilder = class extends FixedWidthBuilder {
 };
 var Float16Builder = class extends FloatBuilder {
-  setValue(index, value) {
-    this._values.set(index, float64ToUint16(value));
+  setValue(index, value2) {
+    this._values.set(index, float64ToUint16(value2));
   }
 };
 var Float32Builder = class extends FloatBuilder {
-  setValue(index, value) {
-    this._values.set(index, value);
+  setValue(index, value2) {
+    this._values.set(index, value2);
   }
 };
 var Float64Builder = class extends FloatBuilder {
-  setValue(index, value) {
-    this._values.set(index, value);
+  setValue(index, value2) {
+    this._values.set(index, value2);
   }
 };
 
@@ -4245,8 +4245,8 @@ var BN = class {
 
 // node_modules/@apache-arrow/esnext-esm/builder/int.js
 var IntBuilder = class extends FixedWidthBuilder {
-  setValue(index, value) {
-    this._values.set(index, value);
+  setValue(index, value2) {
+    this._values.set(index, value2);
   }
 };
 var Int8Builder = class extends IntBuilder {
@@ -4266,8 +4266,8 @@ var Int64Builder = class extends IntBuilder {
   get values64() {
     return this._values.buffer64;
   }
-  isValid(value) {
-    return super.isValid(toBigInt(value));
+  isValid(value2) {
+    return super.isValid(toBigInt(value2));
   }
 };
 var Uint8Builder = class extends IntBuilder {
@@ -4287,19 +4287,19 @@ var Uint64Builder = class extends IntBuilder {
   get values64() {
     return this._values.buffer64;
   }
-  isValid(value) {
-    return super.isValid(toBigInt(value));
+  isValid(value2) {
+    return super.isValid(toBigInt(value2));
   }
 };
-var toBigInt = ((memo) => (value) => {
-  if (ArrayBuffer.isView(value)) {
-    memo.buffer = value.buffer;
-    memo.byteOffset = value.byteOffset;
-    memo.byteLength = value.byteLength;
-    value = bignumToBigInt(memo);
+var toBigInt = ((memo) => (value2) => {
+  if (ArrayBuffer.isView(value2)) {
+    memo.buffer = value2.buffer;
+    memo.byteOffset = value2.byteOffset;
+    memo.byteLength = value2.byteLength;
+    value2 = bignumToBigInt(memo);
     memo.buffer = null;
   }
-  return value;
+  return value2;
 })({ "BigIntArray": BigInt64ArrayCtor });
 
 // node_modules/@apache-arrow/esnext-esm/builder/time.js
@@ -4347,19 +4347,19 @@ var BinaryBuilder = class extends VariableWidthBuilder {
     this._nulls && (size += this._nulls.byteLength);
     return size;
   }
-  setValue(index, value) {
-    return super.setValue(index, toUint8Array(value));
+  setValue(index, value2) {
+    return super.setValue(index, toUint8Array(value2));
   }
   _flushPending(pending, pendingLength) {
     const offsets = this._offsets;
     const data = this._values.reserve(pendingLength).buffer;
-    let index = 0, length = 0, offset = 0, value;
-    for ([index, value] of pending) {
-      if (value === void 0) {
+    let index = 0, length = 0, offset = 0, value2;
+    for ([index, value2] of pending) {
+      if (value2 === void 0) {
         offsets.set(index, 0);
       } else {
-        length = value.length;
-        data.set(value, offset);
+        length = value2.length;
+        data.set(value2, offset);
         offsets.set(index, length);
         offset += length;
       }
@@ -4380,8 +4380,8 @@ var Utf8Builder = class extends VariableWidthBuilder {
     this._nulls && (size += this._nulls.byteLength);
     return size;
   }
-  setValue(index, value) {
-    return super.setValue(index, encodeUtf8(value));
+  setValue(index, value2) {
+    return super.setValue(index, encodeUtf8(value2));
   }
   _flushPending(pending, pendingLength) {
   }
@@ -4483,8 +4483,8 @@ function mergeMaps(m1, m2) {
 }
 function generateDictionaryMap(fields, dictionaries = new Map()) {
   for (let i = -1, n = fields.length; ++i < n; ) {
-    const field = fields[i];
-    const type = field.type;
+    const field2 = fields[i];
+    const type = field2.type;
     if (DataType.isDictionary(type)) {
       if (!dictionaries.has(type.id)) {
         dictionaries.set(type.id, type.dictionary);
@@ -4529,13 +4529,13 @@ var ListBuilder = class extends VariableWidthBuilder {
     const run = this._run;
     const offsets = this._offsets;
     const setValue = this._setValue;
-    let index = 0, value;
-    for ([index, value] of pending) {
-      if (value === void 0) {
+    let index = 0, value2;
+    for ([index, value2] of pending) {
+      if (value2 === void 0) {
         offsets.set(index, 0);
       } else {
-        offsets.set(index, value.length);
-        setValue(this, index, run.bind(value));
+        offsets.set(index, value2.length);
+        setValue(this, index, run.bind(value2));
       }
     }
   }
@@ -4547,8 +4547,8 @@ var FixedSizeListBuilder = class extends Builder {
     super(...arguments);
     this._run = new Run();
   }
-  setValue(index, value) {
-    super.setValue(index, this._run.bind(value));
+  setValue(index, value2) {
+    super.setValue(index, this._run.bind(value2));
   }
   addChild(child, name = "0") {
     if (this.numChildren > 0) {
@@ -4566,16 +4566,16 @@ var FixedSizeListBuilder = class extends Builder {
 
 // node_modules/@apache-arrow/esnext-esm/builder/map.js
 var MapBuilder = class extends VariableWidthBuilder {
-  set(index, value) {
-    return super.set(index, value);
+  set(index, value2) {
+    return super.set(index, value2);
   }
-  setValue(index, value) {
-    value = value instanceof Map ? value : new Map(Object.entries(value));
+  setValue(index, value2) {
+    value2 = value2 instanceof Map ? value2 : new Map(Object.entries(value2));
     const pending = this._pending || (this._pending = new Map());
     const current = pending.get(index);
     current && (this._pendingLength -= current.size);
-    this._pendingLength += value.size;
-    pending.set(index, value);
+    this._pendingLength += value2.size;
+    pending.set(index, value2);
   }
   addChild(child, name = `${this.numChildren}`) {
     if (this.numChildren > 0) {
@@ -4588,12 +4588,12 @@ var MapBuilder = class extends VariableWidthBuilder {
   _flushPending(pending) {
     const offsets = this._offsets;
     const setValue = this._setValue;
-    pending.forEach((value, index) => {
-      if (value === void 0) {
+    pending.forEach((value2, index) => {
+      if (value2 === void 0) {
         offsets.set(index, 0);
       } else {
-        offsets.set(index, value.size);
-        setValue(this, index, value);
+        offsets.set(index, value2.size);
+        setValue(this, index, value2);
       }
     });
   }
@@ -4620,21 +4620,21 @@ var UnionBuilder = class extends Builder {
   get typeIdToChildIndex() {
     return this.type.typeIdToChildIndex;
   }
-  append(value, childTypeId) {
-    return this.set(this.length, value, childTypeId);
+  append(value2, childTypeId) {
+    return this.set(this.length, value2, childTypeId);
   }
-  set(index, value, childTypeId) {
+  set(index, value2, childTypeId) {
     if (childTypeId === void 0) {
-      childTypeId = this._valueToChildTypeId(this, value, index);
+      childTypeId = this._valueToChildTypeId(this, value2, index);
     }
-    if (this.setValid(index, this.isValid(value))) {
-      this.setValue(index, value, childTypeId);
+    if (this.setValid(index, this.isValid(value2))) {
+      this.setValue(index, value2, childTypeId);
     }
     return this;
   }
-  setValue(index, value, childTypeId) {
+  setValue(index, value2, childTypeId) {
     this._typeIds.set(index, childTypeId);
-    super.setValue(index, value);
+    super.setValue(index, value2);
   }
   addChild(child, name = `${this.children.length}`) {
     const childTypeId = this.children.push(child);
@@ -4643,7 +4643,7 @@ var UnionBuilder = class extends Builder {
     this.type = new Union_(mode, [...typeIds, childTypeId], fields);
     return childTypeId;
   }
-  _valueToChildTypeId(builder, value, offset) {
+  _valueToChildTypeId(builder, value2, offset) {
     throw new Error(`Cannot map UnionBuilder value to child typeId. Pass the \`childTypeId\` as the second argument to unionBuilder.append(), or supply a \`valueToChildTypeId\` function as part of the UnionBuilder constructor options.`);
   }
 };
@@ -4654,10 +4654,10 @@ var DenseUnionBuilder = class extends UnionBuilder {
     super(options);
     this._offsets = new DataBufferBuilder(new Int32Array(0));
   }
-  setValue(index, value, childTypeId) {
+  setValue(index, value2, childTypeId) {
     const childIndex = this.type.typeIdToChildIndex[childTypeId];
     this._offsets.set(index, this.getChildAt(childIndex).length);
-    return super.setValue(index, value, childTypeId);
+    return super.setValue(index, value2, childTypeId);
   }
 };
 
@@ -5018,112 +5018,112 @@ var setEpochMsToNanosecondsLong = (data, index, epochMs) => {
   data[index] = epochMs * 1e6 % 4294967296 | 0;
   data[index + 1] = epochMs * 1e6 / 4294967296 | 0;
 };
-var setVariableWidthBytes = (values, valueOffsets, index, value) => {
+var setVariableWidthBytes = (values, valueOffsets, index, value2) => {
   const { [index]: x2, [index + 1]: y2 } = valueOffsets;
   if (x2 != null && y2 != null) {
-    values.set(value.subarray(0, y2 - x2), x2);
+    values.set(value2.subarray(0, y2 - x2), x2);
   }
 };
 var setBool2 = ({ offset, values }, index, val) => {
   const idx = offset + index;
   val ? values[idx >> 3] |= 1 << idx % 8 : values[idx >> 3] &= ~(1 << idx % 8);
 };
-var setDateDay = ({ values }, index, value) => {
-  setEpochMsToDays(values, index, value.valueOf());
+var setDateDay = ({ values }, index, value2) => {
+  setEpochMsToDays(values, index, value2.valueOf());
 };
-var setDateMillisecond = ({ values }, index, value) => {
-  setEpochMsToMillisecondsLong(values, index * 2, value.valueOf());
+var setDateMillisecond = ({ values }, index, value2) => {
+  setEpochMsToMillisecondsLong(values, index * 2, value2.valueOf());
 };
-var setNumeric = ({ stride, values }, index, value) => {
-  values[stride * index] = value;
+var setNumeric = ({ stride, values }, index, value2) => {
+  values[stride * index] = value2;
 };
-var setFloat16 = ({ stride, values }, index, value) => {
-  values[stride * index] = float64ToUint16(value);
+var setFloat16 = ({ stride, values }, index, value2) => {
+  values[stride * index] = float64ToUint16(value2);
 };
-var setNumericX2 = (vector, index, value) => {
-  switch (typeof value) {
+var setNumericX2 = (vector, index, value2) => {
+  switch (typeof value2) {
     case "bigint":
-      vector.values64[index] = value;
+      vector.values64[index] = value2;
       break;
     case "number":
-      vector.values[index * vector.stride] = value;
+      vector.values[index * vector.stride] = value2;
       break;
     default: {
-      const val = value;
+      const val = value2;
       const { stride, ArrayType } = vector;
       const long = toArrayBufferView(ArrayType, val);
       vector.values.set(long.subarray(0, stride), stride * index);
     }
   }
 };
-var setFixedSizeBinary = ({ stride, values }, index, value) => {
-  values.set(value.subarray(0, stride), stride * index);
+var setFixedSizeBinary = ({ stride, values }, index, value2) => {
+  values.set(value2.subarray(0, stride), stride * index);
 };
-var setBinary = ({ values, valueOffsets }, index, value) => setVariableWidthBytes(values, valueOffsets, index, value);
-var setUtf8 = ({ values, valueOffsets }, index, value) => {
-  setVariableWidthBytes(values, valueOffsets, index, encodeUtf8(value));
+var setBinary = ({ values, valueOffsets }, index, value2) => setVariableWidthBytes(values, valueOffsets, index, value2);
+var setUtf8 = ({ values, valueOffsets }, index, value2) => {
+  setVariableWidthBytes(values, valueOffsets, index, encodeUtf8(value2));
 };
-var setInt = (vector, index, value) => {
-  vector.type.bitWidth < 64 ? setNumeric(vector, index, value) : setNumericX2(vector, index, value);
+var setInt = (vector, index, value2) => {
+  vector.type.bitWidth < 64 ? setNumeric(vector, index, value2) : setNumericX2(vector, index, value2);
 };
-var setFloat = (vector, index, value) => {
-  vector.type.precision !== Precision.HALF ? setNumeric(vector, index, value) : setFloat16(vector, index, value);
+var setFloat = (vector, index, value2) => {
+  vector.type.precision !== Precision.HALF ? setNumeric(vector, index, value2) : setFloat16(vector, index, value2);
 };
-var setDate = (vector, index, value) => {
-  vector.type.unit === DateUnit.DAY ? setDateDay(vector, index, value) : setDateMillisecond(vector, index, value);
+var setDate = (vector, index, value2) => {
+  vector.type.unit === DateUnit.DAY ? setDateDay(vector, index, value2) : setDateMillisecond(vector, index, value2);
 };
-var setTimestampSecond = ({ values }, index, value) => setEpochMsToMillisecondsLong(values, index * 2, value / 1e3);
-var setTimestampMillisecond = ({ values }, index, value) => setEpochMsToMillisecondsLong(values, index * 2, value);
-var setTimestampMicrosecond = ({ values }, index, value) => setEpochMsToMicrosecondsLong(values, index * 2, value);
-var setTimestampNanosecond = ({ values }, index, value) => setEpochMsToNanosecondsLong(values, index * 2, value);
-var setTimestamp = (vector, index, value) => {
+var setTimestampSecond = ({ values }, index, value2) => setEpochMsToMillisecondsLong(values, index * 2, value2 / 1e3);
+var setTimestampMillisecond = ({ values }, index, value2) => setEpochMsToMillisecondsLong(values, index * 2, value2);
+var setTimestampMicrosecond = ({ values }, index, value2) => setEpochMsToMicrosecondsLong(values, index * 2, value2);
+var setTimestampNanosecond = ({ values }, index, value2) => setEpochMsToNanosecondsLong(values, index * 2, value2);
+var setTimestamp = (vector, index, value2) => {
   switch (vector.type.unit) {
     case TimeUnit.SECOND:
-      return setTimestampSecond(vector, index, value);
+      return setTimestampSecond(vector, index, value2);
     case TimeUnit.MILLISECOND:
-      return setTimestampMillisecond(vector, index, value);
+      return setTimestampMillisecond(vector, index, value2);
     case TimeUnit.MICROSECOND:
-      return setTimestampMicrosecond(vector, index, value);
+      return setTimestampMicrosecond(vector, index, value2);
     case TimeUnit.NANOSECOND:
-      return setTimestampNanosecond(vector, index, value);
+      return setTimestampNanosecond(vector, index, value2);
   }
 };
-var setTimeSecond = ({ values, stride }, index, value) => {
-  values[stride * index] = value;
+var setTimeSecond = ({ values, stride }, index, value2) => {
+  values[stride * index] = value2;
 };
-var setTimeMillisecond = ({ values, stride }, index, value) => {
-  values[stride * index] = value;
+var setTimeMillisecond = ({ values, stride }, index, value2) => {
+  values[stride * index] = value2;
 };
-var setTimeMicrosecond = ({ values }, index, value) => {
-  values.set(value.subarray(0, 2), 2 * index);
+var setTimeMicrosecond = ({ values }, index, value2) => {
+  values.set(value2.subarray(0, 2), 2 * index);
 };
-var setTimeNanosecond = ({ values }, index, value) => {
-  values.set(value.subarray(0, 2), 2 * index);
+var setTimeNanosecond = ({ values }, index, value2) => {
+  values.set(value2.subarray(0, 2), 2 * index);
 };
-var setTime = (vector, index, value) => {
+var setTime = (vector, index, value2) => {
   switch (vector.type.unit) {
     case TimeUnit.SECOND:
-      return setTimeSecond(vector, index, value);
+      return setTimeSecond(vector, index, value2);
     case TimeUnit.MILLISECOND:
-      return setTimeMillisecond(vector, index, value);
+      return setTimeMillisecond(vector, index, value2);
     case TimeUnit.MICROSECOND:
-      return setTimeMicrosecond(vector, index, value);
+      return setTimeMicrosecond(vector, index, value2);
     case TimeUnit.NANOSECOND:
-      return setTimeNanosecond(vector, index, value);
+      return setTimeNanosecond(vector, index, value2);
   }
 };
-var setDecimal = ({ values }, index, value) => {
-  values.set(value.subarray(0, 4), 4 * index);
+var setDecimal = ({ values }, index, value2) => {
+  values.set(value2.subarray(0, 4), 4 * index);
 };
-var setList = (vector, index, value) => {
+var setList = (vector, index, value2) => {
   const values = vector.getChildAt(0), valueOffsets = vector.valueOffsets;
   for (let idx = -1, itr = valueOffsets[index], end = valueOffsets[index + 1]; itr < end; ) {
-    values.set(itr++, value.get(++idx));
+    values.set(itr++, value2.get(++idx));
   }
 };
-var setMap = (vector, index, value) => {
+var setMap = (vector, index, value2) => {
   const values = vector.getChildAt(0), valueOffsets = vector.valueOffsets;
-  const entries = value instanceof Map ? [...value] : Object.entries(value);
+  const entries = value2 instanceof Map ? [...value2] : Object.entries(value2);
   for (let idx = -1, itr = valueOffsets[index], end = valueOffsets[index + 1]; itr < end; ) {
     values.set(itr++, entries[++idx]);
   }
@@ -5132,42 +5132,42 @@ var _setStructArrayValue = (o2, v2) => (c, _, i) => c?.set(o2, v2[i]);
 var _setStructVectorValue = (o2, v2) => (c, _, i) => c?.set(o2, v2.get(i));
 var _setStructMapValue = (o2, v2) => (c, f, _) => c?.set(o2, v2.get(f.name));
 var _setStructObjectValue = (o2, v2) => (c, f, _) => c?.set(o2, v2[f.name]);
-var setStruct = (vector, index, value) => {
-  const setValue = value instanceof Map ? _setStructMapValue(index, value) : value instanceof AbstractVector ? _setStructVectorValue(index, value) : Array.isArray(value) ? _setStructArrayValue(index, value) : _setStructObjectValue(index, value);
+var setStruct = (vector, index, value2) => {
+  const setValue = value2 instanceof Map ? _setStructMapValue(index, value2) : value2 instanceof AbstractVector ? _setStructVectorValue(index, value2) : Array.isArray(value2) ? _setStructArrayValue(index, value2) : _setStructObjectValue(index, value2);
   vector.type.children.forEach((f, i) => setValue(vector.getChildAt(i), f, i));
 };
-var setUnion = (vector, index, value) => {
-  vector.type.mode === UnionMode.Dense ? setDenseUnion(vector, index, value) : setSparseUnion(vector, index, value);
+var setUnion = (vector, index, value2) => {
+  vector.type.mode === UnionMode.Dense ? setDenseUnion(vector, index, value2) : setSparseUnion(vector, index, value2);
 };
-var setDenseUnion = (vector, index, value) => {
+var setDenseUnion = (vector, index, value2) => {
   const childIndex = vector.typeIdToChildIndex[vector.typeIds[index]];
   const child = vector.getChildAt(childIndex);
-  child && child.set(vector.valueOffsets[index], value);
+  child && child.set(vector.valueOffsets[index], value2);
 };
-var setSparseUnion = (vector, index, value) => {
+var setSparseUnion = (vector, index, value2) => {
   const childIndex = vector.typeIdToChildIndex[vector.typeIds[index]];
   const child = vector.getChildAt(childIndex);
-  child && child.set(index, value);
+  child && child.set(index, value2);
 };
-var setDictionary = (vector, index, value) => {
+var setDictionary = (vector, index, value2) => {
   const key = vector.getKey(index);
   if (key !== null) {
-    vector.setValue(key, value);
+    vector.setValue(key, value2);
   }
 };
-var setIntervalValue = (vector, index, value) => {
-  vector.type.unit === IntervalUnit.DAY_TIME ? setIntervalDayTime(vector, index, value) : setIntervalYearMonth(vector, index, value);
+var setIntervalValue = (vector, index, value2) => {
+  vector.type.unit === IntervalUnit.DAY_TIME ? setIntervalDayTime(vector, index, value2) : setIntervalYearMonth(vector, index, value2);
 };
-var setIntervalDayTime = ({ values }, index, value) => {
-  values.set(value.subarray(0, 2), 2 * index);
+var setIntervalDayTime = ({ values }, index, value2) => {
+  values.set(value2.subarray(0, 2), 2 * index);
 };
-var setIntervalYearMonth = ({ values }, index, value) => {
-  values[index] = value[0] * 12 + value[1] % 12;
+var setIntervalYearMonth = ({ values }, index, value2) => {
+  values[index] = value2[0] * 12 + value2[1] % 12;
 };
-var setFixedSizeList = (vector, index, value) => {
+var setFixedSizeList = (vector, index, value2) => {
   const child = vector.getChildAt(0), { stride } = vector;
   for (let idx = -1, offset = index * stride; ++idx < stride; ) {
-    child.set(offset + idx, value.get(idx));
+    child.set(offset + idx, value2.get(idx));
   }
 };
 SetVisitor.prototype.visitBool = setBool2;
@@ -5357,9 +5357,9 @@ function newBuilder(options) {
     const children = options["children"] || [];
     const defaultOptions = { "nullValues": options["nullValues"] };
     const getChildOptions = Array.isArray(children) ? (_, i) => children[i] || defaultOptions : ({ name }) => children[name] || defaultOptions;
-    type.children.forEach((field, index) => {
-      const { type: type2 } = field;
-      const opts = getChildOptions(field, index);
+    type.children.forEach((field2, index) => {
+      const { type: type2 } = field2;
+      const opts = getChildOptions(field2, index);
       builder.children.push(newBuilder({ ...opts, type: type2 }));
     });
   }
@@ -5614,9 +5614,9 @@ var FileBlock = class {
 
 // node_modules/@apache-arrow/esnext-esm/io/stream.js
 var AsyncByteQueue = class extends AsyncQueue {
-  write(value) {
-    if ((value = toUint8Array(value)).byteLength > 0) {
-      return super.write(value);
+  write(value2) {
+    if ((value2 = toUint8Array(value2)).byteLength > 0) {
+      return super.write(value2);
     }
   }
   toString(sync = false) {
@@ -5643,14 +5643,14 @@ var ByteStream = class {
   [Symbol.iterator]() {
     return this;
   }
-  next(value) {
-    return this.source.next(value);
+  next(value2) {
+    return this.source.next(value2);
   }
-  throw(value) {
-    return this.source.throw(value);
+  throw(value2) {
+    return this.source.throw(value2);
   }
-  return(value) {
-    return this.source.return(value);
+  return(value2) {
+    return this.source.return(value2);
   }
   peek(size) {
     return this.source.peek(size);
@@ -5682,14 +5682,14 @@ var AsyncByteStream = class {
   [Symbol.asyncIterator]() {
     return this;
   }
-  next(value) {
-    return this.source.next(value);
+  next(value2) {
+    return this.source.next(value2);
   }
-  throw(value) {
-    return this.source.throw(value);
+  throw(value2) {
+    return this.source.throw(value2);
   }
-  return(value) {
-    return this.source.return(value);
+  return(value2) {
+    return this.source.return(value2);
   }
   get closed() {
     return this.source.closed;
@@ -5720,11 +5720,11 @@ var ByteStreamSource = class {
   next(size, cmd = "read") {
     return this.source.next({ cmd, size });
   }
-  throw(value) {
-    return Object.create(this.source.throw && this.source.throw(value) || ITERATOR_DONE);
+  throw(value2) {
+    return Object.create(this.source.throw && this.source.throw(value2) || ITERATOR_DONE);
   }
-  return(value) {
-    return Object.create(this.source.return && this.source.return(value) || ITERATOR_DONE);
+  return(value2) {
+    return Object.create(this.source.return && this.source.return(value2) || ITERATOR_DONE);
   }
 };
 var AsyncByteStreamSource = class {
@@ -5747,14 +5747,14 @@ var AsyncByteStreamSource = class {
   async next(size, cmd = "read") {
     return await this.source.next({ cmd, size });
   }
-  async throw(value) {
-    const result = this.source.throw && await this.source.throw(value) || ITERATOR_DONE;
+  async throw(value2) {
+    const result = this.source.throw && await this.source.throw(value2) || ITERATOR_DONE;
     this._closedPromiseResolve && this._closedPromiseResolve();
     this._closedPromiseResolve = void 0;
     return Object.create(result);
   }
-  async return(value) {
-    const result = this.source.return && await this.source.return(value) || ITERATOR_DONE;
+  async return(value2) {
+    const result = this.source.return && await this.source.return(value2) || ITERATOR_DONE;
     this._closedPromiseResolve && this._closedPromiseResolve();
     this._closedPromiseResolve = void 0;
     return Object.create(result);
@@ -5796,13 +5796,13 @@ var RandomAccessFile = class extends ByteStream {
   close() {
     this.buffer && (this.buffer = null);
   }
-  throw(value) {
+  throw(value2) {
     this.close();
-    return { done: true, value };
+    return { done: true, value: value2 };
   }
-  return(value) {
+  return(value2) {
     this.close();
-    return { done: true, value };
+    return { done: true, value: value2 };
   }
 };
 var AsyncRandomAccessFile = class extends AsyncByteStream {
@@ -5860,13 +5860,13 @@ var AsyncRandomAccessFile = class extends AsyncByteStream {
     this._handle = null;
     f && await f.close();
   }
-  async throw(value) {
+  async throw(value2) {
     await this.close();
-    return { done: true, value };
+    return { done: true, value: value2 };
   }
-  async return(value) {
+  async return(value2) {
     await this.close();
-    return { done: true, value };
+    return { done: true, value: value2 };
   }
 };
 
@@ -5879,11 +5879,11 @@ __export(int_exports, {
   Uint64: () => Uint642
 });
 var carryBit16 = 1 << 16;
-function intAsHex(value) {
-  if (value < 0) {
-    value = 4294967295 + value + 1;
+function intAsHex(value2) {
+  if (value2 < 0) {
+    value2 = 4294967295 + value2 + 1;
   }
-  return `0x${value.toString(16)}`;
+  return `0x${value2.toString(16)}`;
 }
 var kInt32DecimalDigits = 8;
 var kPowersOfTen = [
@@ -6447,8 +6447,8 @@ var MapRow = class extends Row {
   getValue(index) {
     return this[kParent].getChildAt(1).get(index);
   }
-  setValue(index, value) {
-    this[kParent].getChildAt(1).set(index, value);
+  setValue(index, value2) {
+    this[kParent].getChildAt(1).set(index, value2);
   }
 };
 var StructRow = class extends Row {
@@ -6457,13 +6457,13 @@ var StructRow = class extends Row {
     return defineRowProxyProperties(this);
   }
   *keys() {
-    for (const field of this[kParent].type.children) {
-      yield field.name;
+    for (const field2 of this[kParent].type.children) {
+      yield field2.name;
     }
   }
   *values() {
-    for (const field of this[kParent].type.children) {
-      yield this[field.name];
+    for (const field2 of this[kParent].type.children) {
+      yield this[field2.name];
     }
   }
   getKey(idx) {
@@ -6475,8 +6475,8 @@ var StructRow = class extends Row {
   getValue(index) {
     return this[kParent].getChildAt(index).get(this[kRowIndex]);
   }
-  setValue(index, value) {
-    return this[kParent].getChildAt(index).set(this[kRowIndex], value);
+  setValue(index, value2) {
+    return this[kParent].getChildAt(index).set(this[kRowIndex], value2);
   }
 };
 Object.setPrototypeOf(Row.prototype, Map.prototype);
@@ -6680,21 +6680,21 @@ function clampRange(source, begin, end, then) {
   return then ? then(source, lhs, rhs) : [lhs, rhs];
 }
 var big0 = BigIntAvailable ? BigIntCtor(0) : 0;
-var isNaNFast = (value) => value !== value;
+var isNaNFast = (value2) => value2 !== value2;
 function createElementComparator(search) {
   const typeofSearch = typeof search;
   if (typeofSearch !== "object" || search === null) {
     if (isNaNFast(search)) {
       return isNaNFast;
     }
-    return typeofSearch !== "bigint" ? (value) => value === search : (value) => big0 + value === search;
+    return typeofSearch !== "bigint" ? (value2) => value2 === search : (value2) => big0 + value2 === search;
   }
   if (search instanceof Date) {
     const valueOfSearch = search.valueOf();
-    return (value) => value instanceof Date ? value.valueOf() === valueOfSearch : false;
+    return (value2) => value2 instanceof Date ? value2.valueOf() === valueOfSearch : false;
   }
   if (ArrayBuffer.isView(search)) {
-    return (value) => value ? compareArrayLike(search, value) : false;
+    return (value2) => value2 ? compareArrayLike(search, value2) : false;
   }
   if (search instanceof Map) {
     return creatMapComparator(search);
@@ -6852,48 +6852,48 @@ var selectColumnArgs = (args) => {
 var selectFieldArgs = (args) => _selectFieldArgs(args, [[], []]);
 var selectChunkArgs = (Ctor, vals) => _selectChunkArgs(Ctor, vals, [], 0);
 var selectVectorChildrenArgs = (Ctor, vals) => _selectVectorChildrenArgs(Ctor, vals, [], 0);
-function _selectArgs(Ctor, vals, res, idx) {
-  let value, j2 = idx;
+function _selectArgs(Ctor, vals, res2, idx) {
+  let value2, j2 = idx;
   let i = -1;
   const n = vals.length;
   while (++i < n) {
-    if (isArray(value = vals[i])) {
-      j2 = _selectArgs(Ctor, value, res, j2).length;
-    } else if (value instanceof Ctor) {
-      res[j2++] = value;
+    if (isArray(value2 = vals[i])) {
+      j2 = _selectArgs(Ctor, value2, res2, j2).length;
+    } else if (value2 instanceof Ctor) {
+      res2[j2++] = value2;
     }
   }
-  return res;
+  return res2;
 }
-function _selectChunkArgs(Ctor, vals, res, idx) {
-  let value, j2 = idx;
+function _selectChunkArgs(Ctor, vals, res2, idx) {
+  let value2, j2 = idx;
   let i = -1;
   const n = vals.length;
   while (++i < n) {
-    if (isArray(value = vals[i])) {
-      j2 = _selectChunkArgs(Ctor, value, res, j2).length;
-    } else if (value instanceof Chunked) {
-      j2 = _selectChunkArgs(Ctor, value.chunks, res, j2).length;
-    } else if (value instanceof Ctor) {
-      res[j2++] = value;
+    if (isArray(value2 = vals[i])) {
+      j2 = _selectChunkArgs(Ctor, value2, res2, j2).length;
+    } else if (value2 instanceof Chunked) {
+      j2 = _selectChunkArgs(Ctor, value2.chunks, res2, j2).length;
+    } else if (value2 instanceof Ctor) {
+      res2[j2++] = value2;
     }
   }
-  return res;
+  return res2;
 }
-function _selectVectorChildrenArgs(Ctor, vals, res, idx) {
-  let value, j2 = idx;
+function _selectVectorChildrenArgs(Ctor, vals, res2, idx) {
+  let value2, j2 = idx;
   let i = -1;
   const n = vals.length;
   while (++i < n) {
-    if (isArray(value = vals[i])) {
-      j2 = _selectVectorChildrenArgs(Ctor, value, res, j2).length;
-    } else if (value instanceof Ctor) {
-      j2 = _selectArgs(AbstractVector, value.schema.fields.map((_, i2) => value.getChildAt(i2)), res, j2).length;
-    } else if (value instanceof AbstractVector) {
-      res[j2++] = value;
+    if (isArray(value2 = vals[i])) {
+      j2 = _selectVectorChildrenArgs(Ctor, value2, res2, j2).length;
+    } else if (value2 instanceof Ctor) {
+      j2 = _selectArgs(AbstractVector, value2.schema.fields.map((_, i2) => value2.getChildAt(i2)), res2, j2).length;
+    } else if (value2 instanceof AbstractVector) {
+      res2[j2++] = value2;
     }
   }
-  return res;
+  return res2;
 }
 var toKeysAndValues = (xs, [k, v2], i) => (xs[0][i] = k, xs[1][i] = v2, xs);
 function _selectFieldArgs(vals, ret) {
@@ -6921,7 +6921,7 @@ function _selectFieldArgs(vals, ret) {
   let valueIndex = -1;
   let idx = -1;
   const len = vals.length;
-  let field;
+  let field2;
   let val;
   const [fields, values] = ret;
   while (++idx < len) {
@@ -6929,12 +6929,12 @@ function _selectFieldArgs(vals, ret) {
     if (val instanceof Column && (values[++valueIndex] = val)) {
       fields[++fieldIndex] = val.field.clone(keys[idx], val.type, true);
     } else {
-      ({ [idx]: field = idx } = keys);
+      ({ [idx]: field2 = idx } = keys);
       if (val instanceof DataType && (values[++valueIndex] = val)) {
-        fields[++fieldIndex] = Field2.new(field, val, true);
+        fields[++fieldIndex] = Field2.new(field2, val, true);
       } else if (val?.type && (values[++valueIndex] = val)) {
         val instanceof Data && (values[valueIndex] = val = AbstractVector.new(val));
-        fields[++fieldIndex] = Field2.new(field, val.type, true);
+        fields[++fieldIndex] = Field2.new(field2, val.type, true);
       }
     }
   }
@@ -7054,14 +7054,14 @@ var Chunked = class extends AbstractVector {
       return null;
     }
     const columns = this._children || (this._children = []);
-    let child, field, chunks;
+    let child, field2, chunks;
     if (child = columns[index]) {
       return child;
     }
-    if (field = (this._type.children || [])[index]) {
+    if (field2 = (this._type.children || [])[index]) {
       chunks = this._chunks.map((vector) => vector.getChildAt(index)).filter((vec) => vec != null);
       if (chunks.length > 0) {
-        return columns[index] = new Chunked(field.type, chunks);
+        return columns[index] = new Chunked(field2.type, chunks);
       }
     }
     return null;
@@ -7095,8 +7095,8 @@ var Chunked = class extends AbstractVector {
   get(index) {
     return this.search(index, this.getInternal);
   }
-  set(index, value) {
-    this.search(index, ({ chunks }, i, j2) => chunks[i].set(j2, value));
+  set(index, value2) {
+    this.search(index, ({ chunks }, i, j2) => chunks[i].set(j2, value2));
   }
   indexOf(element, offset) {
     if (offset && typeof offset === "number") {
@@ -7195,28 +7195,28 @@ var arraySet = (src, dst, offset) => {
 
 // node_modules/@apache-arrow/esnext-esm/column.js
 var Column = class extends Chunked {
-  constructor(field, vectors = [], offsets) {
+  constructor(field2, vectors = [], offsets) {
     vectors = Chunked.flatten(...vectors);
-    super(field.type, vectors, offsets);
-    this._field = field;
+    super(field2.type, vectors, offsets);
+    this._field = field2;
     if (vectors.length === 1 && !(this instanceof SingleChunkColumn)) {
-      return new SingleChunkColumn(field, vectors[0], this._chunkOffsets);
+      return new SingleChunkColumn(field2, vectors[0], this._chunkOffsets);
     }
   }
   static new(...args) {
-    let [field, data, ...rest] = args;
-    if (typeof field !== "string" && !(field instanceof Field2)) {
-      data = field;
-      field = "";
+    let [field2, data, ...rest] = args;
+    if (typeof field2 !== "string" && !(field2 instanceof Field2)) {
+      data = field2;
+      field2 = "";
     }
     const chunks = Chunked.flatten(Array.isArray(data) ? [...data, ...rest] : data instanceof AbstractVector ? [data, ...rest] : [AbstractVector.new(data, ...rest)]);
-    if (typeof field === "string") {
+    if (typeof field2 === "string") {
       const type = chunks[0].data.type;
-      field = new Field2(field, type, true);
-    } else if (!field.nullable && chunks.some(({ nullCount }) => nullCount > 0)) {
-      field = field.clone({ nullable: true });
+      field2 = new Field2(field2, type, true);
+    } else if (!field2.nullable && chunks.some(({ nullCount }) => nullCount > 0)) {
+      field2 = field2.clone({ nullable: true });
     }
-    return new Column(field, chunks);
+    return new Column(field2, chunks);
   }
   get field() {
     return this._field;
@@ -7238,22 +7238,22 @@ var Column = class extends Chunked {
       return null;
     }
     const columns = this._children || (this._children = []);
-    let column, field, chunks;
+    let column, field2, chunks;
     if (column = columns[index]) {
       return column;
     }
-    if (field = (this.type.children || [])[index]) {
+    if (field2 = (this.type.children || [])[index]) {
       chunks = this._chunks.map((vector) => vector.getChildAt(index)).filter((vec) => vec != null);
       if (chunks.length > 0) {
-        return columns[index] = new Column(field, chunks);
+        return columns[index] = new Column(field2, chunks);
       }
     }
     return null;
   }
 };
 var SingleChunkColumn = class extends Column {
-  constructor(field, vector, offsets) {
-    super(field, [vector], offsets);
+  constructor(field2, vector, offsets) {
+    super(field2, [vector], offsets);
     this._chunk = vector;
   }
   search(index, then) {
@@ -7265,8 +7265,8 @@ var SingleChunkColumn = class extends Column {
   get(index) {
     return this._chunk.get(index);
   }
-  set(index, value) {
-    this._chunk.set(index, value);
+  set(index, value2) {
+    this._chunk.set(index, value2);
   }
   indexOf(element, offset) {
     return this._chunk.indexOf(element, offset);
@@ -7421,24 +7421,24 @@ function nullCountFromJSON(validity) {
 function fieldFromJSON(_field, dictionaries) {
   let id;
   let keys;
-  let field;
+  let field2;
   let dictMeta;
   let type;
   let dictType;
   if (!dictionaries || !(dictMeta = _field["dictionary"])) {
     type = typeFromJSON(_field, fieldChildrenFromJSON(_field, dictionaries));
-    field = new Field2(_field["name"], type, _field["nullable"], customMetadataFromJSON(_field["customMetadata"]));
+    field2 = new Field2(_field["name"], type, _field["nullable"], customMetadataFromJSON(_field["customMetadata"]));
   } else if (!dictionaries.has(id = dictMeta["id"])) {
     keys = (keys = dictMeta["indexType"]) ? indexTypeFromJSON(keys) : new Int32();
     dictionaries.set(id, type = typeFromJSON(_field, fieldChildrenFromJSON(_field, dictionaries)));
     dictType = new Dictionary(type, keys, id, dictMeta["isOrdered"]);
-    field = new Field2(_field["name"], dictType, _field["nullable"], customMetadataFromJSON(_field["customMetadata"]));
+    field2 = new Field2(_field["name"], dictType, _field["nullable"], customMetadataFromJSON(_field["customMetadata"]));
   } else {
     keys = (keys = dictMeta["indexType"]) ? indexTypeFromJSON(keys) : new Int32();
     dictType = new Dictionary(dictionaries.get(id), keys, id, dictMeta["isOrdered"]);
-    field = new Field2(_field["name"], dictType, _field["nullable"], customMetadataFromJSON(_field["customMetadata"]));
+    field2 = new Field2(_field["name"], dictType, _field["nullable"], customMetadataFromJSON(_field["customMetadata"]));
   }
-  return field || null;
+  return field2 || null;
 }
 function customMetadataFromJSON(_metadata) {
   return new Map(Object.entries(_metadata || {}));
@@ -7738,10 +7738,10 @@ function decodeSchemaFields(schema, dictionaries) {
   }
   return fields;
 }
-function decodeFieldChildren(field, dictionaries) {
+function decodeFieldChildren(field2, dictionaries) {
   const children = [];
-  for (let f, i = -1, j2 = -1, n = field.childrenLength(); ++i < n; ) {
-    if (f = field.children(i)) {
+  for (let f, i = -1, j2 = -1, n = field2.childrenLength(); ++i < n; ) {
+    if (f = field2.children(i)) {
       children[++j2] = Field2.decode(f, dictionaries);
     }
   }
@@ -7749,25 +7749,25 @@ function decodeFieldChildren(field, dictionaries) {
 }
 function decodeField(f, dictionaries) {
   let id;
-  let field;
+  let field2;
   let type;
   let keys;
   let dictType;
   let dictMeta;
   if (!dictionaries || !(dictMeta = f.dictionary())) {
     type = decodeFieldType(f, decodeFieldChildren(f, dictionaries));
-    field = new Field2(f.name(), type, f.nullable(), decodeCustomMetadata(f));
+    field2 = new Field2(f.name(), type, f.nullable(), decodeCustomMetadata(f));
   } else if (!dictionaries.has(id = dictMeta.id().low)) {
     keys = (keys = dictMeta.indexType()) ? decodeIndexType(keys) : new Int32();
     dictionaries.set(id, type = decodeFieldType(f, decodeFieldChildren(f, dictionaries)));
     dictType = new Dictionary(type, keys, id, dictMeta.isOrdered());
-    field = new Field2(f.name(), dictType, f.nullable(), decodeCustomMetadata(f));
+    field2 = new Field2(f.name(), dictType, f.nullable(), decodeCustomMetadata(f));
   } else {
     keys = (keys = dictMeta.indexType()) ? decodeIndexType(keys) : new Int32();
     dictType = new Dictionary(dictionaries.get(id), keys, id, dictMeta.isOrdered());
-    field = new Field2(f.name(), dictType, f.nullable(), decodeCustomMetadata(f));
+    field2 = new Field2(f.name(), dictType, f.nullable(), decodeCustomMetadata(f));
   }
-  return field || null;
+  return field2 || null;
 }
 function decodeCustomMetadata(parent) {
   const data = new Map();
@@ -7869,12 +7869,12 @@ function encodeSchema(b, schema) {
   }
   return Schema.endSchema(b);
 }
-function encodeField(b, field) {
+function encodeField(b, field2) {
   let nameOffset = -1;
   let typeOffset = -1;
   let dictionaryOffset = -1;
-  const type = field.type;
-  let typeId = field.typeId;
+  const type = field2.type;
+  let typeId = field2.typeId;
   if (!DataType.isDictionary(type)) {
     typeOffset = instance3.visit(type, b);
   } else {
@@ -7884,7 +7884,7 @@ function encodeField(b, field) {
   }
   const childOffsets = (type.children || []).map((f) => Field2.encode(b, f));
   const childrenVectorOffset = Field.createChildrenVector(b, childOffsets);
-  const metadataOffset = !(field.metadata && field.metadata.size > 0) ? -1 : Field.createCustomMetadataVector(b, [...field.metadata].map(([k, v2]) => {
+  const metadataOffset = !(field2.metadata && field2.metadata.size > 0) ? -1 : Field.createCustomMetadataVector(b, [...field2.metadata].map(([k, v2]) => {
     const key = b.createString(`${k}`);
     const val = b.createString(`${v2}`);
     KeyValue.startKeyValue(b);
@@ -7892,14 +7892,14 @@ function encodeField(b, field) {
     KeyValue.addValue(b, val);
     return KeyValue.endKeyValue(b);
   }));
-  if (field.name) {
-    nameOffset = b.createString(field.name);
+  if (field2.name) {
+    nameOffset = b.createString(field2.name);
   }
   Field.startField(b);
   Field.addType(b, typeOffset);
   Field.addTypeType(b, typeId);
   Field.addChildren(b, childrenVectorOffset);
-  Field.addNullable(b, !!field.nullable);
+  Field.addNullable(b, !!field2.nullable);
   if (nameOffset !== -1) {
     Field.addName(b, nameOffset);
   }
@@ -7972,11 +7972,11 @@ var MessageReader = class {
     }
     return r;
   }
-  throw(value) {
-    return this.source.throw(value);
+  throw(value2) {
+    return this.source.throw(value2);
   }
-  return(value) {
-    return this.source.return(value);
+  return(value2) {
+    return this.source.return(value2);
   }
   readMessage(type) {
     let r;
@@ -8044,11 +8044,11 @@ var AsyncMessageReader = class {
     }
     return r;
   }
-  async throw(value) {
-    return await this.source.throw(value);
+  async throw(value2) {
+    return await this.source.throw(value2);
   }
-  async return(value) {
-    return await this.source.return(value);
+  async return(value2) {
+    return await this.source.return(value2);
   }
   async readMessage(type) {
     let r;
@@ -8186,8 +8186,8 @@ var TypeComparator = class extends Visitor {
   compareManyFields(fields, others) {
     return fields === others || Array.isArray(fields) && Array.isArray(others) && fields.length === others.length && fields.every((f, i) => this.compareFields(f, others[i]));
   }
-  compareFields(field, other) {
-    return field === other || other instanceof field.constructor && field.name === other.name && field.nullable === other.nullable && this.visit(field.type, other.type);
+  compareFields(field2, other) {
+    return field2 === other || other instanceof field2.constructor && field2.name === other.name && field2.nullable === other.nullable && this.visit(field2.type, other.type);
   }
 };
 function compareConstructor(type, other) {
@@ -8282,8 +8282,8 @@ var instance4 = new TypeComparator();
 function compareSchemas(schema, other) {
   return instance4.compareSchemas(schema, other);
 }
-function compareFields(field, other) {
-  return instance4.compareFields(field, other);
+function compareFields(field2, other) {
+  return instance4.compareFields(field2, other);
 }
 function compareTypes(type, other) {
   return instance4.visit(type, other);
@@ -8684,7 +8684,7 @@ var nullBufs = (bitmapLength) => [
 ];
 function ensureSameLengthData(schema, chunks, batchLength = chunks.reduce((l, c) => Math.max(l, c.length), 0)) {
   let data;
-  let field;
+  let field2;
   let i = -1;
   const n = chunks.length;
   const fields = [...schema.fields];
@@ -8694,14 +8694,14 @@ function ensureSameLengthData(schema, chunks, batchLength = chunks.reduce((l, c)
     if ((data = chunks[i]) && data.length === batchLength) {
       batchData[i] = data;
     } else {
-      (field = fields[i]).nullable || (fields[i] = fields[i].clone({ nullable: true }));
-      batchData[i] = data ? data._changeLengthAndBackfillNullBitmap(batchLength) : Data.new(field.type, 0, batchLength, batchLength, nullBufs(bitmapLength));
+      (field2 = fields[i]).nullable || (fields[i] = fields[i].clone({ nullable: true }));
+      batchData[i] = data ? data._changeLengthAndBackfillNullBitmap(batchLength) : Data.new(field2.type, 0, batchLength, batchLength, nullBufs(bitmapLength));
     }
   }
   return [new Schema2(fields), batchLength, batchData];
 }
 function distributeColumnsIntoRecordBatches(columns) {
-  return distributeVectorsIntoRecordBatches(new Schema2(columns.map(({ field }) => field)), columns);
+  return distributeVectorsIntoRecordBatches(new Schema2(columns.map(({ field: field2 }) => field2)), columns);
 }
 function distributeVectorsIntoRecordBatches(schema, vecs) {
   return uniformlyDistributeChunksAcrossRecordBatches(schema, vecs.map((v2) => v2 instanceof Chunked ? v2.chunks.map((c) => c.data) : [v2.data]));
@@ -8733,7 +8733,7 @@ function uniformlyDistributeChunksAcrossRecordBatches(schema, columns) {
 }
 function distributeChildData(fields, batchLength, childData, columns, memo) {
   let data;
-  let field;
+  let field2;
   let length = 0, i = -1;
   const n = columns.length;
   const bitmapLength = (batchLength + 63 & ~63) >> 3;
@@ -8747,8 +8747,8 @@ function distributeChildData(fields, batchLength, childData, columns, memo) {
         memo.numBatches = Math.max(memo.numBatches, columns[i].unshift(data));
       }
     } else {
-      (field = fields[i]).nullable || (fields[i] = field.clone({ nullable: true }));
-      childData[i] = data ? data._changeLengthAndBackfillNullBitmap(batchLength) : Data.new(field.type, 0, batchLength, batchLength, nullBufs(bitmapLength));
+      (field2 = fields[i]).nullable || (fields[i] = field2.clone({ nullable: true }));
+      childData[i] = data ? data._changeLengthAndBackfillNullBitmap(batchLength) : Data.new(field2.type, 0, batchLength, batchLength, nullBufs(bitmapLength));
     }
   }
   return childData;
@@ -8885,8 +8885,8 @@ var DictionaryVector = class extends BaseVector {
   get dictionary() {
     return this.data.dictionary;
   }
-  reverseLookup(value) {
-    return this.dictionary.indexOf(value);
+  reverseLookup(value2) {
+    return this.dictionary.indexOf(value2);
   }
   getKey(idx) {
     return this.indices.get(idx);
@@ -8897,8 +8897,8 @@ var DictionaryVector = class extends BaseVector {
   setKey(idx, key) {
     return this.indices.set(idx, key);
   }
-  setValue(key, value) {
-    return this.dictionary.set(key, value);
+  setValue(key, value2) {
+    return this.dictionary.set(key, value2);
   }
 };
 DictionaryVector.prototype.indices = null;
@@ -9625,7 +9625,7 @@ var ByteWidthVisitor = class extends Visitor {
     return this.visit(type.indices);
   }
   visitFields(fields) {
-    return (fields || []).map((field) => this.visit(field.type));
+    return (fields || []).map((field2) => this.visit(field2.type));
   }
   visitSchema(schema) {
     return this.visitFields(schema.fields).reduce(sum, 0);
@@ -9799,11 +9799,11 @@ function vectorFrom(input) {
 BaseVector.prototype.get = function baseVectorGet(index) {
   return instance5.visit(this, index);
 };
-BaseVector.prototype.set = function baseVectorSet(index, value) {
-  return instance.visit(this, index, value);
+BaseVector.prototype.set = function baseVectorSet(index, value2) {
+  return instance.visit(this, index, value2);
 };
-BaseVector.prototype.indexOf = function baseVectorIndexOf(value, fromIndex) {
-  return instance6.visit(this, value, fromIndex);
+BaseVector.prototype.indexOf = function baseVectorIndexOf(value2, fromIndex) {
+  return instance6.visit(this, value2, fromIndex);
 };
 BaseVector.prototype.toArray = function baseVectorToArray() {
   return instance8.visit(this);
@@ -9935,16 +9935,16 @@ var Table = class extends Chunked {
     if (index < 0 || index >= this.numChildren) {
       return null;
     }
-    let field, child;
+    let field2, child;
     const fields = this._schema.fields;
     const columns = this._children || (this._children = []);
     if (child = columns[index]) {
       return child;
     }
-    if (field = fields[index]) {
+    if (field2 = fields[index]) {
       const chunks = this._chunks.map((chunk) => chunk.getChildAt(index)).filter((vec) => vec != null);
       if (chunks.length > 0) {
-        return columns[index] = new Column(field, chunks);
+        return columns[index] = new Column(field2, chunks);
       }
     }
     return null;
@@ -10122,11 +10122,11 @@ var RecordBatchReader = class extends ReadableInterop {
   next() {
     return this._impl.next();
   }
-  throw(value) {
-    return this._impl.throw(value);
+  throw(value2) {
+    return this._impl.throw(value2);
   }
-  return(value) {
-    return this._impl.return(value);
+  return(value2) {
+    return this._impl.return(value2);
   }
   cancel() {
     return this._impl.cancel();
@@ -10301,15 +10301,15 @@ var RecordBatchStreamReaderImpl = class extends RecordBatchReaderImpl {
     }
     return this;
   }
-  throw(value) {
+  throw(value2) {
     if (!this.closed && this.autoDestroy && (this.closed = true)) {
-      return this.reset()._reader.throw(value);
+      return this.reset()._reader.throw(value2);
     }
     return ITERATOR_DONE;
   }
-  return(value) {
+  return(value2) {
     if (!this.closed && this.autoDestroy && (this.closed = true)) {
-      return this.reset()._reader.return(value);
+      return this.reset()._reader.return(value2);
     }
     return ITERATOR_DONE;
   }
@@ -10376,15 +10376,15 @@ var AsyncRecordBatchStreamReaderImpl = class extends RecordBatchReaderImpl {
     }
     return this;
   }
-  async throw(value) {
+  async throw(value2) {
     if (!this.closed && this.autoDestroy && (this.closed = true)) {
-      return await this.reset()._reader.throw(value);
+      return await this.reset()._reader.throw(value2);
     }
     return ITERATOR_DONE;
   }
-  async return(value) {
+  async return(value2) {
     if (!this.closed && this.autoDestroy && (this.closed = true)) {
-      return await this.reset()._reader.return(value);
+      return await this.reset()._reader.return(value2);
     }
     return ITERATOR_DONE;
   }
@@ -10759,12 +10759,12 @@ var BuilderTransform = class {
       }
     }, {
       "highWaterMark": writableHighWaterMark,
-      "size": (value) => this._writeValueAndReturnChunkSize(value)
+      "size": (value2) => this._writeValueAndReturnChunkSize(value2)
     });
   }
-  _writeValueAndReturnChunkSize(value) {
+  _writeValueAndReturnChunkSize(value2) {
     const bufferedSize = this._bufferedSize;
-    this._bufferedSize = this._getSize(this._builder.append(value));
+    this._bufferedSize = this._getSize(this._builder.append(value2));
     return this._bufferedSize - bufferedSize;
   }
   _maybeFlush(builder, controller) {
@@ -12116,12 +12116,12 @@ function graph(stats, fields) {
     }
   });
 }
-function callout(g2, value) {
-  if (!value)
+function callout(g2, value2) {
+  if (!value2)
     return g2.style("display", "none");
   g2.style("display", null).style("pointer-events", "none").style("font", "10px sans-serif");
   const path = g2.selectAll("path").data([null]).join("path").attr("fill", "white").attr("stroke", "black");
-  const text = g2.selectAll("text").data([null]).join("text").call((text2) => text2.selectAll("tspan").data((value + "").split(/\n/)).join("tspan").attr("x", 0).attr("y", (d, i) => `${i * 1.1}em`).style("font-weight", (_2, i) => i ? null : "bold").text((d) => d));
+  const text = g2.selectAll("text").data([null]).join("text").call((text2) => text2.selectAll("tspan").data((value2 + "").split(/\n/)).join("tspan").attr("x", 0).attr("y", (d, i) => `${i * 1.1}em`).style("font-weight", (_2, i) => i ? null : "bold").text((d) => d));
   const { _, y: y2, width: w, height: h } = text.node().getBBox();
   text.attr("transform", `translate(${-w / 2},${15 - y2})`);
   path.attr("d", `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
@@ -12683,9 +12683,40 @@ function changeUseTeamColors(_) {
   d3.selectAll("#canvas").html("");
   graph(applyFilter(window.stats.players), fields);
 }
+var QUANTILE_RE = /quantile\((\w+), (\d+)\)/;
+function parseQuantiles(filter) {
+  const quantiles = [];
+  let nullfilter = `${filter}`;
+  while ((res = QUANTILE_RE.exec(filter)) !== null) {
+    [call, field, value] = res;
+    filter = filter.replace(call, `_${field}_ntile > ${value}`);
+    nullfilter = nullfilter.replace(call, "true");
+    quantiles.push(field);
+  }
+  console.log(filter, nullfilter);
+  return [filter, nullfilter, quantiles];
+}
 async function applyFilter(conn) {
   const queryCondition = $2("#filter").value;
-  const stats = await query(conn, `SELECT * FROM stats WHERE ${queryCondition}`);
+  [cond, nullcond, medians] = parseQuantiles(queryCondition);
+  let stats = {};
+  if (medians.length > 0) {
+    median_stmts = medians.map((x2) => `ntile(100) OVER (ORDER BY ${x2}) AS _${x2}_ntile`).join(", ");
+    stats = await query(conn, `
+      WITH mstats AS (
+        SELECT *, ${median_stmts}
+        FROM stats
+        WHERE ${nullcond}
+      )
+      SELECT *
+      FROM mstats
+      WHERE ${cond}`);
+  } else {
+    stats = await query(conn, `
+      SELECT *
+      FROM stats
+      WHERE ${queryCondition}`);
+  }
   window.stats = stats;
   return stats;
 }
