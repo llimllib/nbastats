@@ -12684,7 +12684,7 @@ function changeUseTeamColors(_) {
   graph(applyFilter(window.stats.players), fields);
 }
 async function applyFilter(conn) {
-  const queryCondition = $2("#filterrr").value;
+  const queryCondition = $2("#filter").value;
   const stats = await query(conn, `SELECT * FROM stats WHERE ${queryCondition}`);
   window.stats = stats;
   return stats;
