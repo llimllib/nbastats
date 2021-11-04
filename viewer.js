@@ -1,4 +1,5 @@
 import * as duckdb from '@duckdb/duckdb-wasm/dist/duckdb-esm.js';
+// TODO: play around with DataFrame
 import { Table, DataFrame } from '@apache-arrow/esnext-esm';
 
 // TODO
@@ -60,8 +61,13 @@ const settings = {
 };
 
 // window.DATA_URL = 'https://cdn.billmill.org/nbastats';
-// window.DATA_URL = './data';
-window.DATA_URL = 'http://localhost:9001/data';
+// window.DATA_URL = 'http://localhost:9001/data';
+window.DATA_URL = 'http://devd.io:8000/data';
+
+async function query(conn, query) {
+  const table = await conn.query(query)
+  return table.toArray().map(x => x.toJSON())
+}
 
 function hover(event, tooltip, stats, scales, fields, delaunay, cells) {
   const [mx, my] = d3.pointer(event, this);
@@ -496,6 +502,7 @@ function axisLabels(svg, fields) {
 
 // stats should be a list of player objects
 function graph(stats, fields) {
+  console.log(stats)
   const svg = d3.select('#canvas');
 
   var scales = makeScales(stats, fields);
@@ -1172,24 +1179,6 @@ function prepare() {
   d3.select('#staty_usg_pct').attr('selected', true);
 }
 
-async function changeYear(evt) {
-  const res = await fetch(`${window.DATA_URL}/${evt.target.value}/stats.json`);
-  window.stats = await res.json();
-
-  $("#updated").innerHTML = "updated " + new Intl.DateTimeFormat([],
-    { dateStyle: 'medium', timeStyle: 'short' })
-    .format(Date.parse(window.stats.updated));
-
-  const fields = {
-    x: $('#statx').value,
-    y: $('#staty').value,
-    r: $('#radius').value,
-  };
-
-  d3.selectAll('#canvas').html('');
-  graph(applyFilter(window.stats.players), fields);
-}
-
 function changeUseTeamColors(_) {
   const fields = {
     x: $('#statx').value,
@@ -1201,30 +1190,17 @@ function changeUseTeamColors(_) {
   graph(applyFilter(window.stats.players), fields);
 }
 
-// return a function (player, field, n) -> bool that will return true if a
-// player is above the nth quantile in the given field and false otherwise
-function makeQuantiler(stats) {
-  return function(player, field, n) {
-    return player[field] > d3.quantile(stats, n / 100, (p) => p[field]);
-  };
+async function applyFilter(conn) {
+  // select the top 5 percentile in fga, over all years:
+  // https://duckdb.org/2021/10/13/windowing.html
+  // with player_stats as ( select *, ntile(100) over (order by fga) as fga_pctile from stats) select * from player_stats where fga_pctile > 95;
+  const queryCondition = $('#filter').value;
+  const stats = await query(conn, `SELECT * FROM stats WHERE ${queryCondition}`);
+  window.stats = stats;
+  return stats;
 }
 
-function applyFilter(stats) {
-  // This is here to be available for the eval, so it appears unused
-  /* eslint-disable no-unused-vars */
-  const quantile = makeQuantiler(stats);
-
-  // example filters:
-  // player.usg_pct > 26 && player.fga > 80
-  // ['BOS', 'MIA', 'BRK'].indexOf(player.team) != -1 && player.fga > 30
-  // player.team == 'BOS'
-  // quantile(player, 'fga', 80) || quantile(player, 'trb', 80)
-  const activeStats = stats.filter((player) => eval($('#filter').value));
-  /* eslint-enable */
-  return activeStats;
-}
-
-function updateSettings(_evt) {
+async function updateSettings(_evt) {
   settings.width = $('#settings-width').value;
   settings.height = $('#settings-height').value;
   settings.minRadius = $('#settings-min-radius').value;
@@ -1237,12 +1213,12 @@ function updateSettings(_evt) {
   };
 
   d3.selectAll('#canvas').html('');
-  graph(applyFilter(window.stats.players), fields);
+  graph(await applyFilter(window.conn), fields);
 }
 
 function updateAxes(svg) {
-  return (_evt) => {
-    svg.update(applyFilter(window.stats.players), {
+  return async (_evt) => {
+    svg.update(await applyFilter(window.conn), {
       x: $('#statx').value,
       y: $('#staty').value,
       r: $('#radius').value,
@@ -1251,37 +1227,8 @@ function updateAxes(svg) {
 }
 
 window.addEventListener('DOMContentLoaded', async (_evt) => {
-  const res = await fetch(`${window.DATA_URL}/2022/stats.json`);
-  window.stats = await res.json();
-
-  $("#updated").innerHTML = "updated " + new Intl.DateTimeFormat([],
-    { dateStyle: 'medium', timeStyle: 'short' })
-    .format(Date.parse(window.stats.updated));
-
-  $('#settings-width').value = settings.width;
-  $('#settings-height').value = settings.height;
-  $('#settings-min-radius').value = settings.minRadius;
-  $('#settings-max-radius').value = settings.maxRadius;
-
-  prepare();
-
-  const svg = graph(applyFilter(window.stats.players), {
-    x: 'ts_pct',
-    y: 'usg_pct',
-    r: $('#radius').value,
-  });
-  $('#settings-width').addEventListener('change', updateSettings);
-  $('#settings-height').addEventListener('change', updateSettings);
-  $('#settings-min-radius').addEventListener('change', updateSettings);
-  $('#settings-max-radius').addEventListener('change', updateSettings);
-  $('#yearChooser').addEventListener('change', changeYear);
-  $('#teamcolors').addEventListener('change', (evt) =>
-    changeUseTeamColors(evt)
-  );
-  $('#statx').addEventListener('change', updateAxes(svg));
-  $('#staty').addEventListener('change', updateAxes(svg));
-  $('#radius').addEventListener('change', updateAxes(svg));
-  $('#applyFilter').addEventListener('click', updateAxes(svg));
+  // const res = await fetch(`${window.DATA_URL}/2022/stats.json`);
+  // window.stats = await res.json();
 
   // set up duckdb-wasm
   //
@@ -1307,20 +1254,6 @@ window.addEventListener('DOMContentLoaded', async (_evt) => {
   // set a global db variable for easy access
   window.db = db;
 
-  // this doesn't work because the JSON is poorly typed - for example
-  // percentage fields have empty strings instead of zeroes
-  // can I import the json directly rather than by downloading it then re-stringifying?
-  // await db.registerFileText('stats', JSON.stringify(stats.players))
-  // const c = await db.connect();
-  // await c.insertJSONFromPath('stats', { name: 'rows' });
-
-  // console.log("regsitering")
-  // stats_handle = 'stats.parquet'
-  // await db.registerFileURL(stats_handle, `${window.DATA_URL}/stats.parquet`);
-  // console.log("opening")
-  // await db.open({ path: 'stats.parquet' })
-  // console.log("connecting")
-
   const conn = await db.connect();
   window.conn = conn
 
@@ -1330,16 +1263,33 @@ window.addEventListener('DOMContentLoaded', async (_evt) => {
           SELECT * FROM "${window.DATA_URL}/stats.parquet"
   `);
 
-  const table = await conn.query("SELECT * FROM stats LIMIT 5");
-  const rows = table.toArray();
-  console.log(rows, rows[0].name, rows[0].fga);
+  // TODO: figure out how to get the updated date in here. Is there a parquet
+  // metadata facility I can use?
+  // $("#updated").innerHTML = "updated " + new Intl.DateTimeFormat([],
+  //   { dateStyle: 'medium', timeStyle: 'short' })
+  //   .format(Date.parse(window.stats.updated));
 
-  // https://github.com/duckdb/duckdb-wasm/blob/dc65c71e5c19e2aa36a4f4d11ed3ccbc28a04bbf/packages/duckdb-wasm/test/bindings.test.ts#L162
-  // const table = await conn.query<{
-  //     a: arrow.Int;
-  // }>('select count(*)::INTEGER as a from lineitem');
-  // const rows = table.toArray();
-  // expect(rows.length).toEqual(1);
-  // expect(rows[0].a).toEqual(60175);
+  $('#settings-width').value = settings.width;
+  $('#settings-height').value = settings.height;
+  $('#settings-min-radius').value = settings.minRadius;
+  $('#settings-max-radius').value = settings.maxRadius;
 
+  prepare();
+
+  const svg = graph(await applyFilter(conn), {
+    x: 'ts_pct',
+    y: 'usg_pct',
+    r: $('#radius').value,
+  });
+  $('#settings-width').addEventListener('change', updateSettings);
+  $('#settings-height').addEventListener('change', updateSettings);
+  $('#settings-min-radius').addEventListener('change', updateSettings);
+  $('#settings-max-radius').addEventListener('change', updateSettings);
+  $('#teamcolors').addEventListener('change', (evt) =>
+    changeUseTeamColors(evt)
+  );
+  $('#statx').addEventListener('change', updateAxes(svg));
+  $('#staty').addEventListener('change', updateAxes(svg));
+  $('#radius').addEventListener('change', updateAxes(svg));
+  $('#applyFilter').addEventListener('click', updateAxes(svg));
 });
