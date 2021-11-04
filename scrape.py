@@ -315,8 +315,16 @@ def process_data(years: Sequence[str]):
             if isinstance(elt, (float, int)):
                 df[col].replace("", 0.0, inplace=True)
                 break
+        # downcast any int64 columns into int32, because the int64s are painful
+        # to deal with in javascript where they get represented as a pair of
+        # int32s
+        if df[col].dtype == 'int64':
+            df[col] = df[col].astype('int32')
 
-    table = pa.Table.from_pandas(df)
+    schema = pa.Schema.from_pandas(df).with_metadata(
+        {"updated": datetime.utcnow().isoformat() + "Z"},
+    )
+    table = pa.Table.from_pandas(df, schema=schema)
     pq.write_table(table, output)
 
 
