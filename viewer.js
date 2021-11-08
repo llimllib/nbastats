@@ -25,6 +25,7 @@ import { Table, DataFrame } from '@apache-arrow/esnext-esm';
 // * teams instead of players
 // * labels sometimes overlap each other, or dots
 //   * collision detect after labelling?
+//     * example: https://observablehq.com/@fil/automated-label-placement-cities
 // * ability to customize x and y domains
 // * handle players that are coincident better
 //   * right now we just have to ensure we ignore null cells anywhere they're used
@@ -1185,7 +1186,7 @@ function prepare() {
   d3.select('#staty_usg_pct').attr('selected', true);
 }
 
-function changeUseTeamColors(_) {
+async function changeYear(evt) {
   const fields = {
     x: $('#statx').value,
     y: $('#staty').value,
@@ -1193,7 +1194,18 @@ function changeUseTeamColors(_) {
   };
 
   d3.selectAll('#canvas').html('');
-  graph(applyFilter(window.stats.players), fields);
+  graph(await applyFilter(window.conn), fields);
+}
+
+async function changeUseTeamColors(_) {
+  const fields = {
+    x: $('#statx').value,
+    y: $('#staty').value,
+    r: $('#radius').value,
+  };
+
+  d3.selectAll('#canvas').html('');
+  graph(await applyFilter(window.conn), fields);
 }
 
 // ultimately if we have more functions we want to support we could actually
@@ -1232,6 +1244,17 @@ async function applyFilter(conn) {
   // with player_stats as ( select *, ntile(100) over (order by fga) as fga_pctile from stats) select * from player_stats where fga_pctile > 95;
   const queryCondition = $('#filter').value;
 
+  // split the query into its constituent filters: we'll need to remove the
+  // quantile calls to build the filter we'll use for the partition filters
+  //
+  // filter = "something and quantile(fga) > 20 or other != 12 AND quantile(fga) > 7"
+  "something and quantile(fga) > 20 or other != 12 AND quantile(fga) > 7"
+  // filter.split(/and|or/i)
+  // >>> Array(4) [ "something ", " quantile(fga) > 20 ", " other != 12 ", " quantile(fga) > 7" ]
+  const clauses = queryCondition.split(/and|or/i);
+
+  year = $('#yearChooser').value;
+
   [cond, nullcond, medians] = parseQuantiles(queryCondition);
 
   let stats = {};
@@ -1241,16 +1264,16 @@ async function applyFilter(conn) {
       WITH mstats AS (
         SELECT *, ${median_stmts}
         FROM stats
-        WHERE ${nullcond}
+        WHERE year='${year}' and ${nullcond}
       )
       SELECT *
       FROM mstats
-      WHERE ${cond}`);
+      WHERE year='${year}' and ${cond}`);
   } else {
     stats = await query(conn, `
       SELECT *
       FROM stats
-      WHERE ${queryCondition}`);
+      WHERE year='${year}' and ${queryCondition}`);
   }
   window.stats = stats;
   return stats;
@@ -1348,4 +1371,5 @@ window.addEventListener('DOMContentLoaded', async (_evt) => {
   $('#staty').addEventListener('change', updateAxes(svg));
   $('#radius').addEventListener('change', updateAxes(svg));
   $('#applyFilter').addEventListener('click', updateAxes(svg));
+  $('#yearChooser').addEventListener('change', changeYear);
 });
