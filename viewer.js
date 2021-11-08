@@ -21,6 +21,7 @@
 // * teams instead of players
 // * labels sometimes overlap each other, or dots
 //   * collision detect after labelling?
+//     * example: https://observablehq.com/@fil/automated-label-placement-cities
 // * ability to customize x and y domains
 // * handle players that are coincident better
 //   * right now we just have to ensure we ignore null cells anywhere they're used
