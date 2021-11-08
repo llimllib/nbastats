@@ -50,22 +50,36 @@ text.pointLabel {
       </span>
     </div>
     <div style="margin-top: 20px">
-      <!-- this field is getting overwritten with "16" for no reason I can figure out at all it is bizarre -->
+      <span>Year: <select id="yearChooser">
+        <option value="2022" selected>2022</option>
+        <option value="2021">2021</option>
+        <option value="2020">2020</option>
+        <option value="2019">2019</option>
+        <option value="2018">2018</option>
+        <option value="2017">2017</option>
+        <option value="2016">2016</option>
+        <option value="2015">2015</option>
+        <option value="2014">2014</option>
+        <option value="2013">2013</option>
+        <option value="2012">2012</option>
+        <option value="2011">2011</option>
+        <option value="2010">2010</option>
+        </select></span>
       filter: <input type="text"
         id="filter"
-        value="year='2022' and fga>40"
+        value="quantile(fga, 66)"
         style="width: 500px"></input>
       <span style="margin-left: 40px">
         <button id="applyFilter">filter</button>
         <p>
         The filter syntax is a work in progress, and I'll add some UI eventually, but here's some you can try:
         <ul>
-          <li><pre>player.usg_pct &gt; 26 &amp;&amp; player.fga &gt; 80</pre></li>
-          <li><pre>['BOS', 'MIA', 'BRK'].indexOf(player.team) != -1 &amp;&amp; player.fga &gt; 30</pre></li>
-          <li><pre>player.team == 'BOS'</pre></li>
-          <li><pre>quantile(player, 'fga', 80) || quantile(player, 'trb', 80)</pre></li>
-          <li><pre>player.pts_per_g &gt; 20</pre></li>
-          <li><pre>player.fg3a_per_g &gt; 5 &amp;&amp; quantile(player, 'fg3a', 75)</pre></li>
+          <li><pre>usg_pct &gt; 26 and fga &gt; 80</pre></li>
+          <li><pre>team in ('BOS', 'MIA', 'BRK') and fga &gt; 30</pre></li>
+          <li><pre>team = 'BOS'</pre></li>
+          <li><pre>quantile(fga, 80) or quantile(trb, 80)</pre></li>
+          <li><pre>pts_per_g &gt; 20</pre></li>
+          <li><pre>fg3a_per_g &gt; 5 and quantile(fg3a, 75)</pre></li>
         </ul>
       </span>
     </div>
