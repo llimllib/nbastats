@@ -1,5 +1,4 @@
 import * as duckdb from '@duckdb/duckdb-wasm/dist/duckdb-esm.js';
-// TODO: play around with DataFrame
 import { Table, DataFrame } from '@apache-arrow/esnext-esm';
 
 // TODO
