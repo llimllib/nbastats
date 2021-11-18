@@ -45,6 +45,7 @@
 // * fix transferred player bug: select "raptor defensive rating" as y axis and
 //   you get a bunch of undefined coordinates and players at (0,0)
 // * keep history of your filters in localstorage or something
+// * add ability to draw arrows
 
 const $ = (s) => document.querySelector(s);
 
