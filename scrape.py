@@ -3,14 +3,13 @@ import argparse
 import csv
 from datetime import datetime
 import json
-from os import makedirs, stat, mkdir
-from os.path import isdir, isfile
 import re
+from pathlib import Path
 from time import time
-from typing import Dict, Tuple, Any, Sequence
-import ipdb
+from typing import Dict, Tuple, Any, Sequence, Union
 
 from bs4 import BeautifulSoup, element
+import ipdb
 import requests
 import pandas as pd
 import pyarrow as pa
@@ -52,12 +51,20 @@ PlayerStats = Dict[str, Any]
 # a StatDict is a mapping from player keys to player stats
 StatDict = Dict[PlayerKey, PlayerStats]
 
-def log(msg):
+
+def log(msg: str):
     if DEBUG:
         print(msg)
 
 
-def tryint(mayben):
+def tryint(mayben: str) -> Union[str, float, int]:
+    """
+    Try to turn `mayben` into a number.
+
+    If it can be coerced into an int, return that. Else if it can be coerced
+    into a float, return that. If both were unsuccessful, return the string and
+    assume it's not a number.
+    """
     try:
         return int(mayben)
     except ValueError:
@@ -68,19 +75,19 @@ def tryint(mayben):
 
 
 # TODO: stale still isn't the right word
-def stale(fname):
+def stale(fname: Path) -> bool:
     """
     Return whether a file is stale and should be re-downloaded
 
     It should be re-downloaded if the file given by fname was modified more than
     an hour ago or does not exist
     """
-    if not isfile(fname):
+    if not fname.is_file():
         return True
-    return (time() - stat(fname).st_mtime) / (60 * 60) > 1
+    return (time() - fname.stat().st_mtime) / (60 * 60) > 1
 
 
-def save(url, fname):
+def save(url: str, fname: Path):
     """save the contents of url to fname"""
     res = requests.get(url)
     if res.status_code != 200:
@@ -89,13 +96,13 @@ def save(url, fname):
         f.write(res.text)
 
 
-def get_bbref_data(year, datadir):
-    if not isdir(datadir):
-        makedirs(datadir)
+def get_bbref_data(year: str, datadir: Path):
+    if not datadir.is_dir():
+        datadir.mkdir(parents=True)
 
     log(f"getting {year} data in {datadir}")
 
-    dir_ = f"data/{year}"
+    dir_ = Path(f"data/{year}")
 
     pages = [
         "totals",
@@ -112,16 +119,16 @@ def get_bbref_data(year, datadir):
     for page in pages:
         save(
             f"https://www.basketball-reference.com/leagues/NBA_{year}_{page}.html",
-            f"{dir_}/{page}.html",
+            dir_ / f"{page}.html",
         )
     save(
         f"https://www.basketball-reference.com/leagues/NBA_{year}.html",
-        f"{dir_}/teams.html",
+        dir_ / "teams.html",
     )
 
 
-def parse_team_stats(year):
-    datadir = f"data/{year}"
+def parse_team_stats(year: str):
+    datadir = Path(f"data/{year}")
 
     teamdata = {}
 
@@ -210,44 +217,46 @@ def parse_player_stats(year: str) -> StatDict:
 
 def download_data(years: Sequence[str], force_download: bool = False):
     for year in years:
-        datadir = f"data/{year}"
-        if not isdir(datadir):
-            mkdir(datadir)
+        datadir = Path(f"data/{year}")
+        if not datadir.is_dir():
+            datadir.mkdir(parents=True)
 
-        if force_download:
-            get_bbref_data(year, datadir)
-        elif year == "2022" and stale(f"{datadir}/totals.html"):
+        # we want to download the year's data if:
+        # - the force_download flag was set
+        # - the data is stale
+        if force_download or stale(datadir / "totals.html"):
             get_bbref_data(year, datadir)
         else:
             continue
 
     # 538 Raptor data
     # https://github.com/fivethirtyeight/data/tree/master/nba-raptor
-    if not isdir("data/raptor") or force_download:
+    raptord = Path("data/raptor")
+    if (
+        not raptord.is_dir()
+        or not (raptord / "historical_RAPTOR.csv").is_file()
+        or not (raptord / "modern_RAPTOR.csv").is_file()
+        or force_download
+    ):
         log("downloading raptor")
-        try:
-            makedirs("data/raptor")
-        except FileExistsError:
-            pass
+        raptord.mkdir(parents=True, exist_ok=True)
 
         save(
             "https://raw.githubusercontent.com/fivethirtyeight/data/master/nba-raptor/historical_RAPTOR_by_team.csv",
-            "data/raptor/historical_RAPTOR.csv",
+            raptord / "historical_RAPTOR.csv",
         )
 
         save(
             "https://raw.githubusercontent.com/fivethirtyeight/data/master/nba-raptor/modern_RAPTOR_by_team.csv",
-            "data/raptor/modern_RAPTOR.csv",
+            raptord / "modern_RAPTOR.csv",
         )
-    if (
-        not isfile("data/raptor/latest_RAPTOR.csv")
-        or stale("data/raptor/latest_RAPTOR.csv")
-        or force_download
-    ):
+
+    latest_raptor = raptord / "latest_RAPTOR.csv"
+    if not (latest_raptor).is_file() or stale(latest_raptor) or force_download:
         log("downloading latest raptor")
         save(
             "https://projects.fivethirtyeight.com/nba-model/2022/latest_RAPTOR_by_team.csv",
-            "data/raptor/latest_RAPTOR.csv",
+            latest_raptor,
         )
 
 
@@ -261,8 +270,9 @@ def fix_team(team: str, year: str) -> str:
 
 
 def parse_raptor_stats(data: StatDict, years: Sequence[str]):
+    raptord = Path("data/raptor")
     for raptorfile in ("latest_RAPTOR", "modern_RAPTOR", "historical_RAPTOR"):
-        for row in csv.DictReader(open(f"data/raptor/{raptorfile}.csv")):
+        for row in csv.DictReader(open(raptord / f"{raptorfile}.csv")):
             if row["season_type"] != "RS":
                 # we're currently not handling playoff data, so skip
                 continue
@@ -318,8 +328,8 @@ def process_data(years: Sequence[str]):
         # downcast any int64 columns into int32, because the int64s are painful
         # to deal with in javascript where they get represented as a pair of
         # int32s
-        if df[col].dtype == 'int64':
-            df[col] = df[col].astype('int32')
+        if df[col].dtype == "int64":
+            df[col] = df[col].astype("int32")
 
     schema = pa.Schema.from_pandas(df).with_metadata(
         {"updated": datetime.utcnow().isoformat() + "Z"},
