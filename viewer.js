@@ -1221,8 +1221,8 @@ async function changeUseTeamColors(_) {
 // rather than what we have, which is a "quantile greater than" function. The
 // problem is that it's tricky to parse - we need to pull out the entire
 // expression "quantile(fga) < 35" so taht we can replace it in the CTE with
-// "true" (or elimiate it), but that basically reduces to a complicated parsing
-// problem. So for now, for simplicity, just leave well enough alone
+// "true" (or eliminate it), but that basically reduces to a complicated
+// parsing problem. So for now, for simplicity, just leave well enough alone
 const QUANTILE_RE = /quantile\((\w+), (\d+)\)/
 function parseQuantiles(filter) {
   const quantiles = []
@@ -1240,7 +1240,14 @@ function parseQuantiles(filter) {
 async function applyFilter(conn) {
   // select the top 5 percentile in fga, over all years:
   // https://duckdb.org/2021/10/13/windowing.html
-  // with player_stats as ( select *, ntile(100) over (order by fga) as fga_pctile from stats) select * from player_stats where fga_pctile > 95;
+  //
+  // with player_stats as (
+  //     select *,
+  //            ntile(100) over (order by fga) as fga_pctile
+  //     from stats
+  //  )
+  //  select * from player_stats
+  //  where fga_pctile > 95;
   const queryCondition = $('#filter').value;
 
   // split the query into its constituent filters: we'll need to remove the
