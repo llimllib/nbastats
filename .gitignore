@@ -3,4 +3,4 @@ __pycache__
 node_modules
 .envrc
 data
-dist/*.js
+dist/*
