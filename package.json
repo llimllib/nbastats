@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "NBA Statistics",
   "main": "viewer.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,11 +18,14 @@
   },
   "homepage": "https://github.com/llimllib/nbastats#readme",
   "devDependencies": {
-    "eslint": "^8.1.0"
+    "esbuild-jest": "^0.5.0",
+    "eslint": "^8.1.0",
+    "jest": "^27.3.1",
+    "stream": "^0.0.2"
   },
   "dependencies": {
     "@apache-arrow/esnext-esm": "^6.0.0",
-    "@duckdb/duckdb-wasm": "^0.1.12-dev26.0",
+    "@duckdb/duckdb-wasm": "^0.1.13-dev8.0",
     "esbuild": "^0.13.12",
     "wasm-feature-detect": "^1.2.11"
   }
