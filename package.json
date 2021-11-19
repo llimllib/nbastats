@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@apache-arrow/esnext-esm": "^6.0.0",
-    "@duckdb/duckdb-wasm": "^0.1.13-dev8.0",
+    "@duckdb/duckdb-wasm": "^0.1.13-dev12.0",
     "esbuild": "^0.13.12",
     "wasm-feature-detect": "^1.2.11"
   }
