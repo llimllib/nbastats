@@ -1,5 +1,4 @@
-import * as duckdb from '@duckdb/duckdb-wasm/dist/duckdb-esm.js';
-import { Table, DataFrame } from '@apache-arrow/esnext-esm';
+import * as duckdb from '@duckdb/duckdb-wasm';
 
 // TODO
 // * data series
@@ -1291,23 +1290,23 @@ function updateAxes(svg) {
 }
 
 window.addEventListener('DOMContentLoaded', async (_evt) => {
-  // const res = await fetch(`${window.DATA_URL}/2022/stats.json`);
-  // window.stats = await res.json();
-
-  // set up duckdb-wasm
-  //
-  // copied from https://www.npmjs.com/package/@duckdb/duckdb-wasm, I don't
-  // really have any idea what this is supposed to be doing
-  //
-  // OK, the result of this on my browser is that two files get loaded from jsdelivr:
-  //  - duckdb-browser-async.worker.js
-  //  - duckdb.wasm
-  //
-  // We will want to load this locally somehow but I'm going to put that off for now
-  //
-  // Select a bundle based on browser checks
-  const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
-  const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
+  // tell duckdb where to find its wasm files
+  const DUCKDB_BUNDLES = {
+      asyncDefault: {
+          mainModule: '/dist/duckdb/duckdb.wasm',
+          mainWorker: '/dist/duckdb/duckdb-browser.worker.js',
+      },
+      asyncNext: {
+          mainModule: '/dist/duckdb/duckdb-next.wasm',
+          mainWorker: '/dist/duckdb/duckdb-browser-next.worker.js',
+      },
+      asyncNextCOI: {
+          mainModule: '/dist/duckdb/duckdb-next-coi.wasm',
+          mainWorker: '/dist/duckdb/duckdb-browser-next-coi.worker.js',
+          pthreadWorker: '/dist/duckdb/duckdb-browser-next-coi.pthread.worker.js',
+      },
+  };
+  const bundle = await duckdb.selectBundle(DUCKDB_BUNDLES);
 
   // Instantiate the asynchronus version of DuckDB-wasm
   const worker = new Worker(bundle.mainWorker);
