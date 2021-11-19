@@ -15,6 +15,10 @@ text.label {
 text.pointLabel {
   font: 10px sans-serif;
 }
+.code {
+  background-color: #eee;
+  font-family: monospace;
+}
 </style>
   </head>
   <body>
@@ -72,15 +76,21 @@ text.pointLabel {
       <span style="margin-left: 40px">
         <button id="applyFilter">filter</button>
         <p>
-        The filter syntax is a work in progress, and I'll add some UI eventually, but here's some you can try:
+          The filter syntax is a work in progress. You're essentially writing the
+          <span class="code">where</span> clause in a SQL statement (using <a
+          href="https://duckdb.org/docs/sql/query_syntax/where">DuckDB SQL</a>).
+        </p>
+        <p>
+          Here's some you can try:
+        </p>
         <ul>
           <li><pre>usg_pct &gt; 26 and fga &gt; 80</pre></li>
           <li><pre>team in ('BOS', 'MIA', 'BRK') and fga &gt; 30</pre></li>
           <li><pre>team = 'BOS'</pre></li>
-          <li><pre>quantile(fga, 80) or quantile(trb, 80)</pre></li>
+          <li><pre>quantile(fga) &gt; 80 or quantile(trb) &gt; 80</pre></li>
           <li><pre>pts_per_g &gt; 20</pre></li>
-          <li><pre>fg3a_per_g &gt; 5 and quantile(fg3a, 75)</pre></li>
-          <li><pre>quantile(stl, 75) and quantile(ast, 75) and year='2022' or (name like '%Thybulle' and year='2022')</pre></li>
+          <li><pre>fg3a_per_g &gt; 5 and quantile(fg3a) &gt; 75</pre></li>
+          <li><pre>quantile(stl) &gt; 75 and quantile(ast) &gt; 75 or name like '%Thybulle'</pre></li>
         </ul>
       </span>
     </div>
