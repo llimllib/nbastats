@@ -1209,32 +1209,20 @@ async function changeUseTeamColors(_) {
 
 // ultimately if we have more functions we want to support we could actually
 // parse a query language? for now let's hack like whoa
+//
 // TODO: instead of \w we should use whatever the valid characters are in a
 // postgres column name? but honestly all of our column names are very simple
 // so who cares
-//
-// XXX: I would really like the expression just to be `quantile(<field)`, so
-// that you could do nicer things like:
-//
-// quantile(fga) < 35
-//
-// rather than what we have, which is a "quantile greater than" function. The
-// problem is that it's tricky to parse - we need to pull out the entire
-// expression "quantile(fga) < 35" so taht we can replace it in the CTE with
-// "true" (or eliminate it), but that basically reduces to a complicated
-// parsing problem. So for now, for simplicity, just leave well enough alone
-const QUANTILE_RE = /quantile\((\w+), (\d+)\)/
+const QUANTILE_RE = /quantile\((\w+)\)/
 function parseQuantiles(filter) {
   const quantiles = []
-  let nullfilter = `${filter}`
   while ((res = QUANTILE_RE.exec(filter)) !== null) {
-    [call, field, value] = res;
-    filter = filter.replace(call, `_${field}_ntile > ${value}`);
-    nullfilter = nullfilter.replace(call, "true");
+    [call, field] = res;
+    filter = filter.replace(call, `_${field}_ntile`);
     quantiles.push(field);
   }
-  console.log(filter, nullfilter);
-  return [filter, nullfilter, quantiles];
+  console.log(filter);
+  return [filter, quantiles];
 }
 
 async function applyFilter(conn) {
@@ -1242,26 +1230,17 @@ async function applyFilter(conn) {
   // https://duckdb.org/2021/10/13/windowing.html
   //
   // with player_stats as (
-  //     select *,
-  //            ntile(100) over (order by fga) as fga_pctile
-  //     from stats
-  //  )
-  //  select * from player_stats
-  //  where fga_pctile > 95;
+  //    select *,
+  //           ntile(100) over (order by fga) as fga_pctile
+  //    from stats
+  // )
+  // select * from player_stats
+  // where fga_pctile > 95;
   const queryCondition = $('#filter').value;
-
-  // split the query into its constituent filters: we'll need to remove the
-  // quantile calls to build the filter we'll use for the partition filters
-  //
-  // filter = "something and quantile(fga) > 20 or other != 12 AND quantile(fga) > 7"
-  "something and quantile(fga) > 20 or other != 12 AND quantile(fga) > 7"
-  // filter.split(/and|or/i)
-  // >>> Array(4) [ "something ", " quantile(fga) > 20 ", " other != 12 ", " quantile(fga) > 7" ]
-  const clauses = queryCondition.split(/and|or/i);
 
   year = $('#yearChooser').value;
 
-  [cond, nullcond, medians] = parseQuantiles(queryCondition);
+  [cond, medians] = parseQuantiles(queryCondition);
 
   let stats = {};
   if (medians.length > 0) {
@@ -1270,7 +1249,7 @@ async function applyFilter(conn) {
       WITH mstats AS (
         SELECT *, ${median_stmts}
         FROM stats
-        WHERE year='${year}' and ${nullcond}
+        WHERE year='${year}'
       )
       SELECT *
       FROM mstats
