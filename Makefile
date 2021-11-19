@@ -37,9 +37,14 @@ flush:
 dist/viewer_duckdb.js: viewer.js package-lock.json
 	node build.mjs
 
-wasm: dist/viewer_duckdb.js
+# TODO: only copy this files if they're newer, and make them dependencies of
+#       viewer_duckdb.js
+duckdb_files: node_modules/@duckdb/duckdb-wasm/dist/*
+	cp node_modules/@duckdb/duckdb-wasm/dist/*.{js,wasm,map} dist/duckdb/
+
+wasm: duckdb_files dist/viewer_duckdb.js
 
 clean:
 	rm -f dist/*
 
-.PHONY: serve publish lint update syncdata requirements freeze flush wasm clean
+.PHONY: serve publish lint update syncdata requirements freeze flush duckdb_files wasm clean
