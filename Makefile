@@ -1,3 +1,11 @@
+DIST = dist
+DUCKDB_DIST = node_modules/@duckdb/duckdb-wasm/dist/
+DUCKDB_PREREQS = duckdb.wasm duckdb-next.wasm duckdb-browser.worker.js duckdb-browser-next.worker.js
+DUCKDB_PREREQS_FULL = $(addprefix $(DUCKDB_DIST),$(DUCKDB_PREREQS))
+BUILD_PREREQS_FULL = $(addprefix $(DIST)/duckdb/,$(DUCKDB_PREREQS))
+
+wasm: duckdb_files dist/viewer_duckdb.js $(BUILD_PREREQS_FULL)
+
 serve:
 	devd -ol .
 
@@ -34,15 +42,13 @@ flush:
 		$$(doctl compute cdn list --format ID | tail -n1) \
 		--files nbastats/*
 
-dist/viewer_duckdb.js: viewer.js package-lock.json
+dist/viewer_duckdb.js: viewer.js package-lock.json dist/duckdb
 	node build.mjs
 
-# TODO: only copy this files if they're newer, and make them dependencies of
-#       viewer_duckdb.js
+$(DIST)/%: $(DUCKDB_DIST)
 duckdb_files: node_modules/@duckdb/duckdb-wasm/dist/*
-	cp node_modules/@duckdb/duckdb-wasm/dist/*.{js,wasm,map} dist/duckdb/
-
-wasm: duckdb_files dist/viewer_duckdb.js
+	# only update files if they're newer
+	rsync --update $(DUCKDB_PREREQS_FULL) $(DIST)/duckdb/
 
 clean:
 	rm -f dist/*
