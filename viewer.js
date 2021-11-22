@@ -1303,17 +1303,23 @@ window.addEventListener("DOMContentLoaded", async (_evt) => {
   // tell duckdb where to find its wasm files
   const DUCKDB_BUNDLES = {
     asyncDefault: {
-      mainModule: "/dist/duckdb/duckdb.wasm",
-      mainWorker: "/dist/duckdb/duckdb-browser.worker.js",
+      mainModule: "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb.wasm",
+      mainWorker:
+        "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-browser.worker.js",
     },
     asyncNext: {
-      mainModule: "/dist/duckdb/duckdb-next.wasm",
-      mainWorker: "/dist/duckdb/duckdb-browser-next.worker.js",
+      mainModule:
+        "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-next.wasm",
+      mainWorker:
+        "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-browser-next.worker.js",
     },
     asyncNextCOI: {
-      mainModule: "/dist/duckdb/duckdb-next-coi.wasm",
-      mainWorker: "/dist/duckdb/duckdb-browser-next-coi.worker.js",
-      pthreadWorker: "/dist/duckdb/duckdb-browser-next-coi.pthread.worker.js",
+      mainModule:
+        "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-next-coi.wasm",
+      mainWorker:
+        "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-browser-next-coi.worker.js",
+      pthreadWorker:
+        "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-browser-next-coi.pthread.worker.js",
     },
   };
   const bundle = await duckdb.selectBundle(DUCKDB_BUNDLES);
