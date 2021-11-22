@@ -1336,12 +1336,21 @@ window.addEventListener("DOMContentLoaded", async (_evt) => {
           SELECT * FROM "${window.DATA_URL}/stats.parquet"
   `);
 
-  // TODO: figure out how to get the updated date in here. Is there a parquet
-  // metadata facility I can use?
+  // TODO: pull the updated date from the parquet file once duckdb supports
+  //       pulling metadata out of parquet files. Until then, we will pull
+  //       the data from a separate file.
   // - https://github.com/duckdb/duckdb/issues/2534
-  // $("#updated").innerHTML = "updated " + new Intl.DateTimeFormat([],
-  //   { dateStyle: 'medium', timeStyle: 'short' })
-  //   .format(Date.parse(window.stats.updated));
+  try {
+    const res = await fetch(`${window.DATA_URL}/metadata.json`);
+    const j = await res.json();
+    const updated = j["updated"];
+    console.log("updated: ", updated, "j:", j);
+    $("#updated").innerHTML = "updated " + new Intl.DateTimeFormat([],
+      { dateStyle: 'medium', timeStyle: 'short' })
+      .format(Date.parse(updated));
+  } catch (e) {
+    console.log("unable to fetch updated date:", e);
+  }
 
   $("#settings-width").value = settings.width;
   $("#settings-height").value = settings.height;
