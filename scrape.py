@@ -331,11 +331,20 @@ def process_data(years: Sequence[str]):
         if df[col].dtype == "int64":
             df[col] = df[col].astype("int32")
 
+    dt = datetime.utcnow().isoformat() + "Z"
     schema = pa.Schema.from_pandas(df).with_metadata(
-        {"updated": datetime.utcnow().isoformat() + "Z"},
+        {"updated": dt},
     )
     table = pa.Table.from_pandas(df, schema=schema)
     pq.write_table(table, output)
+
+    # XXX: Until duckdb supports reading metadata out of parquet files, we will
+    #      generate a metadata file
+    # - https://github.com/duckdb/duckdb/issues/2534
+    json.dump(
+        {"updated": datetime.utcnow().isoformat() + "Z"},
+        open("data/metadata.json", "w"),
+    )
 
 
 def main(args):
