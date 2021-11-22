@@ -1,7 +1,7 @@
 module.exports = {
   globals: {
     "d3": true
-  }
+  },
   env: {
     browser: true,
     es2021: true,
