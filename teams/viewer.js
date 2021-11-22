@@ -1,5 +1,10 @@
-// TODO:
-// * last 15 games only option
+// TODO
+// * last 15 (n?) games only option
+// * show non-rotated graph next to rotated graph
+// * handle overlapping logos better
+// * add axis line for evenly balanced O/D
+//   * possibly lines for net ratings?
+// * add ability to draw arrows
 const $ = (s) => document.querySelector(s);
 
 const settings = {

@@ -28,15 +28,16 @@ import * as duckdb from "@duckdb/duckdb-wasm";
 // * handle players that are coincident better
 //   * right now we just have to ensure we ignore null cells anywhere they're used
 //   * what even is the right thing to do? I dunno
-//  * the tooltip sometimes goes off the bottom, it should appear above the dot
-//    when it's low
-//    * convert it to an HTML absolutely positioned tooltip?
-//    * I know I have that in one of my other projects
-//  * would be cool to be able to set a linear or log scale
-//    * right now we just choose linear by default but for example, if you
-//      choose FT% as the circle size, you see that Andre Drummond looks tiny and
-//      everybody else looks huge.
-//    * if it were a log scale, the good shooters would jump out at you
+//   * maybe when you roll over a dot that's obscuring another dot, they separate themselves?
+// * the tooltip sometimes goes off the bottom, it should appear above the dot
+//   when it's low
+//   * convert it to an HTML absolutely positioned tooltip?
+//   * I know I have that in one of my other projects
+// * would be cool to be able to set a linear or log scale
+//   * right now we just choose linear by default but for example, if you
+//     choose FT% as the circle size, you see that Andre Drummond looks tiny and
+//     everybody else looks huge.
+//   * if it were a log scale, the good shooters would jump out at you
 // * should I thread a single transition object through all the transitions?
 // * checkbox to show all labels no matter what
 // * the labels aren't quite where they should be
@@ -48,9 +49,9 @@ import * as duckdb from "@duckdb/duckdb-wasm";
 // * add year as an axis possibility
 //   * I think there's a lot more possible UI around time, but for now this
 //     would be helpful
-// * default to current season only
 //   * allow filter to range on all years
-//   * possibly a check box for "current year only"?
+// * keep history of your filters in localstorage or something
+// * add ability to draw arrows
 
 const $ = (s) => document.querySelector(s);
 
@@ -120,7 +121,7 @@ function orient(pos, r) {
 }
 
 function orientText(scales, fields) {
-  return function ([player, cell]) {
+  return function([player, cell]) {
     // if two players have the same stats on the selected dimension, the
     // voronoi cell will be null. Skip this player for now - do something more
     // intelligent with coincident players later
@@ -135,7 +136,7 @@ function orientText(scales, fields) {
           cx - scales.x(player[fields.x])
         ) /
           Math.PI) *
-          2
+        2
       ) +
         4) %
       4;
@@ -144,10 +145,10 @@ function orientText(scales, fields) {
       angle === 0
         ? orient("right", r)
         : angle === 3
-        ? orient("top", r)
-        : angle === 1
-        ? orient("bottom", r)
-        : orient("left", r)
+          ? orient("top", r)
+          : angle === 1
+            ? orient("bottom", r)
+            : orient("left", r)
     );
   };
 }
@@ -193,7 +194,7 @@ function pointLabels(svg, stats, scales, fields, cells) {
     )
     .text(([p, _]) => p.name);
 
-  return function (stats, scales, fields, cells) {
+  return function(stats, scales, fields, cells) {
     var orienter = orientText(scales, fields);
 
     // TODO the label immediately changes orientation instead of
@@ -310,7 +311,7 @@ function axes(svg, stats, scales) {
     .call((g) => g.selectAll(".tick text").attr("dy", -4).attr("x", 4));
 
   // return an update function
-  return function (stats, scales, fields) {
+  return function(stats, scales, fields) {
     const xAxType = statMeta[fields.x].type;
     if (xAxType == "categorical") {
       xaxis.scale(scales.x).tickFormat((p) => p);
@@ -329,7 +330,7 @@ function axes(svg, stats, scales) {
       .transition()
       .duration(settings.duration)
       .call(xaxis)
-      .on("start", function () {
+      .on("start", function() {
         xaxisg.select(".domain").remove(); // https://stackoverflow.com/a/50254240/42559
       })
       .call((g) => g.select(".domain").remove())
@@ -390,7 +391,7 @@ function points(svg, stats, scales, fields) {
       .attr("r", (d) => scales.r(d[fields.r]));
   }
 
-  return function (stats, scales, fields) {
+  return function(stats, scales, fields) {
     useTeamColors = $("#teamcolors").checked;
     d3.selectAll(".player_label").remove();
 
@@ -493,7 +494,7 @@ function axisLabels(svg, fields) {
     rlabel.style("display", "none");
   }
 
-  return function (fields) {
+  return function(fields) {
     xlabel.text("→" + statMeta[fields.x].name);
     ylabel.text("↑ " + statMeta[fields.y].name);
     // don't add a radius label if the value is constant
