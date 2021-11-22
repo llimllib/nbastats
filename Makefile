@@ -32,8 +32,12 @@ clean:
 serve:
 	devd -ol .
 
+# copy the dist folder to our CDN
+distribute: dist/viewer_duckdb.js
+	s3cmd sync --acl-public dist/ s3://llimllib/nbastats/dist/
+
 # publish to github pages
-publish:
+publish: distribute
 	-git branch -D gh-pages
 	git checkout -b gh-pages
 	git push -f -u origin gh-pages
