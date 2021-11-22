@@ -35,6 +35,7 @@ serve:
 # copy the dist folder to our CDN
 distribute: dist/viewer_duckdb.js
 	s3cmd sync --acl-public dist/ s3://llimllib/nbastats/dist/
+	make flush
 
 # publish to github pages
 publish: distribute
@@ -46,6 +47,14 @@ publish: distribute
 # lint the source
 lint:
 	eslint viewer.js
+
+# flush the CDN cache so it picks up new database files or javascript files
+# TODO: I'd like to run this on my remote server but I don't want to deal with
+# setting up doctl
+flush:
+	doctl compute cdn flush \
+		$$(doctl compute cdn list --format ID | tail -n1) \
+		--files nbastats/*
 
 ##################
 # stats database
@@ -70,13 +79,5 @@ freeze:
 		pip install -r requirements_to_freeze.txt && \
 		pip freeze > requirements.txt && \
 		deactivate
-
-# flush the CDN cache so it picks up new database files
-# TODO: I'd like to run this on my remote server but I don't want to deal with
-# setting up doctl
-flush:
-	doctl compute cdn flush \
-		$$(doctl compute cdn list --format ID | tail -n1) \
-		--files nbastats/*
 
 .PHONY: serve publish lint update syncdata requirements freeze flush duckdb_files wasm clean
