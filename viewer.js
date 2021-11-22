@@ -121,7 +121,7 @@ function orient(pos, r) {
 }
 
 function orientText(scales, fields) {
-  return function([player, cell]) {
+  return function ([player, cell]) {
     // if two players have the same stats on the selected dimension, the
     // voronoi cell will be null. Skip this player for now - do something more
     // intelligent with coincident players later
@@ -136,7 +136,7 @@ function orientText(scales, fields) {
           cx - scales.x(player[fields.x])
         ) /
           Math.PI) *
-        2
+          2
       ) +
         4) %
       4;
@@ -145,10 +145,10 @@ function orientText(scales, fields) {
       angle === 0
         ? orient("right", r)
         : angle === 3
-          ? orient("top", r)
-          : angle === 1
-            ? orient("bottom", r)
-            : orient("left", r)
+        ? orient("top", r)
+        : angle === 1
+        ? orient("bottom", r)
+        : orient("left", r)
     );
   };
 }
@@ -194,7 +194,7 @@ function pointLabels(svg, stats, scales, fields, cells) {
     )
     .text(([p, _]) => p.name);
 
-  return function(stats, scales, fields, cells) {
+  return function (stats, scales, fields, cells) {
     var orienter = orientText(scales, fields);
 
     // TODO the label immediately changes orientation instead of
@@ -311,7 +311,7 @@ function axes(svg, stats, scales) {
     .call((g) => g.selectAll(".tick text").attr("dy", -4).attr("x", 4));
 
   // return an update function
-  return function(stats, scales, fields) {
+  return function (stats, scales, fields) {
     const xAxType = statMeta[fields.x].type;
     if (xAxType == "categorical") {
       xaxis.scale(scales.x).tickFormat((p) => p);
@@ -330,7 +330,7 @@ function axes(svg, stats, scales) {
       .transition()
       .duration(settings.duration)
       .call(xaxis)
-      .on("start", function() {
+      .on("start", function () {
         xaxisg.select(".domain").remove(); // https://stackoverflow.com/a/50254240/42559
       })
       .call((g) => g.select(".domain").remove())
@@ -391,7 +391,7 @@ function points(svg, stats, scales, fields) {
       .attr("r", (d) => scales.r(d[fields.r]));
   }
 
-  return function(stats, scales, fields) {
+  return function (stats, scales, fields) {
     useTeamColors = $("#teamcolors").checked;
     d3.selectAll(".player_label").remove();
 
@@ -494,7 +494,7 @@ function axisLabels(svg, fields) {
     rlabel.style("display", "none");
   }
 
-  return function(fields) {
+  return function (fields) {
     xlabel.text("→" + statMeta[fields.x].name);
     ylabel.text("↑ " + statMeta[fields.y].name);
     // don't add a radius label if the value is constant
@@ -1345,9 +1345,12 @@ window.addEventListener("DOMContentLoaded", async (_evt) => {
     const j = await res.json();
     const updated = j["updated"];
     console.log("updated: ", updated, "j:", j);
-    $("#updated").innerHTML = "updated " + new Intl.DateTimeFormat([],
-      { dateStyle: 'medium', timeStyle: 'short' })
-      .format(Date.parse(updated));
+    $("#updated").innerHTML =
+      "updated " +
+      new Intl.DateTimeFormat([], {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }).format(Date.parse(updated));
   } catch (e) {
     console.log("unable to fetch updated date:", e);
   }
