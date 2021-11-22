@@ -52,7 +52,7 @@ update: requirements
 
 # sync the stats database to my CDN
 syncdata: update
-	s3cmd sync --acl-public --exclude='*' --include='*.json' data/ s3://llimllib/nbastats/
+	s3cmd sync --acl-public --exclude='*' --rinclude='\.(json|parquet)$$' data/ s3://llimllib/nbastats/
 
 # install the requirements for the data scraping script
 requirements:
