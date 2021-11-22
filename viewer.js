@@ -1313,14 +1313,6 @@ window.addEventListener("DOMContentLoaded", async (_evt) => {
       mainWorker:
         "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-browser-next.worker.js",
     },
-    asyncNextCOI: {
-      mainModule:
-        "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-next-coi.wasm",
-      mainWorker:
-        "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-browser-next-coi.worker.js",
-      pthreadWorker:
-        "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-browser-next-coi.pthread.worker.js",
-    },
   };
   const bundle = await duckdb.selectBundle(DUCKDB_BUNDLES);
 
