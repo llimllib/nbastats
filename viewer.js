@@ -66,9 +66,8 @@ const settings = {
   domainPadding: 0.05,
 };
 
-// window.DATA_URL = 'https://cdn.billmill.org/nbastats';
-// window.DATA_URL = 'http://localhost:9001/data';
-window.DATA_URL = "http://devd.io:8000/data";
+window.DATA_URL = "https://cdn.billmill.org/nbastats";
+// window.DATA_URL = "http://devd.io:8000/data";
 
 async function query(conn, query) {
   const table = await conn.query(query);
@@ -1301,20 +1300,26 @@ function updateAxes(svg) {
 
 window.addEventListener("DOMContentLoaded", async (_evt) => {
   // tell duckdb where to find its wasm files
-  const DUCKDB_BUNDLES = {
-    asyncDefault: {
-      mainModule: "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb.wasm",
-      mainWorker:
-        "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-browser.worker.js",
-    },
-    asyncNext: {
-      mainModule:
-        "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-next.wasm",
-      mainWorker:
-        "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-browser-next.worker.js",
-    },
-  };
-  const bundle = await duckdb.selectBundle(DUCKDB_BUNDLES);
+  // fails due to CORS: https://github.com/duckdb/duckdb-wasm/discussions/419
+  // const DUCKDB_BUNDLES = {
+  //   asyncDefault: {
+  //     mainModule: "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb.wasm",
+  //     mainWorker:
+  //       "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-browser.worker.js",
+  //   },
+  //   asyncNext: {
+  //     mainModule:
+  //       "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-next.wasm",
+  //     mainWorker:
+  //       "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-browser-next.worker.js",
+  //   },
+  // };
+  // const bundle = await duckdb.selectBundle(DUCKDB_BUNDLES);
+  //
+  // TODO: serve from my own CDN instead of jsdelivr, blocked on the issue
+  // linked above
+  const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
+  const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
 
   // Instantiate the asynchronus version of DuckDB-wasm
   const worker = new Worker(bundle.mainWorker);
