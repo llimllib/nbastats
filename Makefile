@@ -64,10 +64,25 @@ distribute: production
 
 # publish to github pages
 publish: distribute
+	# delete the current gh-pages branch
 	-git branch -D gh-pages
-	git checkout -b gh-pages
+
+	# copy dist folder to a temp rid
+	$(eval TMP := $(shell mktemp -d))
+	cp -r dist $(TMP)
+
+	# create an empty gh-pages branch
+	git switch --orphan gh-pages
+
+	# copy dist folder into root
+	cp -r $(TMP)/* .
+
+	# push to github and switch back to main branch
 	git push -f -u origin gh-pages
 	git checkout main
+
+	# remove the temp dir
+	rm -rf $(TMP)
 
 # lint the source
 lint:
