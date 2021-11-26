@@ -72,11 +72,11 @@ publish: distribute
 	-git branch -D gh-pages
 
 	# copy dist folder to a temp rid
-	$(eval TMP := $(shell mktemp -d))
+	$(eval TMP = $(shell mktemp -d))
 	cp -r dist/* $(TMP)
 
 	# get a list of all files in the dist dir
-	MANIFEST=$$(cd dist && find . -type file -not -path '*/\.*')
+	$(eval MANIFEST = $(shell cd dist && find . -type file -not -path '*/\.*'))
 
 	# create an empty gh-pages branch
 	git switch --orphan gh-pages
@@ -84,7 +84,7 @@ publish: distribute
 	# copy dist folder into root
 	cp -r $(TMP)/* .
 
-	git add $$MANIFEST
+	git add $(MANIFEST)
 	git commit -m "update gh-pages"
 	git push -f -u origin gh-pages
 	git checkout main
