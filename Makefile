@@ -4,7 +4,10 @@ DUCKDB_PREREQS = duckdb.wasm duckdb-next.wasm duckdb-browser.worker.js duckdb-br
 DUCKDB_PREREQS_FULL = $(addprefix $(DUCKDB_DIST),$(DUCKDB_PREREQS))
 BUILD_PREREQS_FULL = $(addprefix $(DIST)/duckdb/,$(DUCKDB_PREREQS))
 
-all: wasm html
+all: wasm html static
+
+static:
+	cp -r logos dist/
 
 # build our JS bundle. It depends on two things:
 # - the duckdb wasm files, which are copied from the node_modules dir if they
@@ -128,4 +131,4 @@ freeze:
 		pip freeze > requirements.txt && \
 		deactivate
 
-.PHONY: all serve publish lint update syncdata requirements freeze flush duckdb_files wasm clean
+.PHONY: all html static serve publish lint update syncdata requirements freeze flush duckdb_files wasm clean
