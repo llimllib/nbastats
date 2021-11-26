@@ -66,8 +66,8 @@ const settings = {
   domainPadding: 0.05,
 };
 
-window.DATA_URL = "https://cdn.billmill.org/nbastats";
-// window.DATA_URL = "http://devd.io:8000/data";
+// the environment variable is set by an esbuild define
+window.DATA_URL = process.env.DATA_URL;
 
 async function query(conn, query) {
   const table = await conn.query(query);
@@ -1299,25 +1299,12 @@ function updateAxes(svg) {
 }
 
 window.addEventListener("DOMContentLoaded", async (_evt) => {
-  // tell duckdb where to find its wasm files
-  // fails due to CORS: https://github.com/duckdb/duckdb-wasm/discussions/419
-  // const DUCKDB_BUNDLES = {
-  //   asyncDefault: {
-  //     mainModule: "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb.wasm",
-  //     mainWorker:
-  //       "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-browser.worker.js",
-  //   },
-  //   asyncNext: {
-  //     mainModule:
-  //       "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-next.wasm",
-  //     mainWorker:
-  //       "https://cdn.billmill.org/nbastats/dist/duckdb/duckdb-browser-next.worker.js",
-  //   },
-  // };
-  // const bundle = await duckdb.selectBundle(DUCKDB_BUNDLES);
+  // I'm not serving this from my own CDN because it seems pretty complicated
+  // to do so due to web workers not being able to make CORS requests without
+  // annoying workarounds, see:
   //
-  // TODO: serve from my own CDN instead of jsdelivr, blocked on the issue
-  // linked above
+  // https://github.com/duckdb/duckdb-wasm/discussions/419#discussioncomment-1704798
+  // https://stackoverflow.com/questions/21913673/execute-web-worker-from-different-origin
   const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
   const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
 

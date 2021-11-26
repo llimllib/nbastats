@@ -11,7 +11,7 @@ BUILD_PREREQS_FULL = $(addprefix $(DIST)/duckdb/,$(DUCKDB_PREREQS))
 wasm: duckdb_files dist/viewer_duckdb.js
 
 # if our source files have changed, rebuild the otuput bundle
-dist/viewer_duckdb.js: viewer.js package-lock.json $(BUILD_PREREQS_FULL)
+dist/viewer_duckdb.js: src/viewer.js package-lock.json $(BUILD_PREREQS_FULL) build.mjs
 	node build.mjs
 
 # If the files contained in the duckdb node_modules dir have changed, copy them
@@ -46,7 +46,7 @@ publish: distribute
 
 # lint the source
 lint:
-	eslint viewer.js
+	eslint src/**/*.js
 
 # flush the CDN cache so it picks up new database files or javascript files
 # TODO: I'd like to run this on my remote server but I don't want to deal with

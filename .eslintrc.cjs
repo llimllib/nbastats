@@ -1,6 +1,7 @@
 module.exports = {
   globals: {
-    "d3": true
+    "d3": true,
+    "process": "readonly"
   },
   env: {
     browser: true,
