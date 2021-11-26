@@ -78,8 +78,9 @@ publish: distribute
 	$(eval TMP = $(shell mktemp -d))
 	cp -r dist/* $(TMP)
 
-	# get a list of all files in the dist dir
-	$(eval MANIFEST = $(shell cd dist && find . -type file -not -path '*/\.*'))
+	# get a list of all files in the dist dir, and surround them in quotes
+	# because some have spaces
+	$(eval MANIFEST = $(shell cd dist && find . -type file -not -path '*/\.*' | sed 's,\(.*\),"\1",'))
 
 	# create an empty gh-pages branch
 	git switch --orphan gh-pages
