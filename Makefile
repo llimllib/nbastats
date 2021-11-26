@@ -15,7 +15,7 @@ wasm: duckdb_files dist/viewer_duckdb.js
 # make a production build. Force all files to be rebuilt with
 # the production values
 production:
-	ENV=production make -B all
+	ENV=production DATA_URL=https://cdn.billmill.org/nbastats make -B all
 
 html: dist/index.html
 	# the teams viewer is still just raw HTML, so copy it straight into dist
