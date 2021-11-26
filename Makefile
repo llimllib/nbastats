@@ -4,11 +4,33 @@ DUCKDB_PREREQS = duckdb.wasm duckdb-next.wasm duckdb-browser.worker.js duckdb-br
 DUCKDB_PREREQS_FULL = $(addprefix $(DUCKDB_DIST),$(DUCKDB_PREREQS))
 BUILD_PREREQS_FULL = $(addprefix $(DIST)/duckdb/,$(DUCKDB_PREREQS))
 
+all: wasm dist/index.html
+
 # build our JS bundle. It depends on two things:
 # - the duckdb wasm files, which are copied from the node_modules dir if they
 #   are newer than the ones we already have in dist/duckdb
 # - the bundle output, dist/viewer_duckdb.js
 wasm: duckdb_files dist/viewer_duckdb.js
+
+# make a production build. Force all files to be rebuilt with
+# the production values
+production:
+	ENV=production make -B all
+
+# build our index file. We're only doing one substitution, so we just do it by
+# sed-ing it in, think about a more comprehensive solution if we start doing
+# more.
+PROD_SCRIPT_URL = https://cdn.billmill.org/nbastats/dist/viewer_duckdb.js
+DEV_SCRIPT_URL = /dist/viewer_duckdb.js
+dist/index.html: src/index.html
+ifeq ($(ENV),production)
+	$(eval SCRIPT_URL = $(PROD_SCRIPT_URL))
+else
+	$(eval SCRIPT_URL = $(DEV_SCRIPT_URL))
+endif
+
+	# replace $$SCRIPT_URL with the script URL
+	sed 's,\$$SCRIPT_URL,$(SCRIPT_URL),' src/index.html > dist/index.html
 
 # if our source files have changed, rebuild the otuput bundle
 dist/viewer_duckdb.js: src/viewer.js package-lock.json $(BUILD_PREREQS_FULL) build.mjs
@@ -33,8 +55,11 @@ serve:
 	devd -ol .
 
 # copy the dist folder to our CDN
-distribute: dist/viewer_duckdb.js
-	s3cmd sync --acl-public dist/ s3://llimllib/nbastats/dist/
+distribute: production
+	@# for now, we're using jsdelivr for the web workers, due to 
+	@# // https://github.com/duckdb/duckdb-wasm/discussions/419#discussioncomment-1704798
+	@# so we are excluding duckdb
+	s3cmd sync --exclude duckdb/* --acl-public dist/ s3://llimllib/nbastats/dist/
 	make flush
 
 # publish to github pages
@@ -80,4 +105,4 @@ freeze:
 		pip freeze > requirements.txt && \
 		deactivate
 
-.PHONY: serve publish lint update syncdata requirements freeze flush duckdb_files wasm clean
+.PHONY: all serve publish lint update syncdata requirements freeze flush duckdb_files wasm clean
