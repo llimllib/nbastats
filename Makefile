@@ -4,7 +4,7 @@ DUCKDB_PREREQS = duckdb.wasm duckdb-next.wasm duckdb-browser.worker.js duckdb-br
 DUCKDB_PREREQS_FULL = $(addprefix $(DUCKDB_DIST),$(DUCKDB_PREREQS))
 BUILD_PREREQS_FULL = $(addprefix $(DIST)/duckdb/,$(DUCKDB_PREREQS))
 
-all: wasm dist/index.html
+all: wasm html
 
 # build our JS bundle. It depends on two things:
 # - the duckdb wasm files, which are copied from the node_modules dir if they
@@ -16,6 +16,10 @@ wasm: duckdb_files dist/viewer_duckdb.js
 # the production values
 production:
 	ENV=production make -B all
+
+html: dist/index.html
+	# the teams viewer is still just raw HTML, so copy it straight into dist
+	cp -r src/teams dist/teams
 
 # build our index file. We're only doing one substitution, so we just do it by
 # sed-ing it in, think about a more comprehensive solution if we start doing
@@ -71,15 +75,17 @@ publish: distribute
 	$(eval TMP := $(shell mktemp -d))
 	cp -r dist/* $(TMP)
 
+	# get a list of all files in the dist dir
+	MANIFEST=$$(cd dist && find . -type file -not -path '*/\.*')
+
 	# create an empty gh-pages branch
 	git switch --orphan gh-pages
 
 	# copy dist folder into root
 	cp -r $(TMP)/* .
 
-	# push to github and switch back to main branch
-	git add *
-	git commit -am "update gh-pages"
+	git add $$MANIFEST
+	git commit -m "update gh-pages"
 	git push -f -u origin gh-pages
 	git checkout main
 
