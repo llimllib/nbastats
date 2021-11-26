@@ -69,7 +69,7 @@ publish: distribute
 
 	# copy dist folder to a temp rid
 	$(eval TMP := $(shell mktemp -d))
-	cp -r dist $(TMP)
+	cp -r dist/* $(TMP)
 
 	# create an empty gh-pages branch
 	git switch --orphan gh-pages
@@ -78,6 +78,8 @@ publish: distribute
 	cp -r $(TMP)/* .
 
 	# push to github and switch back to main branch
+	git add *
+	git commit -am "update gh-pages"
 	git push -f -u origin gh-pages
 	git checkout main
 
