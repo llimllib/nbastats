@@ -23,6 +23,7 @@ production:
 html: dist/index.html
 	# the teams viewer is still just raw HTML, so copy it straight into dist
 	cp -r src/teams dist/teams
+	cp favicon.ico dist/
 
 # build our index file. We're only doing one substitution, so we just do it by
 # sed-ing it in, think about a more comprehensive solution if we start doing
@@ -113,7 +114,7 @@ flush:
 #
 # update the database
 update: requirements
-	./scrape.py
+	./scraper/scrape.py
 
 # sync the stats database to my CDN
 syncdata: update
