@@ -29,7 +29,7 @@ html: dist/index.html
 # sed-ing it in, think about a more comprehensive solution if we start doing
 # more.
 PROD_SCRIPT_URL = https://cdn.billmill.org/nbastats/dist/viewer_duckdb.js
-DEV_SCRIPT_URL = /dist/viewer_duckdb.js
+DEV_SCRIPT_URL = /viewer_duckdb.js
 dist/index.html: src/index.html
 ifeq ($(ENV),production)
 	$(eval SCRIPT_URL = $(PROD_SCRIPT_URL))
