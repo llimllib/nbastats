@@ -1,58 +1,5 @@
 import * as duckdb from "@duckdb/duckdb-wasm";
 
-// TODO
-// * data series
-//   * we should be rendering _n_ series of data
-//   * you should be able to style each series as you wish
-//   * but they all should be shown on the same axes
-// * organize all the inputs
-//   * sections?
-//   * ability to open and close sections?
-//   * what's a comparable UI?
-//   * sorting, autocomplete? glossary?
-//     * I tried autocomplete and it wasn't a great experience at first blush
-// * show UI indication of legal filters
-// * permalinks to a graph with a given filter/year/resolution/etc
-// * select multiple years
-//   * view a set of players through years
-// * nice transitions between years
-//   * transitions on graph size change? probs overkill
-// * highlight a player or particular set of players
-//   * something like, one dot stays lit and the others go grey
-// * small multiples by team?
-// * teams instead of players
-// * labels sometimes overlap each other, or dots
-//   * collision detect after labelling?
-//     * example: https://observablehq.com/@fil/automated-label-placement-cities
-// * ability to customize x and y domains
-// * handle players that are coincident better
-//   * right now we just have to ensure we ignore null cells anywhere they're used
-//   * what even is the right thing to do? I dunno
-//   * maybe when you roll over a dot that's obscuring another dot, they separate themselves?
-// * the tooltip sometimes goes off the bottom, it should appear above the dot
-//   when it's low
-//   * convert it to an HTML absolutely positioned tooltip?
-//   * I know I have that in one of my other projects
-// * would be cool to be able to set a linear or log scale
-//   * right now we just choose linear by default but for example, if you
-//     choose FT% as the circle size, you see that Andre Drummond looks tiny and
-//     everybody else looks huge.
-//   * if it were a log scale, the good shooters would jump out at you
-// * should I thread a single transition object through all the transitions?
-// * checkbox to show all labels no matter what
-// * the labels aren't quite where they should be
-// * playoffs vs regular season
-// * show loading spinner
-// * add option to remove traded player stats maybe?
-// * fix transferred player bug: select "raptor defensive rating" as y axis and
-//   you get a bunch of undefined coordinates and players at (0,0)
-// * add year as an axis possibility
-//   * I think there's a lot more possible UI around time, but for now this
-//     would be helpful
-//   * allow filter to range on all years
-// * keep history of your filters in localstorage or something
-// * add ability to draw arrows
-
 const $ = (s) => document.querySelector(s);
 
 const settings = {
