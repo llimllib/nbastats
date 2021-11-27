@@ -83,7 +83,7 @@ publish: distribute
 	# because some have spaces
 	$(eval MANIFEST = $(shell cd dist && find . -type file -not -path '*/\.*' | sed 's,\(.*\),"\1",'))
 
-	# create an empty gh-pages branch
+	# create an empty gh-pages branch (requires a recent-ish git version)
 	git switch --orphan gh-pages
 
 	# copy dist folder into root
@@ -118,7 +118,17 @@ update: requirements
 
 # sync the stats database to my CDN
 syncdata: update
-	s3cmd sync --acl-public --exclude='*' --rinclude='\.(json|parquet)$$' data/ s3://llimllib/nbastats/
+	s3cmd sync --acl-public \
+		--exclude='*' \
+		--rinclude='\.(json|parquet)$$' \
+		data/ s3://llimllib/nbastats/
+
+# download CDN data to local
+dldata:
+	s3cmd sync --acl-public \
+		--exclude='*' \
+		--rinclude='\.(json|parquet)$$' \
+		s3://llimllib/nbastats/ data/
 
 # install the requirements for the data scraping script
 requirements:
