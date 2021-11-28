@@ -100,6 +100,15 @@ function squaregraph(stats) {
   );
   centeredText(txt, settings.width - 45, 25, "Good", "at both", 15);
   centeredText(txt, 30, settings.height - 20, "Bad", "at both", 15);
+  txt
+    .append("text")
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "15px")
+    .attr("font-weight", "bold")
+    .attr("fill", "lightgrey")
+    .attr("transform", `translate(85, 80) rotate(45)`)
+    .append("tspan")
+    .text("net rating = 0");
 
   // tooltip modified from
   // https://next.observablehq.com/@giorgiofighera/histogram-with-tooltips-and-bars-highlighted-on-mouse-over
@@ -150,7 +159,6 @@ function tiltedgraph(stats) {
     d.off_rtg_trans = xt(d.off_rtg, d.def_rtg, angle);
     d.def_rtg_trans = yt(d.off_rtg, d.def_rtg, angle);
   });
-  console.log(stats.map((d) => `${d.off_rtg_trans}, ${d.def_rtg_trans}`));
 
   const toext = d3.extent(stats, (d) => d.off_rtg_trans),
     omargin = (toext[1] - toext[0]) * 0.1,
@@ -159,12 +167,14 @@ function tiltedgraph(stats) {
 
   const x = d3.scaleLinear().domain([xmin, xmax]).range([0, settings.width]);
 
-  const tdext = d3.extent(stats, (d) => d.def_rtg_trans),
-    dmargin = (tdext[1] - tdext[0]) * 0.1,
-    ymin = tdext[0] - dmargin,
-    ymax = tdext[1] + dmargin;
-
-  const y = d3.scaleLinear().domain([ymin, ymax]).range([0, settings.height]);
+  const y = d3
+    .scaleLinear()
+    .domain(d3.extent(stats, (d) => d.net_rtg))
+    .range([0, settings.height]);
+  console.log(
+    d3.extent(stats, (d) => d.net_rtn),
+    y
+  );
 
   const yaxis = d3.axisRight(y).tickSize(10).tickSizeOuter(0);
   svg
@@ -176,7 +186,8 @@ function tiltedgraph(stats) {
     .call((g) => g.selectAll(".tick line").remove())
     .call((g) => g.selectAll(".tick text").remove());
 
-  // I want a line at a net rating of 0
+  // I want a line at a net rating of 0, but for some reason this is drawing
+  // the line too low, at a net rating of about -1
   const xaxis = d3.axisTop(x).tickSize(10).tickSizeOuter(0);
   svg
     .append("g")
@@ -228,6 +239,16 @@ function tiltedgraph(stats) {
     .attr("transform", `translate(${settings.width / 2 - 10}, 100) rotate(-90)`)
     .append("tspan")
     .text("net rating →");
+
+  txt
+    .append("text")
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "15px")
+    .attr("font-weight", "bold")
+    .attr("fill", "lightgrey")
+    .attr("transform", `translate(10, ${y(0) - 5})`)
+    .append("tspan")
+    .text("net rating = 0");
 
   // Needs to be after the ticks to appear over them
   svg

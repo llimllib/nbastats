@@ -31,11 +31,16 @@ text.pointLabel {
   z-index: 300;
   visibility: hidden;
 }
+.spacer {
+  display:inline-block;
+  width: 100px;
+}
 </style>
   </head>
   <body>
     <div>
       <svg id="canvas" width="600" height="600"></svg>
+      <span class="spacer"></span>
       <svg id="square" width="600" height="600"></svg>
     </div>
     <div class="tooltip" style="position: absolute; visibility: hidden"></div>
