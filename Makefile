@@ -22,7 +22,7 @@ production:
 
 html: dist/index.html
 	# the teams viewer is still just raw HTML, so copy it straight into dist
-	cp -r src/teams dist/teams
+	cp -r src/teams/ dist/teams/
 	cp favicon.ico dist/
 
 # build our index file. We're only doing one substitution, so we just do it by
