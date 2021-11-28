@@ -45,6 +45,8 @@ function squaregraph(stats) {
     .domain([min - settings.domainPadding, max + settings.domainPadding])
     .range([0, settings.height]);
 
+  // These have no basis - (0, 0) is at a random spot in the domain. Is there a
+  // more sensible center than just fitting them in a square?
   const xaxis = d3.axisTop(x).tickSize(10).tickSizeOuter(0);
   svg
     .append("g")
@@ -109,6 +111,27 @@ function squaregraph(stats) {
     .attr("transform", `translate(85, 80) rotate(45)`)
     .append("tspan")
     .text("net rating = 0");
+  txt
+    .append("text")
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "15px")
+    .attr("font-weight", "bold")
+    .attr("fill", "lightgrey")
+    .attr("transform", `translate(${settings.width / 2 + 15}, 120) rotate(-90)`)
+    .append("tspan")
+    .text("better defense →");
+  txt
+    .append("text")
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "15px")
+    .attr("font-weight", "bold")
+    .attr("fill", "lightgrey")
+    .attr(
+      "transform",
+      `translate(${settings.width - 120}, ${settings.height / 2 + 15})`
+    )
+    .append("tspan")
+    .text("better offense →");
 
   // tooltip modified from
   // https://next.observablehq.com/@giorgiofighera/histogram-with-tooltips-and-bars-highlighted-on-mouse-over
@@ -166,28 +189,25 @@ function tiltedgraph(stats) {
     xmax = toext[1] + omargin;
 
   const x = d3.scaleLinear().domain([xmin, xmax]).range([0, settings.width]);
+  console.log(xmin, xmax, x, xt(108, 108, angle));
 
   const y = d3
     .scaleLinear()
-    .domain(d3.extent(stats, (d) => d.net_rtg))
-    .range([0, settings.height]);
-  console.log(
-    d3.extent(stats, (d) => d.net_rtn),
-    y
-  );
+    .domain(d3.extent(stats, (d) => d.net_rtg).map((x) => x * 1.1))
+    .range([settings.height, 0]);
+  window.y = y;
+  window.x = x;
 
   const yaxis = d3.axisRight(y).tickSize(10).tickSizeOuter(0);
   svg
     .append("g")
-    .attr("transform", `translate(${settings.width / 2}, 0)`)
+    .attr("transform", `translate(${x(0)}, 0)`)
     .attr("class", "yaxis")
     .call(yaxis)
     .call((g) => g.selectAll(".domain").attr("stroke-opacity", 0.2))
     .call((g) => g.selectAll(".tick line").remove())
     .call((g) => g.selectAll(".tick text").remove());
 
-  // I want a line at a net rating of 0, but for some reason this is drawing
-  // the line too low, at a net rating of about -1
   const xaxis = d3.axisTop(x).tickSize(10).tickSizeOuter(0);
   svg
     .append("g")
@@ -236,7 +256,7 @@ function tiltedgraph(stats) {
     .attr("font-size", "15px")
     .attr("font-weight", "bold")
     .attr("fill", "grey")
-    .attr("transform", `translate(${settings.width / 2 - 10}, 100) rotate(-90)`)
+    .attr("transform", `translate(${x(0) + 15}, 100) rotate(-90)`)
     .append("tspan")
     .text("net rating →");
 
@@ -258,7 +278,7 @@ function tiltedgraph(stats) {
     .data(stats)
     .join("image")
     .attr("x", (d) => x(d.off_rtg_trans) - settings.logoSize / 2)
-    .attr("y", (d) => y(d.def_rtg_trans) - settings.logoSize / 2)
+    .attr("y", (d) => y(d.net_rtg) - settings.logoSize / 2)
     .attr("width", settings.logoSize)
     .attr("height", settings.logoSize)
     .attr("href", (d) => `../logos/${d.name}.svg`);
