@@ -448,10 +448,82 @@ function axisLabels(svg, fields) {
   };
 }
 
+// generate a normally-distributed value with a Box-Muller transform
+// https://stackoverflow.com/a/49434653/42559
+function randn_bm() {
+  let u = 0,
+    v = 0;
+  while (u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+  while (v === 0) v = Math.random();
+  let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  num = num / 10.0 + 0.5; // Translate to 0 -> 1
+  if (num > 1 || num < 0) return randn_bm(); // resample between 0 and 1
+  return num;
+}
+
+function loading() {
+  const svg = d3.select("#canvas");
+  const r = 8;
+
+  const circleGroup = svg.append("g");
+  const textGroup = svg.append("g");
+
+  randcircle = () => {
+    let x = randn_bm() * settings.width;
+    let y = randn_bm() * settings.width;
+    let teamNames = Object.keys(teams);
+    let team = teams[teamNames[Math.floor(Math.random() * teamNames.length)]];
+    circleGroup
+      .append("circle")
+      .attr("cx", x)
+      .attr("cy", y)
+      .attr("fill", team.colors[0])
+      .attr("r", r);
+    circleGroup
+      .append("circle")
+      .attr("cx", x)
+      .attr("cy", y)
+      .attr("fill", team.colors[1])
+      .attr("r", r / 2);
+  };
+
+  loadText = textGroup
+    .append("text")
+    .attr("text-anchor", "middle")
+    .attr("x", settings.width * randn_bm())
+    .attr("y", settings.height * randn_bm())
+    .attr("font-family", "sans-serif")
+    .attr("font-size", 25 + "px")
+    .attr("font-weight", "bold")
+    .attr("fill", "grey")
+    .text("loading");
+
+  randcircle();
+
+  dx = 2;
+  dy = -2;
+
+  return setInterval(() => {
+    randcircle();
+    let x = +loadText.attr("x");
+    let y = +loadText.attr("y");
+    if (x + dx > settings.width - 40 || x + dx < 40) {
+      dx = -dx;
+    }
+    if (y + dy > settings.height - 10 || y + dy < 10) {
+      dy = -dy;
+    }
+
+    loadText.attr("x", x + dx);
+    loadText.attr("y", y + dy);
+    console.log(loadText.attr("x"), loadText.attr("y"));
+  }, 10);
+}
+
 // stats should be a list of player objects
 function graph(stats, fields) {
-  console.log(stats);
   const svg = d3.select("#canvas");
+  svg.selectAll("*").remove();
 
   var scales = makeScales(stats, fields);
   var [delaunay, voronoiCells] = calcVoronoi(stats, scales, fields);
@@ -1194,6 +1266,8 @@ function updateAxes(svg) {
 }
 
 window.addEventListener("DOMContentLoaded", async (_evt) => {
+  const intervalID = loading();
+
   // I'm not serving this from my own CDN because it seems pretty complicated
   // to do so due to web workers not being able to make CORS requests without
   // annoying workarounds, see:
@@ -1247,6 +1321,7 @@ window.addEventListener("DOMContentLoaded", async (_evt) => {
 
   prepare();
 
+  clearInterval(intervalID);
   const svg = graph(await applyFilter(conn), {
     x: "ts_pct",
     y: "usg_pct",
