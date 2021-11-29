@@ -464,30 +464,59 @@ function randn_bm() {
 function loading() {
   const svg = d3.select("#canvas");
   const r = 8;
+  let t = 0;
 
-  const circleGroup = svg.append("g");
+  const centerx = settings.width / 2;
+  const centery = settings.height / 2;
+  const circleGroup = svg
+    .append("g")
+    .attr("transform", `translate(${centerx}, ${centery})`);
+  const circles = circleGroup.append("g");
   const textGroup = svg.append("g");
 
-  randcircle = () => {
-    let x = randn_bm() * settings.width;
-    let y = randn_bm() * settings.width;
-    let teamNames = Object.keys(teams);
-    let team = teams[teamNames[Math.floor(Math.random() * teamNames.length)]];
-    circleGroup
-      .append("circle")
-      .attr("cx", x)
-      .attr("cy", y)
-      .attr("fill", team.colors[0])
-      .attr("r", r);
-    circleGroup
-      .append("circle")
-      .attr("cx", x)
-      .attr("cy", y)
-      .attr("fill", team.colors[1])
-      .attr("r", r / 2);
+  // number of circles around the... circle
+  const nCircles = 16;
+  // radius of the circle around the center
+  const groupr = 100;
+  // amount to bounce the circles
+  const bounce = 100;
+  // helpful constant
+  const twopi = Math.PI * 2;
+
+  const randcircle = () => {
+    for (let i = 0; i < nCircles; i++) {
+      let teamNames = Object.keys(teams);
+      let team = teams[teamNames[Math.floor(Math.random() * teamNames.length)]];
+      circles
+        .append("circle")
+        .attr(
+          "cx",
+          (groupr + ((t + i * 5) % bounce)) * Math.sin((twopi / nCircles) * i)
+        )
+        .attr(
+          "cy",
+          (groupr + ((t + i * 5) % bounce)) * Math.cos((twopi / nCircles) * i)
+        )
+        .attr("i", i)
+        .attr("fill", team.colors[0])
+        .attr("r", r);
+      circles
+        .append("circle")
+        .attr(
+          "cx",
+          (groupr + ((t + i * 5) % bounce)) * Math.sin((twopi / nCircles) * i)
+        )
+        .attr(
+          "cy",
+          (groupr + ((t + i * 5) % bounce)) * Math.cos((twopi / nCircles) * i)
+        )
+        .attr("i", i)
+        .attr("fill", team.colors[1])
+        .attr("r", r / 2);
+    }
   };
 
-  loadText = textGroup
+  const loadText = textGroup
     .append("text")
     .attr("text-anchor", "middle")
     .attr("x", settings.width * randn_bm())
@@ -500,23 +529,49 @@ function loading() {
 
   randcircle();
 
-  dx = 2;
-  dy = -2;
+  let dx = 2;
+  let dy = -2;
 
-  return setInterval(() => {
-    randcircle();
+  const movetext = () => {
     let x = +loadText.attr("x");
     let y = +loadText.attr("y");
-    if (x + dx > settings.width - 40 || x + dx < 40) {
+    if (x + dx > settings.width - 100 || x + dx < 100) {
       dx = -dx;
     }
-    if (y + dy > settings.height - 10 || y + dy < 10) {
+    if (y + dy > settings.height - 20 || y + dy < 20) {
       dy = -dy;
     }
 
-    loadText.attr("x", x + dx);
-    loadText.attr("y", y + dy);
-    console.log(loadText.attr("x"), loadText.attr("y"));
+    loadText
+      .attr("x", x + dx)
+      .attr("y", y + dy)
+      .attr("fill", `rgb(${t % 255}, ${(t + 60) % 255}, ${(t + 120) % 255})`);
+  };
+
+  return setInterval(() => {
+    movetext();
+    circles.attr("transform", `rotate(${t / 10})`);
+    circles
+      .selectAll("circle")
+      .attr("cx", (_, idx, nodes) => {
+        // the d3 docs suggest that `this` should be nodes[idx], but I'm
+        // getting window instead
+        const me = d3.select(nodes[idx]);
+        const i = +me.attr("i");
+        return (
+          (groupr + Math.abs(Math.sin(t / 1000 + i / nCircles)) * bounce) *
+          Math.sin((twopi / nCircles) * i)
+        );
+      })
+      .attr("cy", (_, idx, nodes) => {
+        const me = d3.select(nodes[idx]);
+        const i = +me.attr("i");
+        return (
+          (groupr + Math.abs(Math.sin(t / 1000 + i / nCircles) * bounce)) *
+          Math.cos((twopi / nCircles) * i)
+        );
+      });
+    t += 10;
   }, 10);
 }
 
