@@ -33,19 +33,15 @@ function hover(event, tooltip, stats, scales, fields, delaunay, cells) {
   }
 
   tooltip
-    .attr(
-      "transform",
-      `translate(${scales.x(closestPlayer[fields.x])},${scales.y(
-        closestPlayer[fields.y]
-      )})`
-    )
-    .call(
-      callout,
+    .style("visibility", "visible")
+    .html(
       `${closestPlayer.name}
 ${closestPlayer.team}
 ${statMeta[fields.x].name}: ${closestPlayer[fields.x]}
 ${statMeta[fields.y].name}: ${closestPlayer[fields.y]}${rtext}`
-    );
+    )
+    .style("top", event.pageY - 10 + "px")
+    .style("left", event.pageX + 10 + "px");
 }
 
 function orient(pos, r) {
@@ -464,14 +460,13 @@ function graph(stats, fields) {
   const updatePoints = points(svg, stats, scales, fields);
   const updateLabels = pointLabels(svg, stats, scales, fields, voronoiCells);
 
-  // https://observablehq.com/@d3/line-chart-with-tooltip
-  var tooltip = svg.append("g").attr("class", "tooltip");
+  const tooltip = d3.select(".tooltip");
 
   svg.on("touchmove mousemove", (evt) =>
     hover(evt, tooltip, stats, scales, fields, delaunay, voronoiCells)
   );
 
-  svg.on("touchend mouseleave", () => tooltip.call(callout, null));
+  svg.on("touchend mouseleave", () => tooltip.style("visibility", "hidden"));
 
   // https://observablehq.com/@d3/dot-plot
   return Object.assign(svg.node(), {
@@ -507,55 +502,8 @@ function graph(stats, fields) {
           voronoiCells
         );
       });
-
-      // remove the tooltip and redraw it; otherwise it won't properly appear
-      // above everything else. SVG has no z-order; last drawn thing wins
-      tooltip.remove();
-      tooltip = svg.append("g").attr("class", "tooltip");
     },
   });
-}
-
-// https://observablehq.com/@d3/line-chart-with-tooltip
-function callout(g, value) {
-  if (!value) return g.style("display", "none");
-
-  g.style("display", null)
-    .style("pointer-events", "none")
-    .style("font", "10px sans-serif");
-
-  const path = g
-    .selectAll("path")
-    .data([null])
-    .join("path")
-    .attr("fill", "white")
-    .attr("stroke", "black");
-
-  const text = g
-    .selectAll("text")
-    .data([null])
-    .join("text")
-    .call((text) =>
-      text
-        .selectAll("tspan")
-        .data((value + "").split(/\n/))
-        .join("tspan")
-        .attr("x", 0)
-        .attr("y", (d, i) => `${i * 1.1}em`)
-        .style("font-weight", (_, i) => (i ? null : "bold"))
-        .text((d) => d)
-    );
-
-  // I don't know why eslint won't accept the _ as a legally unused var :shrug:
-  /* eslint-disable no-unused-vars */
-  const { _, y, width: w, height: h } = text.node().getBBox();
-  /* eslint-enable */
-
-  text.attr("transform", `translate(${-w / 2},${15 - y})`);
-  path.attr(
-    "d",
-    `M${-w / 2 - 10},5H-5l5,-5l5,5H${w / 2 + 10}v${h + 20}h-${w + 20}z`
-  );
 }
 
 const statMeta = {
