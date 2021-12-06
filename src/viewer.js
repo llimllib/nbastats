@@ -589,6 +589,8 @@ function graph(stats, fields) {
 
   const tooltip = d3.select(".tooltip");
 
+  svg.append("g").attr("class", "titleg");
+
   svg.on("touchmove mousemove", (evt) =>
     hover(evt, tooltip, stats, scales, fields, delaunay, voronoiCells)
   );
@@ -1320,6 +1322,38 @@ function updateAxes(svg) {
   };
 }
 
+function centeredText(txt, x, y, size, lines) {
+  console.log($("#bold").checked ? "bold" : "normal");
+  const h = txt
+    .append("text")
+    .attr("y", y)
+    .attr("font-family", "sans-serif")
+    .attr("font-size", size + "px")
+    .attr("font-weight", $("#bold").checked ? "bold" : "normal")
+    .attr("fill", "black")
+    .attr("transform", `translate(${x})`);
+
+  let dy = size;
+  lines.forEach((l) => {
+    h.append("tspan")
+      .attr("x", "0")
+      .attr("text-anchor", "middle")
+      .attr("dy", dy)
+      .text(l);
+  });
+}
+
+function changeTitle(svg) {
+  const handler = (_evt) => {
+    let lines = d3.select("#title").node().value.split("\n");
+    const titleg = d3.select(svg).select(".titleg");
+    titleg.node().innerHTML = "";
+    centeredText(titleg, settings.width / 2, 30, 15, lines);
+  };
+  handler();
+  return handler;
+}
+
 window.addEventListener("DOMContentLoaded", async (_evt) => {
   const intervalID = loading();
 
@@ -1394,4 +1428,7 @@ window.addEventListener("DOMContentLoaded", async (_evt) => {
   $("#radius").addEventListener("change", updateAxes(svg));
   $("#applyFilter").addEventListener("click", updateAxes(svg));
   $("#yearChooser").addEventListener("change", changeYear);
+  $("#title").addEventListener("input", changeTitle(svg));
+  $("#title").addEventListener("change", changeTitle(svg));
+  $("#bold").addEventListener("change", changeTitle(svg));
 });
