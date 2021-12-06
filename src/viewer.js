@@ -1323,7 +1323,6 @@ function updateAxes(svg) {
 }
 
 function centeredText(txt, x, y, size, lines) {
-  console.log($("#bold").checked ? "bold" : "normal");
   const h = txt
     .append("text")
     .attr("y", y)
