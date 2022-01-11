@@ -60,7 +60,7 @@ clean:
 #
 # serve the site for development
 serve:
-	devd -ol .
+	devd -ol /=dist /data/=data
 
 # copy the dist folder to our CDN
 distribute: production
