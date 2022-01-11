@@ -214,7 +214,7 @@ function makeScales(stats, fields) {
     r = (_) => parseFloat(fields.r);
   } else {
     r = d3
-      .scaleLinear()
+      .scaleRadial()
       .domain(d3.extent(stats, (s) => s[fields.r]))
       .range([settings.minRadius, settings.maxRadius]);
   }
