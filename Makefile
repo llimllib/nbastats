@@ -52,7 +52,7 @@ duckdb_files:
 
 # clean up the build files
 clean:
-	rm -f dist/*
+	rm -rf dist/*
 
 
 ##################
