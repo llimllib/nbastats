@@ -16,9 +16,9 @@ async function main() {
   const stats = await res.json();
   window.stats = stats;
   const b = bestPlayersGraph(stats);
-  document.body.append(b);
+  document.querySelector("#barchart").append(b);
   const g = smallMultipleGraph(stats);
-  document.body.append(g);
+  document.querySelector("#small_multiples").append(g);
 }
 
 // https://observablehq.com/@observablehq/plot-bar?collection=@observablehq/plot
@@ -63,7 +63,7 @@ function bestPlayersGraph(stats) {
   });
   document.body.append(
     plt.legend("color", {
-      label: "fuck you",
+      label: "← less playoff usage · greater playoff usage →",
     })
   );
   return plt;
