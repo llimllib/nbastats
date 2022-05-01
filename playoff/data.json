@@ -1,1 +1,2052 @@
-[{"name": "Precious Achiuwa", "team": "TOR", "usg_pct": 18.5, "ts_pct": 50.3, "playoff_mp": 167, "playoff_usg_pct": 18.2, "playoff_ts_pct": 54.1, "playoff_mpg": 27.83}, {"name": "Steven Adams", "team": "MEM", "usg_pct": 12.0, "ts_pct": 56.00000000000001, "playoff_mp": 31, "playoff_usg_pct": 1.3, "playoff_ts_pct": null, "playoff_mpg": 10.33}, {"name": "Bam Adebayo", "team": "MIA", "usg_pct": 25.0, "ts_pct": 60.8, "playoff_mp": 157, "playoff_usg_pct": 18.9, "playoff_ts_pct": 60.0, "playoff_mpg": 31.4}, {"name": "Nickeil Alexander-Walker", "team": "UTA", "usg_pct": 24.1, "ts_pct": 47.5, "playoff_mp": 5, "playoff_usg_pct": 22.9, "playoff_ts_pct": 102.49999999999999, "playoff_mpg": 5.0}, {"name": "Grayson Allen", "team": "MIL", "usg_pct": 15.2, "ts_pct": 60.9, "playoff_mp": 120, "playoff_usg_pct": 16.2, "playoff_ts_pct": 77.8, "playoff_mpg": 24.0}, {"name": "Jose Alvarado", "team": "NOP", "usg_pct": 18.4, "ts_pct": 52.0, "playoff_mp": 117, "playoff_usg_pct": 16.8, "playoff_ts_pct": 62.0, "playoff_mpg": 19.5}, {"name": "Kyle Anderson", "team": "MEM", "usg_pct": 16.2, "ts_pct": 50.6, "playoff_mp": 117, "playoff_usg_pct": 9.0, "playoff_ts_pct": 65.0, "playoff_mpg": 19.5}, {"name": "Giannis Antetokounmpo", "team": "MIL", "usg_pct": 34.9, "ts_pct": 63.3, "playoff_mp": 168, "playoff_usg_pct": 34.2, "playoff_ts_pct": 62.5, "playoff_mpg": 33.6}, {"name": "Thanasis Antetokounmpo", "team": "MIL", "usg_pct": 15.7, "ts_pct": 57.699999999999996, "playoff_mp": 13, "playoff_usg_pct": 11.5, "playoff_ts_pct": 58.099999999999994, "playoff_mpg": 4.33}, {"name": "OG Anunoby", "team": "TOR", "usg_pct": 20.5, "ts_pct": 54.900000000000006, "playoff_mp": 217, "playoff_usg_pct": 21.2, "playoff_ts_pct": 58.4, "playoff_mpg": 36.17}, {"name": "Deandre Ayton", "team": "PHO", "usg_pct": 21.4, "ts_pct": 65.60000000000001, "playoff_mp": 210, "playoff_usg_pct": 20.6, "playoff_ts_pct": 72.1, "playoff_mpg": 35.0}, {"name": "Desmond Bane", "team": "MEM", "usg_pct": 23.1, "ts_pct": 59.199999999999996, "playoff_mp": 228, "playoff_usg_pct": 20.8, "playoff_ts_pct": 66.60000000000001, "playoff_mpg": 38.0}, {"name": "Dalano Banton", "team": "TOR", "usg_pct": 16.9, "ts_pct": 46.300000000000004, "playoff_mp": 8, "playoff_usg_pct": 32.7, "playoff_ts_pct": 75.4, "playoff_mpg": 2.0}, {"name": "Scottie Barnes", "team": "TOR", "usg_pct": 19.0, "ts_pct": 55.2, "playoff_mp": 133, "playoff_usg_pct": 18.9, "playoff_ts_pct": 52.0, "playoff_mpg": 33.25}, {"name": "Will Barton", "team": "DEN", "usg_pct": 20.8, "ts_pct": 54.800000000000004, "playoff_mp": 172, "playoff_usg_pct": 19.9, "playoff_ts_pct": 50.3, "playoff_mpg": 34.4}, {"name": "Malik Beasley", "team": "MIN", "usg_pct": 19.4, "ts_pct": 54.400000000000006, "playoff_mp": 119, "playoff_usg_pct": 19.3, "playoff_ts_pct": 54.7, "playoff_mpg": 19.83}, {"name": "D\u0101vis Bert\u0101ns", "team": "DAL", "usg_pct": 17.3, "ts_pct": 53.1, "playoff_mp": 57, "playoff_usg_pct": 15.8, "playoff_ts_pct": 60.099999999999994, "playoff_mpg": 9.5}, {"name": "Patrick Beverley", "team": "MIN", "usg_pct": 16.1, "ts_pct": 53.900000000000006, "playoff_mp": 194, "playoff_usg_pct": 15.6, "playoff_ts_pct": 56.2, "playoff_mpg": 32.33}, {"name": "Khem Birch", "team": "TOR", "usg_pct": 11.2, "ts_pct": 53.400000000000006, "playoff_mp": 63, "playoff_usg_pct": 14.0, "playoff_ts_pct": 56.3, "playoff_mpg": 10.5}, {"name": "Bismack Biyombo", "team": "PHO", "usg_pct": 17.1, "ts_pct": 59.599999999999994, "playoff_mp": 15, "playoff_usg_pct": 25.0, "playoff_ts_pct": 33.300000000000004, "playoff_mpg": 3.75}, {"name": "Nemanja Bjelica", "team": "GSW", "usg_pct": 17.8, "ts_pct": 57.3, "playoff_mp": 48, "playoff_usg_pct": 18.9, "playoff_ts_pct": 55.300000000000004, "playoff_mpg": 12.0}, {"name": "Bogdan Bogdanovi\u0107", "team": "ATL", "usg_pct": 21.6, "ts_pct": 56.2, "playoff_mp": 107, "playoff_usg_pct": 24.7, "playoff_ts_pct": 53.400000000000006, "playoff_mpg": 26.75}, {"name": "Bojan Bogdanovi\u0107", "team": "UTA", "usg_pct": 23.7, "ts_pct": 59.9, "playoff_mp": 214, "playoff_usg_pct": 22.7, "playoff_ts_pct": 59.0, "playoff_mpg": 35.67}, {"name": "Isaac Bonga", "team": "TOR", "usg_pct": 11.5, "ts_pct": 36.3, "playoff_mp": 3, "playoff_usg_pct": 13.6, "playoff_ts_pct": 113.6, "playoff_mpg": 3.0}, {"name": "Devin Booker", "team": "PHO", "usg_pct": 32.0, "ts_pct": 57.599999999999994, "playoff_mp": 98, "playoff_usg_pct": 27.9, "playoff_ts_pct": 64.5, "playoff_mpg": 32.67}, {"name": "Chris Boucher", "team": "TOR", "usg_pct": 17.8, "ts_pct": 56.99999999999999, "playoff_mp": 130, "playoff_usg_pct": 17.3, "playoff_ts_pct": 72.2, "playoff_mpg": 21.67}, {"name": "Tony Bradley", "team": "CHI", "usg_pct": 13.6, "ts_pct": 60.0, "playoff_mp": 8, "playoff_usg_pct": 27.4, "playoff_ts_pct": 100.0, "playoff_mpg": 4.0}, {"name": "Mikal Bridges", "team": "PHO", "usg_pct": 15.0, "ts_pct": 62.7, "playoff_mp": 251, "playoff_usg_pct": 16.2, "playoff_ts_pct": 66.10000000000001, "playoff_mpg": 41.83}, {"name": "Armoni Brooks", "team": "TOR", "usg_pct": 16.4, "ts_pct": 48.3, "playoff_mp": 8, "playoff_usg_pct": 23.2, "playoff_ts_pct": null, "playoff_mpg": 2.0}, {"name": "Dillon Brooks", "team": "MEM", "usg_pct": 28.8, "ts_pct": 51.5, "playoff_mp": 200, "playoff_usg_pct": 24.6, "playoff_ts_pct": 47.0, "playoff_mpg": 33.33}, {"name": "Bruce Brown", "team": "BRK", "usg_pct": 15.0, "ts_pct": 57.49999999999999, "playoff_mp": 139, "playoff_usg_pct": 16.6, "playoff_ts_pct": 67.60000000000001, "playoff_mpg": 34.75}, {"name": "Jaylen Brown", "team": "BOS", "usg_pct": 30.5, "ts_pct": 57.4, "playoff_mp": 155, "playoff_usg_pct": 26.0, "playoff_ts_pct": 55.60000000000001, "playoff_mpg": 38.75}, {"name": "Sterling Brown", "team": "DAL", "usg_pct": 13.2, "ts_pct": 49.5, "playoff_mp": 0, "playoff_usg_pct": null, "playoff_ts_pct": 113.6, "playoff_mpg": 0.0}, {"name": "Troy Brown Jr.", "team": "CHI", "usg_pct": 12.3, "ts_pct": 52.5, "playoff_mp": 37, "playoff_usg_pct": 23.7, "playoff_ts_pct": 35.3, "playoff_mpg": 12.33}, {"name": "Jalen Brunson", "team": "DAL", "usg_pct": 21.9, "ts_pct": 58.3, "playoff_mp": 228, "playoff_usg_pct": 31.3, "playoff_ts_pct": 58.3, "playoff_mpg": 38.0}, {"name": "Reggie Bullock", "team": "DAL", "usg_pct": 13.3, "ts_pct": 55.800000000000004, "playoff_mp": 254, "playoff_usg_pct": 9.8, "playoff_ts_pct": 65.0, "playoff_mpg": 42.33}, {"name": "Trey Burke", "team": "DAL", "usg_pct": 25.6, "ts_pct": 47.5, "playoff_mp": 13, "playoff_usg_pct": 34.7, "playoff_ts_pct": 53.6, "playoff_mpg": 4.33}, {"name": "Jared Butler", "team": "UTA", "usg_pct": 23.1, "ts_pct": 50.9, "playoff_mp": 5, "playoff_usg_pct": 18.7, "playoff_ts_pct": null, "playoff_mpg": 5.0}, {"name": "Jimmy Butler", "team": "MIA", "usg_pct": 26.5, "ts_pct": 59.199999999999996, "playoff_mp": 149, "playoff_usg_pct": 30.1, "playoff_ts_pct": 63.6, "playoff_mpg": 37.25}, {"name": "Facundo Campazzo", "team": "DEN", "usg_pct": 14.7, "ts_pct": 50.3, "playoff_mp": 13, "playoff_usg_pct": 13.4, "playoff_ts_pct": null, "playoff_mpg": 3.25}, {"name": "Vlatko \u010can\u010dar", "team": "DEN", "usg_pct": 14.0, "ts_pct": 65.7, "playoff_mp": 9, "playoff_usg_pct": 24.2, "playoff_ts_pct": 83.3, "playoff_mpg": 4.5}, {"name": "Clint Capela", "team": "ATL", "usg_pct": 15.5, "ts_pct": 60.4, "playoff_mp": 40, "playoff_usg_pct": 8.1, "playoff_ts_pct": 33.300000000000004, "playoff_mpg": 20.0}, {"name": "Jevon Carter", "team": "MIL", "usg_pct": 14.0, "ts_pct": 53.1, "playoff_mp": 79, "playoff_usg_pct": 7.7, "playoff_ts_pct": 50.0, "playoff_mpg": 15.8}, {"name": "Alex Caruso", "team": "CHI", "usg_pct": 13.3, "ts_pct": 52.800000000000004, "playoff_mp": 113, "playoff_usg_pct": 9.3, "playoff_ts_pct": 54.300000000000004, "playoff_mpg": 28.25}, {"name": "Marquese Chriss", "team": "DAL", "usg_pct": 21.5, "ts_pct": 51.800000000000004, "playoff_mp": 4, "playoff_usg_pct": 24.2, "playoff_ts_pct": 50.0, "playoff_mpg": 4.0}, {"name": "Brandon Clarke", "team": "MEM", "usg_pct": 17.7, "ts_pct": 66.0, "playoff_mp": 177, "playoff_usg_pct": 17.3, "playoff_ts_pct": 69.3, "playoff_mpg": 29.5}, {"name": "Jordan Clarkson", "team": "UTA", "usg_pct": 26.8, "ts_pct": 53.2, "playoff_mp": 170, "playoff_usg_pct": 25.0, "playoff_ts_pct": 64.9, "playoff_mpg": 28.33}, {"name": "Nic Claxton", "team": "BRK", "usg_pct": 15.1, "ts_pct": 67.2, "playoff_mp": 98, "playoff_usg_pct": 16.7, "playoff_ts_pct": 62.4, "playoff_mpg": 24.5}, {"name": "John Collins", "team": "ATL", "usg_pct": 20.5, "ts_pct": 61.0, "playoff_mp": 122, "playoff_usg_pct": 18.3, "playoff_ts_pct": 54.1, "playoff_mpg": 24.4}, {"name": "Mike Conley", "team": "UTA", "usg_pct": 20.9, "ts_pct": 57.199999999999996, "playoff_mp": 174, "playoff_usg_pct": 20.6, "playoff_ts_pct": 43.2, "playoff_mpg": 29.0}, {"name": "Pat Connaughton", "team": "MIL", "usg_pct": 14.0, "ts_pct": 62.0, "playoff_mp": 113, "playoff_usg_pct": 15.5, "playoff_ts_pct": 56.3, "playoff_mpg": 22.6}, {"name": "DeMarcus Cousins", "team": "DEN", "usg_pct": 28.1, "ts_pct": 56.699999999999996, "playoff_mp": 57, "playoff_usg_pct": 32.5, "playoff_ts_pct": 74.4, "playoff_mpg": 11.4}, {"name": "Torrey Craig", "team": "PHO", "usg_pct": 14.3, "ts_pct": 55.60000000000001, "playoff_mp": 39, "playoff_usg_pct": 13.1, "playoff_ts_pct": 30.4, "playoff_mpg": 9.75}, {"name": "Jae Crowder", "team": "PHO", "usg_pct": 14.6, "ts_pct": 54.1, "playoff_mp": 172, "playoff_usg_pct": 16.5, "playoff_ts_pct": 41.199999999999996, "playoff_mpg": 28.67}, {"name": "Jarrett Culver", "team": "MEM", "usg_pct": 20.6, "ts_pct": 43.3, "playoff_mp": 5, "playoff_usg_pct": 16.2, "playoff_ts_pct": 50.0, "playoff_mpg": 5.0}, {"name": "Seth Curry", "team": "BRK", "usg_pct": 18.5, "ts_pct": 61.5, "playoff_mp": 132, "playoff_usg_pct": 15.1, "playoff_ts_pct": 71.89999999999999, "playoff_mpg": 33.0}, {"name": "Stephen Curry", "team": "GSW", "usg_pct": 30.8, "ts_pct": 60.099999999999994, "playoff_mp": 150, "playoff_usg_pct": 37.0, "playoff_ts_pct": 64.1, "playoff_mpg": 30.0}, {"name": "Dewayne Dedmon", "team": "MIA", "usg_pct": 16.9, "ts_pct": 63.2, "playoff_mp": 47, "playoff_usg_pct": 19.6, "playoff_ts_pct": 59.099999999999994, "playoff_mpg": 9.4}, {"name": "DeMar DeRozan", "team": "CHI", "usg_pct": 31.8, "ts_pct": 59.0, "playoff_mp": 203, "playoff_usg_pct": 25.7, "playoff_ts_pct": 48.1, "playoff_mpg": 40.6}, {"name": "Gorgui Dieng", "team": "ATL", "usg_pct": 16.9, "ts_pct": 62.4, "playoff_mp": 10, "playoff_usg_pct": 11.2, "playoff_ts_pct": 61.5, "playoff_mpg": 5.0}, {"name": "Spencer Dinwiddie", "team": "DAL", "usg_pct": 21.4, "ts_pct": 54.300000000000004, "playoff_mp": 200, "playoff_usg_pct": 26.4, "playoff_ts_pct": 47.8, "playoff_mpg": 33.33}, {"name": "Luka Don\u010di\u0107", "team": "DAL", "usg_pct": 37.4, "ts_pct": 57.099999999999994, "playoff_mp": 109, "playoff_usg_pct": 37.7, "playoff_ts_pct": 59.8, "playoff_mpg": 36.33}, {"name": "Ayo Dosunmu", "team": "CHI", "usg_pct": 14.1, "ts_pct": 59.599999999999994, "playoff_mp": 86, "playoff_usg_pct": 15.0, "playoff_ts_pct": 37.8, "playoff_mpg": 17.2}, {"name": "Goran Dragi\u0107", "team": "BRK", "usg_pct": 17.2, "ts_pct": 47.4, "playoff_mp": 79, "playoff_usg_pct": 22.0, "playoff_ts_pct": 63.9, "playoff_mpg": 19.75}, {"name": "Andre Drummond", "team": "BRK", "usg_pct": 19.0, "ts_pct": 57.4, "playoff_mp": 60, "playoff_usg_pct": 14.7, "playoff_ts_pct": 56.8, "playoff_mpg": 15.0}, {"name": "Kevin Durant", "team": "BRK", "usg_pct": 31.2, "ts_pct": 63.4, "playoff_mp": 176, "playoff_usg_pct": 31.5, "playoff_ts_pct": 52.6, "playoff_mpg": 44.0}, {"name": "Anthony Edwards", "team": "MIN", "usg_pct": 26.4, "ts_pct": 56.00000000000001, "playoff_mp": 227, "playoff_usg_pct": 26.4, "playoff_ts_pct": 60.4, "playoff_mpg": 37.83}, {"name": "Kessler Edwards", "team": "BRK", "usg_pct": 13.8, "ts_pct": 51.6, "playoff_mp": 7, "playoff_usg_pct": 6.6, "playoff_ts_pct": null, "playoff_mpg": 3.5}, {"name": "Joel Embiid", "team": "PHI", "usg_pct": 37.2, "ts_pct": 61.6, "playoff_mp": 234, "playoff_usg_pct": 29.3, "playoff_ts_pct": 62.3, "playoff_mpg": 39.0}, {"name": "Dorian Finney-Smith", "team": "DAL", "usg_pct": 13.8, "ts_pct": 60.4, "playoff_mp": 260, "playoff_usg_pct": 12.6, "playoff_ts_pct": 62.1, "playoff_mpg": 43.33}, {"name": "Malachi Flynn", "team": "TOR", "usg_pct": 16.5, "ts_pct": 48.8, "playoff_mp": 36, "playoff_usg_pct": 10.3, "playoff_ts_pct": null, "playoff_mpg": 6.0}, {"name": "Bryn Forbes", "team": "DEN", "usg_pct": 21.2, "ts_pct": 57.4, "playoff_mp": 76, "playoff_usg_pct": 11.0, "playoff_ts_pct": 58.099999999999994, "playoff_mpg": 15.2}, {"name": "Danilo Gallinari", "team": "ATL", "usg_pct": 18.4, "ts_pct": 57.9, "playoff_mp": 112, "playoff_usg_pct": 22.5, "playoff_ts_pct": 51.2, "playoff_mpg": 22.4}, {"name": "Rudy Gobert", "team": "UTA", "usg_pct": 16.9, "ts_pct": 73.2, "playoff_mp": 197, "playoff_usg_pct": 14.3, "playoff_ts_pct": 68.8, "playoff_mpg": 32.83}, {"name": "Aaron Gordon", "team": "DEN", "usg_pct": 19.7, "ts_pct": 60.199999999999996, "playoff_mp": 160, "playoff_usg_pct": 20.2, "playoff_ts_pct": 52.0, "playoff_mpg": 32.0}, {"name": "Devonte' Graham", "team": "NOP", "usg_pct": 19.5, "ts_pct": 51.4, "playoff_mp": 60, "playoff_usg_pct": 18.3, "playoff_ts_pct": 55.800000000000004, "playoff_mpg": 10.0}, {"name": "Danny Green", "team": "PHI", "usg_pct": 12.3, "ts_pct": 56.10000000000001, "playoff_mp": 188, "playoff_usg_pct": 14.5, "playoff_ts_pct": 50.9, "playoff_mpg": 31.33}, {"name": "Draymond Green", "team": "GSW", "usg_pct": 14.3, "ts_pct": 58.199999999999996, "playoff_mp": 164, "playoff_usg_pct": 13.0, "playoff_ts_pct": 61.1, "playoff_mpg": 32.8}, {"name": "JaMychal Green", "team": "DEN", "usg_pct": 17.2, "ts_pct": 58.699999999999996, "playoff_mp": 69, "playoff_usg_pct": 13.3, "playoff_ts_pct": 52.400000000000006, "playoff_mpg": 13.8}, {"name": "Javonte Green", "team": "CHI", "usg_pct": 11.5, "ts_pct": 63.7, "playoff_mp": 72, "playoff_usg_pct": 13.3, "playoff_ts_pct": 19.6, "playoff_mpg": 14.4}, {"name": "Jeff Green", "team": "DEN", "usg_pct": 16.3, "ts_pct": 62.7, "playoff_mp": 113, "playoff_usg_pct": 8.2, "playoff_ts_pct": 49.5, "playoff_mpg": 22.6}, {"name": "Josh Green", "team": "DAL", "usg_pct": 13.9, "ts_pct": 57.8, "playoff_mp": 68, "playoff_usg_pct": 18.3, "playoff_ts_pct": 35.099999999999994, "playoff_mpg": 11.33}, {"name": "Blake Griffin", "team": "BRK", "usg_pct": 16.9, "ts_pct": 51.800000000000004, "playoff_mp": 25, "playoff_usg_pct": 16.3, "playoff_ts_pct": 50.8, "playoff_mpg": 12.5}, {"name": "James Harden", "team": "PHI", "usg_pct": 27.2, "ts_pct": 58.3, "playoff_mp": 243, "playoff_usg_pct": 23.0, "playoff_ts_pct": 58.199999999999996, "playoff_mpg": 40.5}, {"name": "Tobias Harris", "team": "PHI", "usg_pct": 21.7, "ts_pct": 56.599999999999994, "playoff_mp": 245, "playoff_usg_pct": 18.1, "playoff_ts_pct": 63.7, "playoff_mpg": 40.83}, {"name": "Jaxson Hayes", "team": "NOP", "usg_pct": 16.4, "ts_pct": 68.0, "playoff_mp": 83, "playoff_usg_pct": 17.5, "playoff_ts_pct": 58.599999999999994, "playoff_mpg": 13.83}, {"name": "Juancho Hernang\u00f3mez", "team": "UTA", "usg_pct": 13.4, "ts_pct": 54.2, "playoff_mp": 56, "playoff_usg_pct": 16.7, "playoff_ts_pct": 38.9, "playoff_mpg": 9.33}, {"name": "Willy Hernang\u00f3mez", "team": "NOP", "usg_pct": 22.5, "ts_pct": 58.199999999999996, "playoff_mp": 2, "playoff_usg_pct": 86.1, "playoff_ts_pct": 25.0, "playoff_mpg": 2.0}, {"name": "Tyler Herro", "team": "MIA", "usg_pct": 28.8, "ts_pct": 56.10000000000001, "playoff_mp": 142, "playoff_usg_pct": 25.1, "playoff_ts_pct": 46.800000000000004, "playoff_mpg": 28.4}, {"name": "Haywood Highsmith", "team": "MIA", "usg_pct": 14.0, "ts_pct": 44.6, "playoff_mp": 8, "playoff_usg_pct": 16.6, "playoff_ts_pct": 150.0, "playoff_mpg": 4.0}, {"name": "Aaron Holiday", "team": "PHO", "usg_pct": 18.7, "ts_pct": 54.400000000000006, "playoff_mp": 8, "playoff_usg_pct": 26.0, "playoff_ts_pct": 112.6, "playoff_mpg": 4.0}, {"name": "Jrue Holiday", "team": "MIL", "usg_pct": 23.5, "ts_pct": 59.3, "playoff_mp": 180, "playoff_usg_pct": 25.4, "playoff_ts_pct": 48.0, "playoff_mpg": 36.0}, {"name": "Al Horford", "team": "BOS", "usg_pct": 14.8, "ts_pct": 57.4, "playoff_mp": 128, "playoff_usg_pct": 13.4, "playoff_ts_pct": 72.7, "playoff_mpg": 32.0}, {"name": "Danuel House Jr.", "team": "UTA", "usg_pct": 15.2, "ts_pct": 55.50000000000001, "playoff_mp": 112, "playoff_usg_pct": 13.2, "playoff_ts_pct": 50.9, "playoff_mpg": 18.67}, {"name": "Kevin Huerter", "team": "ATL", "usg_pct": 17.5, "ts_pct": 56.99999999999999, "playoff_mp": 154, "playoff_usg_pct": 17.9, "playoff_ts_pct": 47.199999999999996, "playoff_mpg": 30.8}, {"name": "De'Andre Hunter", "team": "ATL", "usg_pct": 19.9, "ts_pct": 54.7, "playoff_mp": 175, "playoff_usg_pct": 23.6, "playoff_ts_pct": 67.30000000000001, "playoff_mpg": 35.0}, {"name": "Bones Hyland", "team": "DEN", "usg_pct": 23.8, "ts_pct": 55.800000000000004, "playoff_mp": 87, "playoff_usg_pct": 24.1, "playoff_ts_pct": 54.6, "playoff_mpg": 17.4}, {"name": "Serge Ibaka", "team": "MIL", "usg_pct": 17.8, "ts_pct": 57.9, "playoff_mp": 19, "playoff_usg_pct": 36.2, "playoff_ts_pct": 32.4, "playoff_mpg": 4.75}, {"name": "Andre Iguodala", "team": "GSW", "usg_pct": 11.4, "ts_pct": 47.8, "playoff_mp": 42, "playoff_usg_pct": 10.0, "playoff_ts_pct": 31.6, "playoff_mpg": 14.0}, {"name": "Brandon Ingram", "team": "NOP", "usg_pct": 29.3, "ts_pct": 55.400000000000006, "playoff_mp": 236, "playoff_usg_pct": 29.5, "playoff_ts_pct": 58.4, "playoff_mpg": 39.33}, {"name": "Kyrie Irving", "team": "BRK", "usg_pct": 29.4, "ts_pct": 59.199999999999996, "playoff_mp": 170, "playoff_usg_pct": 21.9, "playoff_ts_pct": 58.8, "playoff_mpg": 42.5}, {"name": "Jaren Jackson Jr.", "team": "MEM", "usg_pct": 25.4, "ts_pct": 53.5, "playoff_mp": 147, "playoff_usg_pct": 21.9, "playoff_ts_pct": 51.2, "playoff_mpg": 24.5}, {"name": "Isaiah Joe", "team": "PHI", "usg_pct": 15.5, "ts_pct": 51.9, "playoff_mp": 8, "playoff_usg_pct": 29.4, "playoff_ts_pct": 50.0, "playoff_mpg": 2.0}, {"name": "Cameron Johnson", "team": "PHO", "usg_pct": 17.5, "ts_pct": 62.5, "playoff_mp": 167, "playoff_usg_pct": 17.5, "playoff_ts_pct": 58.3, "playoff_mpg": 27.83}, {"name": "Jalen Johnson", "team": "ATL", "usg_pct": 19.3, "ts_pct": 59.0, "playoff_mp": 9, "playoff_usg_pct": 20.5, "playoff_ts_pct": null, "playoff_mpg": 4.5}, {"name": "Nikola Joki\u0107", "team": "DEN", "usg_pct": 31.9, "ts_pct": 66.10000000000001, "playoff_mp": 171, "playoff_usg_pct": 36.8, "playoff_ts_pct": 64.3, "playoff_mpg": 34.2}, {"name": "Derrick Jones Jr.", "team": "CHI", "usg_pct": 12.5, "ts_pct": 63.3, "playoff_mp": 59, "playoff_usg_pct": 15.8, "playoff_ts_pct": 51.9, "playoff_mpg": 11.8}, {"name": "Herbert Jones", "team": "NOP", "usg_pct": 13.7, "ts_pct": 57.3, "playoff_mp": 226, "playoff_usg_pct": 11.7, "playoff_ts_pct": 59.599999999999994, "playoff_mpg": 37.67}, {"name": "Tyus Jones", "team": "MEM", "usg_pct": 16.6, "ts_pct": 54.400000000000006, "playoff_mp": 115, "playoff_usg_pct": 19.1, "playoff_ts_pct": 62.3, "playoff_mpg": 19.17}, {"name": "DeAndre Jordan", "team": "PHI", "usg_pct": 13.9, "ts_pct": 64.1, "playoff_mp": 0, "playoff_usg_pct": null, "playoff_ts_pct": null, "playoff_mpg": 0.0}, {"name": "Maxi Kleber", "team": "DAL", "usg_pct": 13.3, "ts_pct": 53.7, "playoff_mp": 140, "playoff_usg_pct": 15.8, "playoff_ts_pct": 76.5, "playoff_mpg": 23.33}, {"name": "Kevin Knox", "team": "ATL", "usg_pct": 20.0, "ts_pct": 49.1, "playoff_mp": 9, "playoff_usg_pct": 76.1, "playoff_ts_pct": 92.60000000000001, "playoff_mpg": 4.5}, {"name": "John Konchar", "team": "MEM", "usg_pct": 9.9, "ts_pct": 61.5, "playoff_mp": 17, "playoff_usg_pct": 4.8, "playoff_ts_pct": null, "playoff_mpg": 4.25}, {"name": "Furkan Korkmaz", "team": "PHI", "usg_pct": 17.6, "ts_pct": 50.2, "playoff_mp": 12, "playoff_usg_pct": 3.9, "playoff_ts_pct": 150.0, "playoff_mpg": 3.0}, {"name": "Jonathan Kuminga", "team": "GSW", "usg_pct": 22.7, "ts_pct": 60.0, "playoff_mp": 25, "playoff_usg_pct": 25.4, "playoff_ts_pct": 63.2, "playoff_mpg": 6.25}, {"name": "Zach LaVine", "team": "CHI", "usg_pct": 28.8, "ts_pct": 60.5, "playoff_mp": 153, "playoff_usg_pct": 23.4, "playoff_ts_pct": 55.300000000000004, "playoff_mpg": 38.25}, {"name": "Damion Lee", "team": "GSW", "usg_pct": 15.8, "ts_pct": 56.10000000000001, "playoff_mp": 8, "playoff_usg_pct": 27.5, "playoff_ts_pct": 61.5, "playoff_mpg": 4.0}, {"name": "Kevon Looney", "team": "GSW", "usg_pct": 12.2, "ts_pct": 58.599999999999994, "playoff_mp": 67, "playoff_usg_pct": 7.9, "playoff_ts_pct": 55.800000000000004, "playoff_mpg": 13.4}, {"name": "Brook Lopez", "team": "MIL", "usg_pct": 21.9, "ts_pct": 56.99999999999999, "playoff_mp": 144, "playoff_usg_pct": 18.1, "playoff_ts_pct": 59.699999999999996, "playoff_mpg": 28.8}, {"name": "Kyle Lowry", "team": "MIA", "usg_pct": 18.2, "ts_pct": 60.0, "playoff_mp": 89, "playoff_usg_pct": 14.1, "playoff_ts_pct": 49.6, "playoff_mpg": 29.67}, {"name": "Timoth\u00e9 Luwawu-Cabarrot", "team": "ATL", "usg_pct": 14.3, "ts_pct": 55.60000000000001, "playoff_mp": 22, "playoff_usg_pct": 10.5, "playoff_ts_pct": 62.5, "playoff_mpg": 5.5}, {"name": "Boban Marjanovi\u0107", "team": "DAL", "usg_pct": 33.3, "ts_pct": 61.5, "playoff_mp": 1, "playoff_usg_pct": 96.9, "playoff_ts_pct": null, "playoff_mpg": 1.0}, {"name": "Naji Marshall", "team": "NOP", "usg_pct": 20.8, "ts_pct": 50.5, "playoff_mp": 56, "playoff_usg_pct": 11.3, "playoff_ts_pct": 76.5, "playoff_mpg": 9.33}, {"name": "Caleb Martin", "team": "MIA", "usg_pct": 16.3, "ts_pct": 61.1, "playoff_mp": 63, "playoff_usg_pct": 21.4, "playoff_ts_pct": 34.2, "playoff_mpg": 12.6}, {"name": "Wesley Matthews", "team": "MIL", "usg_pct": 10.7, "ts_pct": 53.6, "playoff_mp": 139, "playoff_usg_pct": 9.0, "playoff_ts_pct": 65.7, "playoff_mpg": 27.8}, {"name": "Tyrese Maxey", "team": "PHI", "usg_pct": 20.2, "ts_pct": 59.4, "playoff_mp": 252, "playoff_usg_pct": 20.7, "playoff_ts_pct": 63.5, "playoff_mpg": 42.0}, {"name": "Skylar Mays", "team": "ATL", "usg_pct": 15.5, "ts_pct": 58.9, "playoff_mp": 9, "playoff_usg_pct": 5.1, "playoff_ts_pct": 100.0, "playoff_mpg": 4.5}, {"name": "CJ McCollum", "team": "NOP", "usg_pct": 27.5, "ts_pct": 55.300000000000004, "playoff_mp": 234, "playoff_usg_pct": 27.9, "playoff_ts_pct": 48.699999999999996, "playoff_mpg": 39.0}, {"name": "Jaden McDaniels", "team": "MIN", "usg_pct": 15.3, "ts_pct": 55.300000000000004, "playoff_mp": 130, "playoff_usg_pct": 14.9, "playoff_ts_pct": 71.3, "playoff_mpg": 21.67}, {"name": "JaVale McGee", "team": "PHO", "usg_pct": 22.8, "ts_pct": 65.10000000000001, "playoff_mp": 66, "playoff_usg_pct": 23.7, "playoff_ts_pct": 82.19999999999999, "playoff_mpg": 11.0}, {"name": "Jordan McLaughlin", "team": "MIN", "usg_pct": 11.8, "ts_pct": 53.5, "playoff_mp": 83, "playoff_usg_pct": 10.7, "playoff_ts_pct": 82.6, "playoff_mpg": 16.6}, {"name": "De'Anthony Melton", "team": "MEM", "usg_pct": 21.3, "ts_pct": 52.900000000000006, "playoff_mp": 47, "playoff_usg_pct": 19.8, "playoff_ts_pct": 23.799999999999997, "playoff_mpg": 11.75}, {"name": "Khris Middleton", "team": "MIL", "usg_pct": 26.7, "ts_pct": 57.699999999999996, "playoff_mp": 72, "playoff_usg_pct": 21.9, "playoff_ts_pct": 57.3, "playoff_mpg": 36.0}, {"name": "Patty Mills", "team": "BRK", "usg_pct": 16.4, "ts_pct": 56.3, "playoff_mp": 72, "playoff_usg_pct": 10.8, "playoff_ts_pct": 78.10000000000001, "playoff_mpg": 18.0}, {"name": "Shake Milton", "team": "PHI", "usg_pct": 18.3, "ts_pct": 51.7, "playoff_mp": 72, "playoff_usg_pct": 11.2, "playoff_ts_pct": 74.6, "playoff_mpg": 12.0}, {"name": "Donovan Mitchell", "team": "UTA", "usg_pct": 32.9, "ts_pct": 57.199999999999996, "playoff_mp": 229, "playoff_usg_pct": 34.3, "playoff_ts_pct": 50.5, "playoff_mpg": 38.17}, {"name": "Greg Monroe", "team": "MIN", "usg_pct": 17.3, "ts_pct": 56.599999999999994, "playoff_mp": 7, "playoff_usg_pct": 36.7, "playoff_ts_pct": 40.0, "playoff_mpg": 3.5}, {"name": "Moses Moody", "team": "GSW", "usg_pct": 15.2, "ts_pct": 57.3, "playoff_mp": 8, "playoff_usg_pct": 21.9, "playoff_ts_pct": 17.4, "playoff_mpg": 4.0}, {"name": "Ja Morant", "team": "MEM", "usg_pct": 33.7, "ts_pct": 57.49999999999999, "playoff_mp": 222, "playoff_usg_pct": 28.4, "playoff_ts_pct": 49.6, "playoff_mpg": 37.0}, {"name": "Monte Morris", "team": "DEN", "usg_pct": 17.4, "ts_pct": 58.3, "playoff_mp": 156, "playoff_usg_pct": 17.9, "playoff_ts_pct": 62.2, "playoff_mpg": 31.2}, {"name": "Trey Murphy III", "team": "NOP", "usg_pct": 15.7, "ts_pct": 55.800000000000004, "playoff_mp": 120, "playoff_usg_pct": 9.0, "playoff_ts_pct": 64.0, "playoff_mpg": 20.0}, {"name": "Svi Mykhailiuk", "team": "TOR", "usg_pct": 16.9, "ts_pct": 50.9, "playoff_mp": 5, "playoff_usg_pct": 22.6, "playoff_ts_pct": 20.5, "playoff_mpg": 1.67}, {"name": "Larry Nance Jr.", "team": "NOP", "usg_pct": 12.8, "ts_pct": 59.0, "playoff_mp": 130, "playoff_usg_pct": 16.5, "playoff_ts_pct": 62.7, "playoff_mpg": 21.67}, {"name": "Georges Niang", "team": "PHI", "usg_pct": 16.8, "ts_pct": 59.4, "playoff_mp": 105, "playoff_usg_pct": 10.3, "playoff_ts_pct": 100.0, "playoff_mpg": 17.5}, {"name": "Zeke Nnaji", "team": "DEN", "usg_pct": 14.9, "ts_pct": 62.9, "playoff_mp": 9, "playoff_usg_pct": 4.8, "playoff_ts_pct": 150.0, "playoff_mpg": 4.5}, {"name": "Jaylen Nowell", "team": "MIN", "usg_pct": 21.0, "ts_pct": 58.099999999999994, "playoff_mp": 12, "playoff_usg_pct": 35.7, "playoff_ts_pct": 30.0, "playoff_mpg": 12.0}, {"name": "Jordan Nwora", "team": "MIL", "usg_pct": 19.4, "ts_pct": 50.6, "playoff_mp": 13, "playoff_usg_pct": 20.0, "playoff_ts_pct": 16.7, "playoff_mpg": 4.33}, {"name": "Royce O'Neale", "team": "UTA", "usg_pct": 9.9, "ts_pct": 60.8, "playoff_mp": 188, "playoff_usg_pct": 9.7, "playoff_ts_pct": 51.6, "playoff_mpg": 31.33}, {"name": "Josh Okogie", "team": "MIN", "usg_pct": 12.1, "ts_pct": 52.6, "playoff_mp": 2, "playoff_usg_pct": 0.0, "playoff_ts_pct": null, "playoff_mpg": 2.0}, {"name": "Onyeka Okongwu", "team": "ATL", "usg_pct": 14.0, "ts_pct": 71.39999999999999, "playoff_mp": 108, "playoff_usg_pct": 10.4, "playoff_ts_pct": 63.7, "playoff_mpg": 21.6}, {"name": "Victor Oladipo", "team": "MIA", "usg_pct": 25.1, "ts_pct": 60.8, "playoff_mp": 59, "playoff_usg_pct": 23.1, "playoff_ts_pct": 52.2, "playoff_mpg": 29.5}, {"name": "Eric Paschall", "team": "UTA", "usg_pct": 17.7, "ts_pct": 61.199999999999996, "playoff_mp": 24, "playoff_usg_pct": 12.6, "playoff_ts_pct": 62.1, "playoff_mpg": 6.0}, {"name": "Chris Paul", "team": "PHO", "usg_pct": 19.7, "ts_pct": 58.099999999999994, "playoff_mp": 221, "playoff_usg_pct": 23.3, "playoff_ts_pct": 66.3, "playoff_mpg": 36.83}, {"name": "Cameron Payne", "team": "PHO", "usg_pct": 24.6, "ts_pct": 50.0, "playoff_mp": 90, "playoff_usg_pct": 26.9, "playoff_ts_pct": 38.1, "playoff_mpg": 15.0}, {"name": "Elfrid Payton", "team": "PHO", "usg_pct": 18.5, "ts_pct": 39.7, "playoff_mp": 2, "playoff_usg_pct": 23.4, "playoff_ts_pct": 100.0, "playoff_mpg": 2.0}, {"name": "Gary Payton II", "team": "GSW", "usg_pct": 14.3, "ts_pct": 67.9, "playoff_mp": 85, "playoff_usg_pct": 10.4, "playoff_ts_pct": 86.6, "playoff_mpg": 17.0}, {"name": "Jordan Poole", "team": "GSW", "usg_pct": 26.0, "ts_pct": 59.8, "playoff_mp": 162, "playoff_usg_pct": 23.8, "playoff_ts_pct": 71.5, "playoff_mpg": 32.4}, {"name": "Otto Porter Jr.", "team": "GSW", "usg_pct": 15.0, "ts_pct": 58.099999999999994, "playoff_mp": 109, "playoff_usg_pct": 11.5, "playoff_ts_pct": 37.2, "playoff_mpg": 21.8}, {"name": "Bobby Portis", "team": "MIL", "usg_pct": 21.3, "ts_pct": 57.099999999999994, "playoff_mp": 119, "playoff_usg_pct": 22.2, "playoff_ts_pct": 54.800000000000004, "playoff_mpg": 23.8}, {"name": "Dwight Powell", "team": "DAL", "usg_pct": 14.0, "ts_pct": 72.5, "playoff_mp": 106, "playoff_usg_pct": 12.1, "playoff_ts_pct": 58.099999999999994, "playoff_mpg": 17.67}, {"name": "Taurean Prince", "team": "MIN", "usg_pct": 17.0, "ts_pct": 58.9, "playoff_mp": 65, "playoff_usg_pct": 22.5, "playoff_ts_pct": 49.9, "playoff_mpg": 13.0}, {"name": "Payton Pritchard", "team": "BOS", "usg_pct": 18.6, "ts_pct": 57.8, "playoff_mp": 46, "playoff_usg_pct": 15.4, "playoff_ts_pct": 76.7, "playoff_mpg": 11.5}, {"name": "Paul Reed", "team": "PHI", "usg_pct": 16.7, "ts_pct": 56.8, "playoff_mp": 60, "playoff_usg_pct": 21.3, "playoff_ts_pct": 61.9, "playoff_mpg": 10.0}, {"name": "Naz Reid", "team": "MIN", "usg_pct": 21.4, "ts_pct": 58.8, "playoff_mp": 54, "playoff_usg_pct": 19.9, "playoff_ts_pct": 59.8, "playoff_mpg": 10.8}, {"name": "Austin Rivers", "team": "DEN", "usg_pct": 12.6, "ts_pct": 54.6, "playoff_mp": 108, "playoff_usg_pct": 9.0, "playoff_ts_pct": 56.89999999999999, "playoff_mpg": 21.6}, {"name": "Duncan Robinson", "team": "MIA", "usg_pct": 17.7, "ts_pct": 57.3, "playoff_mp": 66, "playoff_usg_pct": 16.0, "playoff_ts_pct": 82.69999999999999, "playoff_mpg": 13.2}, {"name": "D'Angelo Russell", "team": "MIN", "usg_pct": 25.1, "ts_pct": 54.400000000000006, "playoff_mp": 196, "playoff_usg_pct": 21.0, "playoff_ts_pct": 45.5, "playoff_mpg": 32.67}, {"name": "Landry Shamet", "team": "PHO", "usg_pct": 16.8, "ts_pct": 55.00000000000001, "playoff_mp": 98, "playoff_usg_pct": 13.5, "playoff_ts_pct": 47.3, "playoff_mpg": 19.6}, {"name": "Day'Ron Sharpe", "team": "BRK", "usg_pct": 21.7, "ts_pct": 59.3, "playoff_mp": 0, "playoff_usg_pct": null, "playoff_ts_pct": null, "playoff_mpg": 0.0}, {"name": "Pascal Siakam", "team": "TOR", "usg_pct": 25.8, "ts_pct": 56.49999999999999, "playoff_mp": 260, "playoff_usg_pct": 24.2, "playoff_ts_pct": 55.800000000000004, "playoff_mpg": 43.33}, {"name": "Marcus Smart", "team": "BOS", "usg_pct": 18.3, "ts_pct": 54.0, "playoff_mp": 147, "playoff_usg_pct": 21.5, "playoff_ts_pct": 53.7, "playoff_mpg": 36.75}, {"name": "Jaden Springer", "team": "PHI", "usg_pct": 15.0, "ts_pct": 100.0, "playoff_mp": 4, "playoff_usg_pct": 35.3, "playoff_ts_pct": 66.7, "playoff_mpg": 2.0}, {"name": "Max Strus", "team": "MIA", "usg_pct": 18.1, "ts_pct": 61.4, "playoff_mp": 144, "playoff_usg_pct": 20.7, "playoff_ts_pct": 56.39999999999999, "playoff_mpg": 28.8}, {"name": "Jayson Tatum", "team": "BOS", "usg_pct": 32.1, "ts_pct": 57.8, "playoff_mp": 167, "playoff_usg_pct": 30.7, "playoff_ts_pct": 61.6, "playoff_mpg": 41.75}, {"name": "Garrett Temple", "team": "NOP", "usg_pct": 13.9, "ts_pct": 49.4, "playoff_mp": 2, "playoff_usg_pct": 0.0, "playoff_ts_pct": null, "playoff_mpg": 2.0}, {"name": "Daniel Theis", "team": "BOS", "usg_pct": 16.2, "ts_pct": 59.5, "playoff_mp": 88, "playoff_usg_pct": 16.4, "playoff_ts_pct": 61.5, "playoff_mpg": 22.0}, {"name": "Cam Thomas", "team": "BRK", "usg_pct": 22.1, "ts_pct": 51.9, "playoff_mp": 0, "playoff_usg_pct": null, "playoff_ts_pct": null, "playoff_mpg": 0.0}, {"name": "Klay Thompson", "team": "GSW", "usg_pct": 29.6, "ts_pct": 54.7, "playoff_mp": 173, "playoff_usg_pct": 24.4, "playoff_ts_pct": 64.5, "playoff_mpg": 34.6}, {"name": "Tristan Thompson", "team": "CHI", "usg_pct": 17.5, "ts_pct": 54.1, "playoff_mp": 38, "playoff_usg_pct": 11.5, "playoff_ts_pct": 40.0, "playoff_mpg": 7.6}, {"name": "Matisse Thybulle", "team": "PHI", "usg_pct": 9.5, "ts_pct": 59.4, "playoff_mp": 43, "playoff_usg_pct": 13.0, "playoff_ts_pct": 46.0, "playoff_mpg": 14.33}, {"name": "Xavier Tillman Sr.", "team": "MEM", "usg_pct": 16.4, "ts_pct": 51.0, "playoff_mp": 80, "playoff_usg_pct": 12.3, "playoff_ts_pct": 69.8, "playoff_mpg": 16.0}, {"name": "Juan Toscano-Anderson", "team": "GSW", "usg_pct": 14.7, "ts_pct": 56.10000000000001, "playoff_mp": 8, "playoff_usg_pct": 16.2, "playoff_ts_pct": 104.2, "playoff_mpg": 4.0}, {"name": "Karl-Anthony Towns", "team": "MIN", "usg_pct": 27.8, "ts_pct": 64.0, "playoff_mp": 222, "playoff_usg_pct": 24.9, "playoff_ts_pct": 64.2, "playoff_mpg": 37.0}, {"name": "Gary Trent Jr.", "team": "TOR", "usg_pct": 21.8, "ts_pct": 54.6, "playoff_mp": 199, "playoff_usg_pct": 21.8, "playoff_ts_pct": 50.9, "playoff_mpg": 33.17}, {"name": "P.J. Tucker", "team": "MIA", "usg_pct": 11.7, "ts_pct": 59.3, "playoff_mp": 141, "playoff_usg_pct": 10.6, "playoff_ts_pct": 75.6, "playoff_mpg": 28.2}, {"name": "Rayjon Tucker", "team": "MIL", "usg_pct": 7.9, "ts_pct": 86.9, "playoff_mp": 12, "playoff_usg_pct": 0.0, "playoff_ts_pct": null, "playoff_mpg": 4.0}, {"name": "Jonas Valan\u010di\u016bnas", "team": "NOP", "usg_pct": 23.8, "ts_pct": 61.7, "playoff_mp": 175, "playoff_usg_pct": 22.5, "playoff_ts_pct": 54.800000000000004, "playoff_mpg": 29.17}, {"name": "Jarred Vanderbilt", "team": "MIN", "usg_pct": 10.9, "ts_pct": 61.199999999999996, "playoff_mp": 129, "playoff_usg_pct": 12.1, "playoff_ts_pct": 52.5, "playoff_mpg": 21.5}, {"name": "Fred VanVleet", "team": "TOR", "usg_pct": 23.7, "ts_pct": 55.2, "playoff_mp": 140, "playoff_usg_pct": 20.1, "playoff_ts_pct": 48.6, "playoff_mpg": 35.0}, {"name": "Gabe Vincent", "team": "MIA", "usg_pct": 17.8, "ts_pct": 55.1, "playoff_mp": 126, "playoff_usg_pct": 16.4, "playoff_ts_pct": 53.0, "playoff_mpg": 25.2}, {"name": "Nikola Vu\u010devi\u0107", "team": "CHI", "usg_pct": 24.5, "ts_pct": 53.300000000000004, "playoff_mp": 181, "playoff_usg_pct": 24.5, "playoff_ts_pct": 52.0, "playoff_mpg": 36.2}, {"name": "Ish Wainright", "team": "PHO", "usg_pct": 14.7, "ts_pct": 49.4, "playoff_mp": 2, "playoff_usg_pct": 46.8, "playoff_ts_pct": null, "playoff_mpg": 2.0}, {"name": "Yuta Watanabe", "team": "TOR", "usg_pct": 16.8, "ts_pct": 52.400000000000006, "playoff_mp": 10, "playoff_usg_pct": 32.5, "playoff_ts_pct": 33.300000000000004, "playoff_mpg": 2.5}, {"name": "Coby White", "team": "CHI", "usg_pct": 19.8, "ts_pct": 56.39999999999999, "playoff_mp": 98, "playoff_usg_pct": 23.8, "playoff_ts_pct": 44.5, "playoff_mpg": 19.6}, {"name": "Derrick White", "team": "BOS", "usg_pct": 19.9, "ts_pct": 54.900000000000006, "playoff_mp": 81, "playoff_usg_pct": 15.4, "playoff_ts_pct": 41.699999999999996, "playoff_mpg": 20.25}, {"name": "Hassan Whiteside", "team": "UTA", "usg_pct": 17.1, "ts_pct": 66.2, "playoff_mp": 65, "playoff_usg_pct": 9.9, "playoff_ts_pct": 40.0, "playoff_mpg": 10.83}, {"name": "Andrew Wiggins", "team": "GSW", "usg_pct": 23.1, "ts_pct": 56.00000000000001, "playoff_mp": 150, "playoff_usg_pct": 19.3, "playoff_ts_pct": 60.3, "playoff_mpg": 30.0}, {"name": "Grant Williams", "team": "BOS", "usg_pct": 12.6, "ts_pct": 63.5, "playoff_mp": 119, "playoff_usg_pct": 11.7, "playoff_ts_pct": 76.2, "playoff_mpg": 29.75}, {"name": "Patrick Williams", "team": "CHI", "usg_pct": 14.2, "ts_pct": 63.7, "playoff_mp": 153, "playoff_usg_pct": 16.9, "playoff_ts_pct": 56.89999999999999, "playoff_mpg": 30.6}, {"name": "Robert Williams", "team": "BOS", "usg_pct": 11.5, "ts_pct": 74.5, "playoff_mp": 30, "playoff_usg_pct": 10.2, "playoff_ts_pct": 42.5, "playoff_mpg": 15.0}, {"name": "Ziaire Williams", "team": "MEM", "usg_pct": 14.9, "ts_pct": 55.900000000000006, "playoff_mp": 55, "playoff_usg_pct": 17.3, "playoff_ts_pct": 59.8, "playoff_mpg": 11.0}, {"name": "Delon Wright", "team": "ATL", "usg_pct": 10.3, "ts_pct": 57.599999999999994, "playoff_mp": 137, "playoff_usg_pct": 12.8, "playoff_ts_pct": 62.2, "playoff_mpg": 27.4}, {"name": "Thaddeus Young", "team": "TOR", "usg_pct": 17.4, "ts_pct": 54.800000000000004, "playoff_mp": 87, "playoff_usg_pct": 12.1, "playoff_ts_pct": 50.6, "playoff_mpg": 14.5}, {"name": "Trae Young", "team": "ATL", "usg_pct": 34.4, "ts_pct": 60.3, "playoff_mp": 186, "playoff_usg_pct": 28.3, "playoff_ts_pct": 46.1, "playoff_mpg": 37.2}, {"name": "Omer Yurtseven", "team": "MIA", "usg_pct": 19.9, "ts_pct": 54.6, "playoff_mp": 8, "playoff_usg_pct": 29.5, "playoff_ts_pct": 65.8, "playoff_mpg": 4.0}]
+[
+  {
+    "name": "Precious Achiuwa",
+    "team": "TOR",
+    "usg_pct": 18.5,
+    "ts_pct": 50.3,
+    "playoff_mp": 167,
+    "playoff_usg_pct": 18.2,
+    "playoff_ts_pct": 54.1,
+    "playoff_mpg": 27.83
+  },
+  {
+    "name": "Steven Adams",
+    "team": "MEM",
+    "usg_pct": 12,
+    "ts_pct": 56.00000000000001,
+    "playoff_mp": 31,
+    "playoff_usg_pct": 1.3,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 10.33
+  },
+  {
+    "name": "Bam Adebayo",
+    "team": "MIA",
+    "usg_pct": 25,
+    "ts_pct": 60.8,
+    "playoff_mp": 157,
+    "playoff_usg_pct": 18.9,
+    "playoff_ts_pct": 60,
+    "playoff_mpg": 31.4
+  },
+  {
+    "name": "Nickeil Alexander-Walker",
+    "team": "UTA",
+    "usg_pct": 24.1,
+    "ts_pct": 47.5,
+    "playoff_mp": 5,
+    "playoff_usg_pct": 22.9,
+    "playoff_ts_pct": 102.49999999999999,
+    "playoff_mpg": 5
+  },
+  {
+    "name": "Grayson Allen",
+    "team": "MIL",
+    "usg_pct": 15.2,
+    "ts_pct": 60.9,
+    "playoff_mp": 120,
+    "playoff_usg_pct": 16.2,
+    "playoff_ts_pct": 77.8,
+    "playoff_mpg": 24
+  },
+  {
+    "name": "Jose Alvarado",
+    "team": "NOP",
+    "usg_pct": 18.4,
+    "ts_pct": 52,
+    "playoff_mp": 117,
+    "playoff_usg_pct": 16.8,
+    "playoff_ts_pct": 62,
+    "playoff_mpg": 19.5
+  },
+  {
+    "name": "Kyle Anderson",
+    "team": "MEM",
+    "usg_pct": 16.2,
+    "ts_pct": 50.6,
+    "playoff_mp": 117,
+    "playoff_usg_pct": 9,
+    "playoff_ts_pct": 65,
+    "playoff_mpg": 19.5
+  },
+  {
+    "name": "Giannis Antetokounmpo",
+    "team": "MIL",
+    "usg_pct": 34.9,
+    "ts_pct": 63.3,
+    "playoff_mp": 168,
+    "playoff_usg_pct": 34.2,
+    "playoff_ts_pct": 62.5,
+    "playoff_mpg": 33.6
+  },
+  {
+    "name": "Thanasis Antetokounmpo",
+    "team": "MIL",
+    "usg_pct": 15.7,
+    "ts_pct": 57.699999999999996,
+    "playoff_mp": 13,
+    "playoff_usg_pct": 11.5,
+    "playoff_ts_pct": 58.099999999999994,
+    "playoff_mpg": 4.33
+  },
+  {
+    "name": "OG Anunoby",
+    "team": "TOR",
+    "usg_pct": 20.5,
+    "ts_pct": 54.900000000000006,
+    "playoff_mp": 217,
+    "playoff_usg_pct": 21.2,
+    "playoff_ts_pct": 58.4,
+    "playoff_mpg": 36.17
+  },
+  {
+    "name": "Deandre Ayton",
+    "team": "PHO",
+    "usg_pct": 21.4,
+    "ts_pct": 65.60000000000001,
+    "playoff_mp": 210,
+    "playoff_usg_pct": 20.6,
+    "playoff_ts_pct": 72.1,
+    "playoff_mpg": 35
+  },
+  {
+    "name": "Desmond Bane",
+    "team": "MEM",
+    "usg_pct": 23.1,
+    "ts_pct": 59.199999999999996,
+    "playoff_mp": 228,
+    "playoff_usg_pct": 20.8,
+    "playoff_ts_pct": 66.60000000000001,
+    "playoff_mpg": 38
+  },
+  {
+    "name": "Dalano Banton",
+    "team": "TOR",
+    "usg_pct": 16.9,
+    "ts_pct": 46.300000000000004,
+    "playoff_mp": 8,
+    "playoff_usg_pct": 32.7,
+    "playoff_ts_pct": 75.4,
+    "playoff_mpg": 2
+  },
+  {
+    "name": "Scottie Barnes",
+    "team": "TOR",
+    "usg_pct": 19,
+    "ts_pct": 55.2,
+    "playoff_mp": 133,
+    "playoff_usg_pct": 18.9,
+    "playoff_ts_pct": 52,
+    "playoff_mpg": 33.25
+  },
+  {
+    "name": "Will Barton",
+    "team": "DEN",
+    "usg_pct": 20.8,
+    "ts_pct": 54.800000000000004,
+    "playoff_mp": 172,
+    "playoff_usg_pct": 19.9,
+    "playoff_ts_pct": 50.3,
+    "playoff_mpg": 34.4
+  },
+  {
+    "name": "Malik Beasley",
+    "team": "MIN",
+    "usg_pct": 19.4,
+    "ts_pct": 54.400000000000006,
+    "playoff_mp": 119,
+    "playoff_usg_pct": 19.3,
+    "playoff_ts_pct": 54.7,
+    "playoff_mpg": 19.83
+  },
+  {
+    "name": "Dāvis Bertāns",
+    "team": "DAL",
+    "usg_pct": 17.3,
+    "ts_pct": 53.1,
+    "playoff_mp": 57,
+    "playoff_usg_pct": 15.8,
+    "playoff_ts_pct": 60.099999999999994,
+    "playoff_mpg": 9.5
+  },
+  {
+    "name": "Patrick Beverley",
+    "team": "MIN",
+    "usg_pct": 16.1,
+    "ts_pct": 53.900000000000006,
+    "playoff_mp": 194,
+    "playoff_usg_pct": 15.6,
+    "playoff_ts_pct": 56.2,
+    "playoff_mpg": 32.33
+  },
+  {
+    "name": "Khem Birch",
+    "team": "TOR",
+    "usg_pct": 11.2,
+    "ts_pct": 53.400000000000006,
+    "playoff_mp": 63,
+    "playoff_usg_pct": 14,
+    "playoff_ts_pct": 56.3,
+    "playoff_mpg": 10.5
+  },
+  {
+    "name": "Bismack Biyombo",
+    "team": "PHO",
+    "usg_pct": 17.1,
+    "ts_pct": 59.599999999999994,
+    "playoff_mp": 15,
+    "playoff_usg_pct": 25,
+    "playoff_ts_pct": 33.300000000000004,
+    "playoff_mpg": 3.75
+  },
+  {
+    "name": "Nemanja Bjelica",
+    "team": "GSW",
+    "usg_pct": 17.8,
+    "ts_pct": 57.3,
+    "playoff_mp": 48,
+    "playoff_usg_pct": 18.9,
+    "playoff_ts_pct": 55.300000000000004,
+    "playoff_mpg": 12
+  },
+  {
+    "name": "Bogdan Bogdanović",
+    "team": "ATL",
+    "usg_pct": 21.6,
+    "ts_pct": 56.2,
+    "playoff_mp": 107,
+    "playoff_usg_pct": 24.7,
+    "playoff_ts_pct": 53.400000000000006,
+    "playoff_mpg": 26.75
+  },
+  {
+    "name": "Bojan Bogdanović",
+    "team": "UTA",
+    "usg_pct": 23.7,
+    "ts_pct": 59.9,
+    "playoff_mp": 214,
+    "playoff_usg_pct": 22.7,
+    "playoff_ts_pct": 59,
+    "playoff_mpg": 35.67
+  },
+  {
+    "name": "Isaac Bonga",
+    "team": "TOR",
+    "usg_pct": 11.5,
+    "ts_pct": 36.3,
+    "playoff_mp": 3,
+    "playoff_usg_pct": 13.6,
+    "playoff_ts_pct": 113.6,
+    "playoff_mpg": 3
+  },
+  {
+    "name": "Devin Booker",
+    "team": "PHO",
+    "usg_pct": 32,
+    "ts_pct": 57.599999999999994,
+    "playoff_mp": 98,
+    "playoff_usg_pct": 27.9,
+    "playoff_ts_pct": 64.5,
+    "playoff_mpg": 32.67
+  },
+  {
+    "name": "Chris Boucher",
+    "team": "TOR",
+    "usg_pct": 17.8,
+    "ts_pct": 56.99999999999999,
+    "playoff_mp": 130,
+    "playoff_usg_pct": 17.3,
+    "playoff_ts_pct": 72.2,
+    "playoff_mpg": 21.67
+  },
+  {
+    "name": "Tony Bradley",
+    "team": "CHI",
+    "usg_pct": 13.6,
+    "ts_pct": 60,
+    "playoff_mp": 8,
+    "playoff_usg_pct": 27.4,
+    "playoff_ts_pct": 100,
+    "playoff_mpg": 4
+  },
+  {
+    "name": "Mikal Bridges",
+    "team": "PHO",
+    "usg_pct": 15,
+    "ts_pct": 62.7,
+    "playoff_mp": 251,
+    "playoff_usg_pct": 16.2,
+    "playoff_ts_pct": 66.10000000000001,
+    "playoff_mpg": 41.83
+  },
+  {
+    "name": "Armoni Brooks",
+    "team": "TOR",
+    "usg_pct": 16.4,
+    "ts_pct": 48.3,
+    "playoff_mp": 8,
+    "playoff_usg_pct": 23.2,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 2
+  },
+  {
+    "name": "Dillon Brooks",
+    "team": "MEM",
+    "usg_pct": 28.8,
+    "ts_pct": 51.5,
+    "playoff_mp": 200,
+    "playoff_usg_pct": 24.6,
+    "playoff_ts_pct": 47,
+    "playoff_mpg": 33.33
+  },
+  {
+    "name": "Bruce Brown",
+    "team": "BRK",
+    "usg_pct": 15,
+    "ts_pct": 57.49999999999999,
+    "playoff_mp": 139,
+    "playoff_usg_pct": 16.6,
+    "playoff_ts_pct": 67.60000000000001,
+    "playoff_mpg": 34.75
+  },
+  {
+    "name": "Jaylen Brown",
+    "team": "BOS",
+    "usg_pct": 30.5,
+    "ts_pct": 57.4,
+    "playoff_mp": 155,
+    "playoff_usg_pct": 26,
+    "playoff_ts_pct": 55.60000000000001,
+    "playoff_mpg": 38.75
+  },
+  {
+    "name": "Sterling Brown",
+    "team": "DAL",
+    "usg_pct": 13.2,
+    "ts_pct": 49.5,
+    "playoff_mp": 0,
+    "playoff_usg_pct": null,
+    "playoff_ts_pct": 113.6,
+    "playoff_mpg": 0
+  },
+  {
+    "name": "Troy Brown Jr.",
+    "team": "CHI",
+    "usg_pct": 12.3,
+    "ts_pct": 52.5,
+    "playoff_mp": 37,
+    "playoff_usg_pct": 23.7,
+    "playoff_ts_pct": 35.3,
+    "playoff_mpg": 12.33
+  },
+  {
+    "name": "Jalen Brunson",
+    "team": "DAL",
+    "usg_pct": 21.9,
+    "ts_pct": 58.3,
+    "playoff_mp": 228,
+    "playoff_usg_pct": 31.3,
+    "playoff_ts_pct": 58.3,
+    "playoff_mpg": 38
+  },
+  {
+    "name": "Reggie Bullock",
+    "team": "DAL",
+    "usg_pct": 13.3,
+    "ts_pct": 55.800000000000004,
+    "playoff_mp": 254,
+    "playoff_usg_pct": 9.8,
+    "playoff_ts_pct": 65,
+    "playoff_mpg": 42.33
+  },
+  {
+    "name": "Trey Burke",
+    "team": "DAL",
+    "usg_pct": 25.6,
+    "ts_pct": 47.5,
+    "playoff_mp": 13,
+    "playoff_usg_pct": 34.7,
+    "playoff_ts_pct": 53.6,
+    "playoff_mpg": 4.33
+  },
+  {
+    "name": "Jared Butler",
+    "team": "UTA",
+    "usg_pct": 23.1,
+    "ts_pct": 50.9,
+    "playoff_mp": 5,
+    "playoff_usg_pct": 18.7,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 5
+  },
+  {
+    "name": "Jimmy Butler",
+    "team": "MIA",
+    "usg_pct": 26.5,
+    "ts_pct": 59.199999999999996,
+    "playoff_mp": 149,
+    "playoff_usg_pct": 30.1,
+    "playoff_ts_pct": 63.6,
+    "playoff_mpg": 37.25
+  },
+  {
+    "name": "Facundo Campazzo",
+    "team": "DEN",
+    "usg_pct": 14.7,
+    "ts_pct": 50.3,
+    "playoff_mp": 13,
+    "playoff_usg_pct": 13.4,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 3.25
+  },
+  {
+    "name": "Vlatko Čančar",
+    "team": "DEN",
+    "usg_pct": 14,
+    "ts_pct": 65.7,
+    "playoff_mp": 9,
+    "playoff_usg_pct": 24.2,
+    "playoff_ts_pct": 83.3,
+    "playoff_mpg": 4.5
+  },
+  {
+    "name": "Clint Capela",
+    "team": "ATL",
+    "usg_pct": 15.5,
+    "ts_pct": 60.4,
+    "playoff_mp": 40,
+    "playoff_usg_pct": 8.1,
+    "playoff_ts_pct": 33.300000000000004,
+    "playoff_mpg": 20
+  },
+  {
+    "name": "Jevon Carter",
+    "team": "MIL",
+    "usg_pct": 14,
+    "ts_pct": 53.1,
+    "playoff_mp": 79,
+    "playoff_usg_pct": 7.7,
+    "playoff_ts_pct": 50,
+    "playoff_mpg": 15.8
+  },
+  {
+    "name": "Alex Caruso",
+    "team": "CHI",
+    "usg_pct": 13.3,
+    "ts_pct": 52.800000000000004,
+    "playoff_mp": 113,
+    "playoff_usg_pct": 9.3,
+    "playoff_ts_pct": 54.300000000000004,
+    "playoff_mpg": 28.25
+  },
+  {
+    "name": "Marquese Chriss",
+    "team": "DAL",
+    "usg_pct": 21.5,
+    "ts_pct": 51.800000000000004,
+    "playoff_mp": 4,
+    "playoff_usg_pct": 24.2,
+    "playoff_ts_pct": 50,
+    "playoff_mpg": 4
+  },
+  {
+    "name": "Brandon Clarke",
+    "team": "MEM",
+    "usg_pct": 17.7,
+    "ts_pct": 66,
+    "playoff_mp": 177,
+    "playoff_usg_pct": 17.3,
+    "playoff_ts_pct": 69.3,
+    "playoff_mpg": 29.5
+  },
+  {
+    "name": "Jordan Clarkson",
+    "team": "UTA",
+    "usg_pct": 26.8,
+    "ts_pct": 53.2,
+    "playoff_mp": 170,
+    "playoff_usg_pct": 25,
+    "playoff_ts_pct": 64.9,
+    "playoff_mpg": 28.33
+  },
+  {
+    "name": "Nic Claxton",
+    "team": "BRK",
+    "usg_pct": 15.1,
+    "ts_pct": 67.2,
+    "playoff_mp": 98,
+    "playoff_usg_pct": 16.7,
+    "playoff_ts_pct": 62.4,
+    "playoff_mpg": 24.5
+  },
+  {
+    "name": "John Collins",
+    "team": "ATL",
+    "usg_pct": 20.5,
+    "ts_pct": 61,
+    "playoff_mp": 122,
+    "playoff_usg_pct": 18.3,
+    "playoff_ts_pct": 54.1,
+    "playoff_mpg": 24.4
+  },
+  {
+    "name": "Mike Conley",
+    "team": "UTA",
+    "usg_pct": 20.9,
+    "ts_pct": 57.199999999999996,
+    "playoff_mp": 174,
+    "playoff_usg_pct": 20.6,
+    "playoff_ts_pct": 43.2,
+    "playoff_mpg": 29
+  },
+  {
+    "name": "Pat Connaughton",
+    "team": "MIL",
+    "usg_pct": 14,
+    "ts_pct": 62,
+    "playoff_mp": 113,
+    "playoff_usg_pct": 15.5,
+    "playoff_ts_pct": 56.3,
+    "playoff_mpg": 22.6
+  },
+  {
+    "name": "DeMarcus Cousins",
+    "team": "DEN",
+    "usg_pct": 28.1,
+    "ts_pct": 56.699999999999996,
+    "playoff_mp": 57,
+    "playoff_usg_pct": 32.5,
+    "playoff_ts_pct": 74.4,
+    "playoff_mpg": 11.4
+  },
+  {
+    "name": "Torrey Craig",
+    "team": "PHO",
+    "usg_pct": 14.3,
+    "ts_pct": 55.60000000000001,
+    "playoff_mp": 39,
+    "playoff_usg_pct": 13.1,
+    "playoff_ts_pct": 30.4,
+    "playoff_mpg": 9.75
+  },
+  {
+    "name": "Jae Crowder",
+    "team": "PHO",
+    "usg_pct": 14.6,
+    "ts_pct": 54.1,
+    "playoff_mp": 172,
+    "playoff_usg_pct": 16.5,
+    "playoff_ts_pct": 41.199999999999996,
+    "playoff_mpg": 28.67
+  },
+  {
+    "name": "Jarrett Culver",
+    "team": "MEM",
+    "usg_pct": 20.6,
+    "ts_pct": 43.3,
+    "playoff_mp": 5,
+    "playoff_usg_pct": 16.2,
+    "playoff_ts_pct": 50,
+    "playoff_mpg": 5
+  },
+  {
+    "name": "Seth Curry",
+    "team": "BRK",
+    "usg_pct": 18.5,
+    "ts_pct": 61.5,
+    "playoff_mp": 132,
+    "playoff_usg_pct": 15.1,
+    "playoff_ts_pct": 71.89999999999999,
+    "playoff_mpg": 33
+  },
+  {
+    "name": "Stephen Curry",
+    "team": "GSW",
+    "usg_pct": 30.8,
+    "ts_pct": 60.099999999999994,
+    "playoff_mp": 150,
+    "playoff_usg_pct": 37,
+    "playoff_ts_pct": 64.1,
+    "playoff_mpg": 30
+  },
+  {
+    "name": "Dewayne Dedmon",
+    "team": "MIA",
+    "usg_pct": 16.9,
+    "ts_pct": 63.2,
+    "playoff_mp": 47,
+    "playoff_usg_pct": 19.6,
+    "playoff_ts_pct": 59.099999999999994,
+    "playoff_mpg": 9.4
+  },
+  {
+    "name": "DeMar DeRozan",
+    "team": "CHI",
+    "usg_pct": 31.8,
+    "ts_pct": 59,
+    "playoff_mp": 203,
+    "playoff_usg_pct": 25.7,
+    "playoff_ts_pct": 48.1,
+    "playoff_mpg": 40.6
+  },
+  {
+    "name": "Gorgui Dieng",
+    "team": "ATL",
+    "usg_pct": 16.9,
+    "ts_pct": 62.4,
+    "playoff_mp": 10,
+    "playoff_usg_pct": 11.2,
+    "playoff_ts_pct": 61.5,
+    "playoff_mpg": 5
+  },
+  {
+    "name": "Spencer Dinwiddie",
+    "team": "DAL",
+    "usg_pct": 21.4,
+    "ts_pct": 54.300000000000004,
+    "playoff_mp": 200,
+    "playoff_usg_pct": 26.4,
+    "playoff_ts_pct": 47.8,
+    "playoff_mpg": 33.33
+  },
+  {
+    "name": "Luka Dončić",
+    "team": "DAL",
+    "usg_pct": 37.4,
+    "ts_pct": 57.099999999999994,
+    "playoff_mp": 109,
+    "playoff_usg_pct": 37.7,
+    "playoff_ts_pct": 59.8,
+    "playoff_mpg": 36.33
+  },
+  {
+    "name": "Ayo Dosunmu",
+    "team": "CHI",
+    "usg_pct": 14.1,
+    "ts_pct": 59.599999999999994,
+    "playoff_mp": 86,
+    "playoff_usg_pct": 15,
+    "playoff_ts_pct": 37.8,
+    "playoff_mpg": 17.2
+  },
+  {
+    "name": "Goran Dragić",
+    "team": "BRK",
+    "usg_pct": 17.2,
+    "ts_pct": 47.4,
+    "playoff_mp": 79,
+    "playoff_usg_pct": 22,
+    "playoff_ts_pct": 63.9,
+    "playoff_mpg": 19.75
+  },
+  {
+    "name": "Andre Drummond",
+    "team": "BRK",
+    "usg_pct": 19,
+    "ts_pct": 57.4,
+    "playoff_mp": 60,
+    "playoff_usg_pct": 14.7,
+    "playoff_ts_pct": 56.8,
+    "playoff_mpg": 15
+  },
+  {
+    "name": "Kevin Durant",
+    "team": "BRK",
+    "usg_pct": 31.2,
+    "ts_pct": 63.4,
+    "playoff_mp": 176,
+    "playoff_usg_pct": 31.5,
+    "playoff_ts_pct": 52.6,
+    "playoff_mpg": 44
+  },
+  {
+    "name": "Anthony Edwards",
+    "team": "MIN",
+    "usg_pct": 26.4,
+    "ts_pct": 56.00000000000001,
+    "playoff_mp": 227,
+    "playoff_usg_pct": 26.4,
+    "playoff_ts_pct": 60.4,
+    "playoff_mpg": 37.83
+  },
+  {
+    "name": "Kessler Edwards",
+    "team": "BRK",
+    "usg_pct": 13.8,
+    "ts_pct": 51.6,
+    "playoff_mp": 7,
+    "playoff_usg_pct": 6.6,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 3.5
+  },
+  {
+    "name": "Joel Embiid",
+    "team": "PHI",
+    "usg_pct": 37.2,
+    "ts_pct": 61.6,
+    "playoff_mp": 234,
+    "playoff_usg_pct": 29.3,
+    "playoff_ts_pct": 62.3,
+    "playoff_mpg": 39
+  },
+  {
+    "name": "Dorian Finney-Smith",
+    "team": "DAL",
+    "usg_pct": 13.8,
+    "ts_pct": 60.4,
+    "playoff_mp": 260,
+    "playoff_usg_pct": 12.6,
+    "playoff_ts_pct": 62.1,
+    "playoff_mpg": 43.33
+  },
+  {
+    "name": "Malachi Flynn",
+    "team": "TOR",
+    "usg_pct": 16.5,
+    "ts_pct": 48.8,
+    "playoff_mp": 36,
+    "playoff_usg_pct": 10.3,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 6
+  },
+  {
+    "name": "Bryn Forbes",
+    "team": "DEN",
+    "usg_pct": 21.2,
+    "ts_pct": 57.4,
+    "playoff_mp": 76,
+    "playoff_usg_pct": 11,
+    "playoff_ts_pct": 58.099999999999994,
+    "playoff_mpg": 15.2
+  },
+  {
+    "name": "Danilo Gallinari",
+    "team": "ATL",
+    "usg_pct": 18.4,
+    "ts_pct": 57.9,
+    "playoff_mp": 112,
+    "playoff_usg_pct": 22.5,
+    "playoff_ts_pct": 51.2,
+    "playoff_mpg": 22.4
+  },
+  {
+    "name": "Rudy Gobert",
+    "team": "UTA",
+    "usg_pct": 16.9,
+    "ts_pct": 73.2,
+    "playoff_mp": 197,
+    "playoff_usg_pct": 14.3,
+    "playoff_ts_pct": 68.8,
+    "playoff_mpg": 32.83
+  },
+  {
+    "name": "Aaron Gordon",
+    "team": "DEN",
+    "usg_pct": 19.7,
+    "ts_pct": 60.199999999999996,
+    "playoff_mp": 160,
+    "playoff_usg_pct": 20.2,
+    "playoff_ts_pct": 52,
+    "playoff_mpg": 32
+  },
+  {
+    "name": "Devonte' Graham",
+    "team": "NOP",
+    "usg_pct": 19.5,
+    "ts_pct": 51.4,
+    "playoff_mp": 60,
+    "playoff_usg_pct": 18.3,
+    "playoff_ts_pct": 55.800000000000004,
+    "playoff_mpg": 10
+  },
+  {
+    "name": "Danny Green",
+    "team": "PHI",
+    "usg_pct": 12.3,
+    "ts_pct": 56.10000000000001,
+    "playoff_mp": 188,
+    "playoff_usg_pct": 14.5,
+    "playoff_ts_pct": 50.9,
+    "playoff_mpg": 31.33
+  },
+  {
+    "name": "Draymond Green",
+    "team": "GSW",
+    "usg_pct": 14.3,
+    "ts_pct": 58.199999999999996,
+    "playoff_mp": 164,
+    "playoff_usg_pct": 13,
+    "playoff_ts_pct": 61.1,
+    "playoff_mpg": 32.8
+  },
+  {
+    "name": "JaMychal Green",
+    "team": "DEN",
+    "usg_pct": 17.2,
+    "ts_pct": 58.699999999999996,
+    "playoff_mp": 69,
+    "playoff_usg_pct": 13.3,
+    "playoff_ts_pct": 52.400000000000006,
+    "playoff_mpg": 13.8
+  },
+  {
+    "name": "Javonte Green",
+    "team": "CHI",
+    "usg_pct": 11.5,
+    "ts_pct": 63.7,
+    "playoff_mp": 72,
+    "playoff_usg_pct": 13.3,
+    "playoff_ts_pct": 19.6,
+    "playoff_mpg": 14.4
+  },
+  {
+    "name": "Jeff Green",
+    "team": "DEN",
+    "usg_pct": 16.3,
+    "ts_pct": 62.7,
+    "playoff_mp": 113,
+    "playoff_usg_pct": 8.2,
+    "playoff_ts_pct": 49.5,
+    "playoff_mpg": 22.6
+  },
+  {
+    "name": "Josh Green",
+    "team": "DAL",
+    "usg_pct": 13.9,
+    "ts_pct": 57.8,
+    "playoff_mp": 68,
+    "playoff_usg_pct": 18.3,
+    "playoff_ts_pct": 35.099999999999994,
+    "playoff_mpg": 11.33
+  },
+  {
+    "name": "Blake Griffin",
+    "team": "BRK",
+    "usg_pct": 16.9,
+    "ts_pct": 51.800000000000004,
+    "playoff_mp": 25,
+    "playoff_usg_pct": 16.3,
+    "playoff_ts_pct": 50.8,
+    "playoff_mpg": 12.5
+  },
+  {
+    "name": "James Harden",
+    "team": "PHI",
+    "usg_pct": 27.2,
+    "ts_pct": 58.3,
+    "playoff_mp": 243,
+    "playoff_usg_pct": 23,
+    "playoff_ts_pct": 58.199999999999996,
+    "playoff_mpg": 40.5
+  },
+  {
+    "name": "Tobias Harris",
+    "team": "PHI",
+    "usg_pct": 21.7,
+    "ts_pct": 56.599999999999994,
+    "playoff_mp": 245,
+    "playoff_usg_pct": 18.1,
+    "playoff_ts_pct": 63.7,
+    "playoff_mpg": 40.83
+  },
+  {
+    "name": "Jaxson Hayes",
+    "team": "NOP",
+    "usg_pct": 16.4,
+    "ts_pct": 68,
+    "playoff_mp": 83,
+    "playoff_usg_pct": 17.5,
+    "playoff_ts_pct": 58.599999999999994,
+    "playoff_mpg": 13.83
+  },
+  {
+    "name": "Juancho Hernangómez",
+    "team": "UTA",
+    "usg_pct": 13.4,
+    "ts_pct": 54.2,
+    "playoff_mp": 56,
+    "playoff_usg_pct": 16.7,
+    "playoff_ts_pct": 38.9,
+    "playoff_mpg": 9.33
+  },
+  {
+    "name": "Willy Hernangómez",
+    "team": "NOP",
+    "usg_pct": 22.5,
+    "ts_pct": 58.199999999999996,
+    "playoff_mp": 2,
+    "playoff_usg_pct": 86.1,
+    "playoff_ts_pct": 25,
+    "playoff_mpg": 2
+  },
+  {
+    "name": "Tyler Herro",
+    "team": "MIA",
+    "usg_pct": 28.8,
+    "ts_pct": 56.10000000000001,
+    "playoff_mp": 142,
+    "playoff_usg_pct": 25.1,
+    "playoff_ts_pct": 46.800000000000004,
+    "playoff_mpg": 28.4
+  },
+  {
+    "name": "Haywood Highsmith",
+    "team": "MIA",
+    "usg_pct": 14,
+    "ts_pct": 44.6,
+    "playoff_mp": 8,
+    "playoff_usg_pct": 16.6,
+    "playoff_ts_pct": 150,
+    "playoff_mpg": 4
+  },
+  {
+    "name": "Aaron Holiday",
+    "team": "PHO",
+    "usg_pct": 18.7,
+    "ts_pct": 54.400000000000006,
+    "playoff_mp": 8,
+    "playoff_usg_pct": 26,
+    "playoff_ts_pct": 112.6,
+    "playoff_mpg": 4
+  },
+  {
+    "name": "Jrue Holiday",
+    "team": "MIL",
+    "usg_pct": 23.5,
+    "ts_pct": 59.3,
+    "playoff_mp": 180,
+    "playoff_usg_pct": 25.4,
+    "playoff_ts_pct": 48,
+    "playoff_mpg": 36
+  },
+  {
+    "name": "Al Horford",
+    "team": "BOS",
+    "usg_pct": 14.8,
+    "ts_pct": 57.4,
+    "playoff_mp": 128,
+    "playoff_usg_pct": 13.4,
+    "playoff_ts_pct": 72.7,
+    "playoff_mpg": 32
+  },
+  {
+    "name": "Danuel House Jr.",
+    "team": "UTA",
+    "usg_pct": 15.2,
+    "ts_pct": 55.50000000000001,
+    "playoff_mp": 112,
+    "playoff_usg_pct": 13.2,
+    "playoff_ts_pct": 50.9,
+    "playoff_mpg": 18.67
+  },
+  {
+    "name": "Kevin Huerter",
+    "team": "ATL",
+    "usg_pct": 17.5,
+    "ts_pct": 56.99999999999999,
+    "playoff_mp": 154,
+    "playoff_usg_pct": 17.9,
+    "playoff_ts_pct": 47.199999999999996,
+    "playoff_mpg": 30.8
+  },
+  {
+    "name": "De'Andre Hunter",
+    "team": "ATL",
+    "usg_pct": 19.9,
+    "ts_pct": 54.7,
+    "playoff_mp": 175,
+    "playoff_usg_pct": 23.6,
+    "playoff_ts_pct": 67.30000000000001,
+    "playoff_mpg": 35
+  },
+  {
+    "name": "Bones Hyland",
+    "team": "DEN",
+    "usg_pct": 23.8,
+    "ts_pct": 55.800000000000004,
+    "playoff_mp": 87,
+    "playoff_usg_pct": 24.1,
+    "playoff_ts_pct": 54.6,
+    "playoff_mpg": 17.4
+  },
+  {
+    "name": "Serge Ibaka",
+    "team": "MIL",
+    "usg_pct": 17.8,
+    "ts_pct": 57.9,
+    "playoff_mp": 19,
+    "playoff_usg_pct": 36.2,
+    "playoff_ts_pct": 32.4,
+    "playoff_mpg": 4.75
+  },
+  {
+    "name": "Andre Iguodala",
+    "team": "GSW",
+    "usg_pct": 11.4,
+    "ts_pct": 47.8,
+    "playoff_mp": 42,
+    "playoff_usg_pct": 10,
+    "playoff_ts_pct": 31.6,
+    "playoff_mpg": 14
+  },
+  {
+    "name": "Brandon Ingram",
+    "team": "NOP",
+    "usg_pct": 29.3,
+    "ts_pct": 55.400000000000006,
+    "playoff_mp": 236,
+    "playoff_usg_pct": 29.5,
+    "playoff_ts_pct": 58.4,
+    "playoff_mpg": 39.33
+  },
+  {
+    "name": "Kyrie Irving",
+    "team": "BRK",
+    "usg_pct": 29.4,
+    "ts_pct": 59.199999999999996,
+    "playoff_mp": 170,
+    "playoff_usg_pct": 21.9,
+    "playoff_ts_pct": 58.8,
+    "playoff_mpg": 42.5
+  },
+  {
+    "name": "Jaren Jackson Jr.",
+    "team": "MEM",
+    "usg_pct": 25.4,
+    "ts_pct": 53.5,
+    "playoff_mp": 147,
+    "playoff_usg_pct": 21.9,
+    "playoff_ts_pct": 51.2,
+    "playoff_mpg": 24.5
+  },
+  {
+    "name": "Isaiah Joe",
+    "team": "PHI",
+    "usg_pct": 15.5,
+    "ts_pct": 51.9,
+    "playoff_mp": 8,
+    "playoff_usg_pct": 29.4,
+    "playoff_ts_pct": 50,
+    "playoff_mpg": 2
+  },
+  {
+    "name": "Cameron Johnson",
+    "team": "PHO",
+    "usg_pct": 17.5,
+    "ts_pct": 62.5,
+    "playoff_mp": 167,
+    "playoff_usg_pct": 17.5,
+    "playoff_ts_pct": 58.3,
+    "playoff_mpg": 27.83
+  },
+  {
+    "name": "Jalen Johnson",
+    "team": "ATL",
+    "usg_pct": 19.3,
+    "ts_pct": 59,
+    "playoff_mp": 9,
+    "playoff_usg_pct": 20.5,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 4.5
+  },
+  {
+    "name": "Nikola Jokić",
+    "team": "DEN",
+    "usg_pct": 31.9,
+    "ts_pct": 66.10000000000001,
+    "playoff_mp": 171,
+    "playoff_usg_pct": 36.8,
+    "playoff_ts_pct": 64.3,
+    "playoff_mpg": 34.2
+  },
+  {
+    "name": "Derrick Jones Jr.",
+    "team": "CHI",
+    "usg_pct": 12.5,
+    "ts_pct": 63.3,
+    "playoff_mp": 59,
+    "playoff_usg_pct": 15.8,
+    "playoff_ts_pct": 51.9,
+    "playoff_mpg": 11.8
+  },
+  {
+    "name": "Herbert Jones",
+    "team": "NOP",
+    "usg_pct": 13.7,
+    "ts_pct": 57.3,
+    "playoff_mp": 226,
+    "playoff_usg_pct": 11.7,
+    "playoff_ts_pct": 59.599999999999994,
+    "playoff_mpg": 37.67
+  },
+  {
+    "name": "Tyus Jones",
+    "team": "MEM",
+    "usg_pct": 16.6,
+    "ts_pct": 54.400000000000006,
+    "playoff_mp": 115,
+    "playoff_usg_pct": 19.1,
+    "playoff_ts_pct": 62.3,
+    "playoff_mpg": 19.17
+  },
+  {
+    "name": "DeAndre Jordan",
+    "team": "PHI",
+    "usg_pct": 13.9,
+    "ts_pct": 64.1,
+    "playoff_mp": 0,
+    "playoff_usg_pct": null,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 0
+  },
+  {
+    "name": "Maxi Kleber",
+    "team": "DAL",
+    "usg_pct": 13.3,
+    "ts_pct": 53.7,
+    "playoff_mp": 140,
+    "playoff_usg_pct": 15.8,
+    "playoff_ts_pct": 76.5,
+    "playoff_mpg": 23.33
+  },
+  {
+    "name": "Kevin Knox",
+    "team": "ATL",
+    "usg_pct": 20,
+    "ts_pct": 49.1,
+    "playoff_mp": 9,
+    "playoff_usg_pct": 76.1,
+    "playoff_ts_pct": 92.60000000000001,
+    "playoff_mpg": 4.5
+  },
+  {
+    "name": "John Konchar",
+    "team": "MEM",
+    "usg_pct": 9.9,
+    "ts_pct": 61.5,
+    "playoff_mp": 17,
+    "playoff_usg_pct": 4.8,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 4.25
+  },
+  {
+    "name": "Furkan Korkmaz",
+    "team": "PHI",
+    "usg_pct": 17.6,
+    "ts_pct": 50.2,
+    "playoff_mp": 12,
+    "playoff_usg_pct": 3.9,
+    "playoff_ts_pct": 150,
+    "playoff_mpg": 3
+  },
+  {
+    "name": "Jonathan Kuminga",
+    "team": "GSW",
+    "usg_pct": 22.7,
+    "ts_pct": 60,
+    "playoff_mp": 25,
+    "playoff_usg_pct": 25.4,
+    "playoff_ts_pct": 63.2,
+    "playoff_mpg": 6.25
+  },
+  {
+    "name": "Zach LaVine",
+    "team": "CHI",
+    "usg_pct": 28.8,
+    "ts_pct": 60.5,
+    "playoff_mp": 153,
+    "playoff_usg_pct": 23.4,
+    "playoff_ts_pct": 55.300000000000004,
+    "playoff_mpg": 38.25
+  },
+  {
+    "name": "Damion Lee",
+    "team": "GSW",
+    "usg_pct": 15.8,
+    "ts_pct": 56.10000000000001,
+    "playoff_mp": 8,
+    "playoff_usg_pct": 27.5,
+    "playoff_ts_pct": 61.5,
+    "playoff_mpg": 4
+  },
+  {
+    "name": "Kevon Looney",
+    "team": "GSW",
+    "usg_pct": 12.2,
+    "ts_pct": 58.599999999999994,
+    "playoff_mp": 67,
+    "playoff_usg_pct": 7.9,
+    "playoff_ts_pct": 55.800000000000004,
+    "playoff_mpg": 13.4
+  },
+  {
+    "name": "Brook Lopez",
+    "team": "MIL",
+    "usg_pct": 21.9,
+    "ts_pct": 56.99999999999999,
+    "playoff_mp": 144,
+    "playoff_usg_pct": 18.1,
+    "playoff_ts_pct": 59.699999999999996,
+    "playoff_mpg": 28.8
+  },
+  {
+    "name": "Kyle Lowry",
+    "team": "MIA",
+    "usg_pct": 18.2,
+    "ts_pct": 60,
+    "playoff_mp": 89,
+    "playoff_usg_pct": 14.1,
+    "playoff_ts_pct": 49.6,
+    "playoff_mpg": 29.67
+  },
+  {
+    "name": "Timothé Luwawu-Cabarrot",
+    "team": "ATL",
+    "usg_pct": 14.3,
+    "ts_pct": 55.60000000000001,
+    "playoff_mp": 22,
+    "playoff_usg_pct": 10.5,
+    "playoff_ts_pct": 62.5,
+    "playoff_mpg": 5.5
+  },
+  {
+    "name": "Boban Marjanović",
+    "team": "DAL",
+    "usg_pct": 33.3,
+    "ts_pct": 61.5,
+    "playoff_mp": 1,
+    "playoff_usg_pct": 96.9,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 1
+  },
+  {
+    "name": "Naji Marshall",
+    "team": "NOP",
+    "usg_pct": 20.8,
+    "ts_pct": 50.5,
+    "playoff_mp": 56,
+    "playoff_usg_pct": 11.3,
+    "playoff_ts_pct": 76.5,
+    "playoff_mpg": 9.33
+  },
+  {
+    "name": "Caleb Martin",
+    "team": "MIA",
+    "usg_pct": 16.3,
+    "ts_pct": 61.1,
+    "playoff_mp": 63,
+    "playoff_usg_pct": 21.4,
+    "playoff_ts_pct": 34.2,
+    "playoff_mpg": 12.6
+  },
+  {
+    "name": "Wesley Matthews",
+    "team": "MIL",
+    "usg_pct": 10.7,
+    "ts_pct": 53.6,
+    "playoff_mp": 139,
+    "playoff_usg_pct": 9,
+    "playoff_ts_pct": 65.7,
+    "playoff_mpg": 27.8
+  },
+  {
+    "name": "Tyrese Maxey",
+    "team": "PHI",
+    "usg_pct": 20.2,
+    "ts_pct": 59.4,
+    "playoff_mp": 252,
+    "playoff_usg_pct": 20.7,
+    "playoff_ts_pct": 63.5,
+    "playoff_mpg": 42
+  },
+  {
+    "name": "Skylar Mays",
+    "team": "ATL",
+    "usg_pct": 15.5,
+    "ts_pct": 58.9,
+    "playoff_mp": 9,
+    "playoff_usg_pct": 5.1,
+    "playoff_ts_pct": 100,
+    "playoff_mpg": 4.5
+  },
+  {
+    "name": "CJ McCollum",
+    "team": "NOP",
+    "usg_pct": 27.5,
+    "ts_pct": 55.300000000000004,
+    "playoff_mp": 234,
+    "playoff_usg_pct": 27.9,
+    "playoff_ts_pct": 48.699999999999996,
+    "playoff_mpg": 39
+  },
+  {
+    "name": "Jaden McDaniels",
+    "team": "MIN",
+    "usg_pct": 15.3,
+    "ts_pct": 55.300000000000004,
+    "playoff_mp": 130,
+    "playoff_usg_pct": 14.9,
+    "playoff_ts_pct": 71.3,
+    "playoff_mpg": 21.67
+  },
+  {
+    "name": "JaVale McGee",
+    "team": "PHO",
+    "usg_pct": 22.8,
+    "ts_pct": 65.10000000000001,
+    "playoff_mp": 66,
+    "playoff_usg_pct": 23.7,
+    "playoff_ts_pct": 82.19999999999999,
+    "playoff_mpg": 11
+  },
+  {
+    "name": "Jordan McLaughlin",
+    "team": "MIN",
+    "usg_pct": 11.8,
+    "ts_pct": 53.5,
+    "playoff_mp": 83,
+    "playoff_usg_pct": 10.7,
+    "playoff_ts_pct": 82.6,
+    "playoff_mpg": 16.6
+  },
+  {
+    "name": "De'Anthony Melton",
+    "team": "MEM",
+    "usg_pct": 21.3,
+    "ts_pct": 52.900000000000006,
+    "playoff_mp": 47,
+    "playoff_usg_pct": 19.8,
+    "playoff_ts_pct": 23.799999999999997,
+    "playoff_mpg": 11.75
+  },
+  {
+    "name": "Khris Middleton",
+    "team": "MIL",
+    "usg_pct": 26.7,
+    "ts_pct": 57.699999999999996,
+    "playoff_mp": 72,
+    "playoff_usg_pct": 21.9,
+    "playoff_ts_pct": 57.3,
+    "playoff_mpg": 36
+  },
+  {
+    "name": "Patty Mills",
+    "team": "BRK",
+    "usg_pct": 16.4,
+    "ts_pct": 56.3,
+    "playoff_mp": 72,
+    "playoff_usg_pct": 10.8,
+    "playoff_ts_pct": 78.10000000000001,
+    "playoff_mpg": 18
+  },
+  {
+    "name": "Shake Milton",
+    "team": "PHI",
+    "usg_pct": 18.3,
+    "ts_pct": 51.7,
+    "playoff_mp": 72,
+    "playoff_usg_pct": 11.2,
+    "playoff_ts_pct": 74.6,
+    "playoff_mpg": 12
+  },
+  {
+    "name": "Donovan Mitchell",
+    "team": "UTA",
+    "usg_pct": 32.9,
+    "ts_pct": 57.199999999999996,
+    "playoff_mp": 229,
+    "playoff_usg_pct": 34.3,
+    "playoff_ts_pct": 50.5,
+    "playoff_mpg": 38.17
+  },
+  {
+    "name": "Greg Monroe",
+    "team": "MIN",
+    "usg_pct": 17.3,
+    "ts_pct": 56.599999999999994,
+    "playoff_mp": 7,
+    "playoff_usg_pct": 36.7,
+    "playoff_ts_pct": 40,
+    "playoff_mpg": 3.5
+  },
+  {
+    "name": "Moses Moody",
+    "team": "GSW",
+    "usg_pct": 15.2,
+    "ts_pct": 57.3,
+    "playoff_mp": 8,
+    "playoff_usg_pct": 21.9,
+    "playoff_ts_pct": 17.4,
+    "playoff_mpg": 4
+  },
+  {
+    "name": "Ja Morant",
+    "team": "MEM",
+    "usg_pct": 33.7,
+    "ts_pct": 57.49999999999999,
+    "playoff_mp": 222,
+    "playoff_usg_pct": 28.4,
+    "playoff_ts_pct": 49.6,
+    "playoff_mpg": 37
+  },
+  {
+    "name": "Monte Morris",
+    "team": "DEN",
+    "usg_pct": 17.4,
+    "ts_pct": 58.3,
+    "playoff_mp": 156,
+    "playoff_usg_pct": 17.9,
+    "playoff_ts_pct": 62.2,
+    "playoff_mpg": 31.2
+  },
+  {
+    "name": "Trey Murphy III",
+    "team": "NOP",
+    "usg_pct": 15.7,
+    "ts_pct": 55.800000000000004,
+    "playoff_mp": 120,
+    "playoff_usg_pct": 9,
+    "playoff_ts_pct": 64,
+    "playoff_mpg": 20
+  },
+  {
+    "name": "Svi Mykhailiuk",
+    "team": "TOR",
+    "usg_pct": 16.9,
+    "ts_pct": 50.9,
+    "playoff_mp": 5,
+    "playoff_usg_pct": 22.6,
+    "playoff_ts_pct": 20.5,
+    "playoff_mpg": 1.67
+  },
+  {
+    "name": "Larry Nance Jr.",
+    "team": "NOP",
+    "usg_pct": 12.8,
+    "ts_pct": 59,
+    "playoff_mp": 130,
+    "playoff_usg_pct": 16.5,
+    "playoff_ts_pct": 62.7,
+    "playoff_mpg": 21.67
+  },
+  {
+    "name": "Georges Niang",
+    "team": "PHI",
+    "usg_pct": 16.8,
+    "ts_pct": 59.4,
+    "playoff_mp": 105,
+    "playoff_usg_pct": 10.3,
+    "playoff_ts_pct": 100,
+    "playoff_mpg": 17.5
+  },
+  {
+    "name": "Zeke Nnaji",
+    "team": "DEN",
+    "usg_pct": 14.9,
+    "ts_pct": 62.9,
+    "playoff_mp": 9,
+    "playoff_usg_pct": 4.8,
+    "playoff_ts_pct": 150,
+    "playoff_mpg": 4.5
+  },
+  {
+    "name": "Jaylen Nowell",
+    "team": "MIN",
+    "usg_pct": 21,
+    "ts_pct": 58.099999999999994,
+    "playoff_mp": 12,
+    "playoff_usg_pct": 35.7,
+    "playoff_ts_pct": 30,
+    "playoff_mpg": 12
+  },
+  {
+    "name": "Jordan Nwora",
+    "team": "MIL",
+    "usg_pct": 19.4,
+    "ts_pct": 50.6,
+    "playoff_mp": 13,
+    "playoff_usg_pct": 20,
+    "playoff_ts_pct": 16.7,
+    "playoff_mpg": 4.33
+  },
+  {
+    "name": "Royce O'Neale",
+    "team": "UTA",
+    "usg_pct": 9.9,
+    "ts_pct": 60.8,
+    "playoff_mp": 188,
+    "playoff_usg_pct": 9.7,
+    "playoff_ts_pct": 51.6,
+    "playoff_mpg": 31.33
+  },
+  {
+    "name": "Josh Okogie",
+    "team": "MIN",
+    "usg_pct": 12.1,
+    "ts_pct": 52.6,
+    "playoff_mp": 2,
+    "playoff_usg_pct": 0,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 2
+  },
+  {
+    "name": "Onyeka Okongwu",
+    "team": "ATL",
+    "usg_pct": 14,
+    "ts_pct": 71.39999999999999,
+    "playoff_mp": 108,
+    "playoff_usg_pct": 10.4,
+    "playoff_ts_pct": 63.7,
+    "playoff_mpg": 21.6
+  },
+  {
+    "name": "Victor Oladipo",
+    "team": "MIA",
+    "usg_pct": 25.1,
+    "ts_pct": 60.8,
+    "playoff_mp": 59,
+    "playoff_usg_pct": 23.1,
+    "playoff_ts_pct": 52.2,
+    "playoff_mpg": 29.5
+  },
+  {
+    "name": "Eric Paschall",
+    "team": "UTA",
+    "usg_pct": 17.7,
+    "ts_pct": 61.199999999999996,
+    "playoff_mp": 24,
+    "playoff_usg_pct": 12.6,
+    "playoff_ts_pct": 62.1,
+    "playoff_mpg": 6
+  },
+  {
+    "name": "Chris Paul",
+    "team": "PHO",
+    "usg_pct": 19.7,
+    "ts_pct": 58.099999999999994,
+    "playoff_mp": 221,
+    "playoff_usg_pct": 23.3,
+    "playoff_ts_pct": 66.3,
+    "playoff_mpg": 36.83
+  },
+  {
+    "name": "Cameron Payne",
+    "team": "PHO",
+    "usg_pct": 24.6,
+    "ts_pct": 50,
+    "playoff_mp": 90,
+    "playoff_usg_pct": 26.9,
+    "playoff_ts_pct": 38.1,
+    "playoff_mpg": 15
+  },
+  {
+    "name": "Elfrid Payton",
+    "team": "PHO",
+    "usg_pct": 18.5,
+    "ts_pct": 39.7,
+    "playoff_mp": 2,
+    "playoff_usg_pct": 23.4,
+    "playoff_ts_pct": 100,
+    "playoff_mpg": 2
+  },
+  {
+    "name": "Gary Payton II",
+    "team": "GSW",
+    "usg_pct": 14.3,
+    "ts_pct": 67.9,
+    "playoff_mp": 85,
+    "playoff_usg_pct": 10.4,
+    "playoff_ts_pct": 86.6,
+    "playoff_mpg": 17
+  },
+  {
+    "name": "Jordan Poole",
+    "team": "GSW",
+    "usg_pct": 26,
+    "ts_pct": 59.8,
+    "playoff_mp": 162,
+    "playoff_usg_pct": 23.8,
+    "playoff_ts_pct": 71.5,
+    "playoff_mpg": 32.4
+  },
+  {
+    "name": "Otto Porter Jr.",
+    "team": "GSW",
+    "usg_pct": 15,
+    "ts_pct": 58.099999999999994,
+    "playoff_mp": 109,
+    "playoff_usg_pct": 11.5,
+    "playoff_ts_pct": 37.2,
+    "playoff_mpg": 21.8
+  },
+  {
+    "name": "Bobby Portis",
+    "team": "MIL",
+    "usg_pct": 21.3,
+    "ts_pct": 57.099999999999994,
+    "playoff_mp": 119,
+    "playoff_usg_pct": 22.2,
+    "playoff_ts_pct": 54.800000000000004,
+    "playoff_mpg": 23.8
+  },
+  {
+    "name": "Dwight Powell",
+    "team": "DAL",
+    "usg_pct": 14,
+    "ts_pct": 72.5,
+    "playoff_mp": 106,
+    "playoff_usg_pct": 12.1,
+    "playoff_ts_pct": 58.099999999999994,
+    "playoff_mpg": 17.67
+  },
+  {
+    "name": "Taurean Prince",
+    "team": "MIN",
+    "usg_pct": 17,
+    "ts_pct": 58.9,
+    "playoff_mp": 65,
+    "playoff_usg_pct": 22.5,
+    "playoff_ts_pct": 49.9,
+    "playoff_mpg": 13
+  },
+  {
+    "name": "Payton Pritchard",
+    "team": "BOS",
+    "usg_pct": 18.6,
+    "ts_pct": 57.8,
+    "playoff_mp": 46,
+    "playoff_usg_pct": 15.4,
+    "playoff_ts_pct": 76.7,
+    "playoff_mpg": 11.5
+  },
+  {
+    "name": "Paul Reed",
+    "team": "PHI",
+    "usg_pct": 16.7,
+    "ts_pct": 56.8,
+    "playoff_mp": 60,
+    "playoff_usg_pct": 21.3,
+    "playoff_ts_pct": 61.9,
+    "playoff_mpg": 10
+  },
+  {
+    "name": "Naz Reid",
+    "team": "MIN",
+    "usg_pct": 21.4,
+    "ts_pct": 58.8,
+    "playoff_mp": 54,
+    "playoff_usg_pct": 19.9,
+    "playoff_ts_pct": 59.8,
+    "playoff_mpg": 10.8
+  },
+  {
+    "name": "Austin Rivers",
+    "team": "DEN",
+    "usg_pct": 12.6,
+    "ts_pct": 54.6,
+    "playoff_mp": 108,
+    "playoff_usg_pct": 9,
+    "playoff_ts_pct": 56.89999999999999,
+    "playoff_mpg": 21.6
+  },
+  {
+    "name": "Duncan Robinson",
+    "team": "MIA",
+    "usg_pct": 17.7,
+    "ts_pct": 57.3,
+    "playoff_mp": 66,
+    "playoff_usg_pct": 16,
+    "playoff_ts_pct": 82.69999999999999,
+    "playoff_mpg": 13.2
+  },
+  {
+    "name": "D'Angelo Russell",
+    "team": "MIN",
+    "usg_pct": 25.1,
+    "ts_pct": 54.400000000000006,
+    "playoff_mp": 196,
+    "playoff_usg_pct": 21,
+    "playoff_ts_pct": 45.5,
+    "playoff_mpg": 32.67
+  },
+  {
+    "name": "Landry Shamet",
+    "team": "PHO",
+    "usg_pct": 16.8,
+    "ts_pct": 55.00000000000001,
+    "playoff_mp": 98,
+    "playoff_usg_pct": 13.5,
+    "playoff_ts_pct": 47.3,
+    "playoff_mpg": 19.6
+  },
+  {
+    "name": "Day'Ron Sharpe",
+    "team": "BRK",
+    "usg_pct": 21.7,
+    "ts_pct": 59.3,
+    "playoff_mp": 0,
+    "playoff_usg_pct": null,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 0
+  },
+  {
+    "name": "Pascal Siakam",
+    "team": "TOR",
+    "usg_pct": 25.8,
+    "ts_pct": 56.49999999999999,
+    "playoff_mp": 260,
+    "playoff_usg_pct": 24.2,
+    "playoff_ts_pct": 55.800000000000004,
+    "playoff_mpg": 43.33
+  },
+  {
+    "name": "Marcus Smart",
+    "team": "BOS",
+    "usg_pct": 18.3,
+    "ts_pct": 54,
+    "playoff_mp": 147,
+    "playoff_usg_pct": 21.5,
+    "playoff_ts_pct": 53.7,
+    "playoff_mpg": 36.75
+  },
+  {
+    "name": "Jaden Springer",
+    "team": "PHI",
+    "usg_pct": 15,
+    "ts_pct": 100,
+    "playoff_mp": 4,
+    "playoff_usg_pct": 35.3,
+    "playoff_ts_pct": 66.7,
+    "playoff_mpg": 2
+  },
+  {
+    "name": "Max Strus",
+    "team": "MIA",
+    "usg_pct": 18.1,
+    "ts_pct": 61.4,
+    "playoff_mp": 144,
+    "playoff_usg_pct": 20.7,
+    "playoff_ts_pct": 56.39999999999999,
+    "playoff_mpg": 28.8
+  },
+  {
+    "name": "Jayson Tatum",
+    "team": "BOS",
+    "usg_pct": 32.1,
+    "ts_pct": 57.8,
+    "playoff_mp": 167,
+    "playoff_usg_pct": 30.7,
+    "playoff_ts_pct": 61.6,
+    "playoff_mpg": 41.75
+  },
+  {
+    "name": "Garrett Temple",
+    "team": "NOP",
+    "usg_pct": 13.9,
+    "ts_pct": 49.4,
+    "playoff_mp": 2,
+    "playoff_usg_pct": 0,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 2
+  },
+  {
+    "name": "Daniel Theis",
+    "team": "BOS",
+    "usg_pct": 16.2,
+    "ts_pct": 59.5,
+    "playoff_mp": 88,
+    "playoff_usg_pct": 16.4,
+    "playoff_ts_pct": 61.5,
+    "playoff_mpg": 22
+  },
+  {
+    "name": "Cam Thomas",
+    "team": "BRK",
+    "usg_pct": 22.1,
+    "ts_pct": 51.9,
+    "playoff_mp": 0,
+    "playoff_usg_pct": null,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 0
+  },
+  {
+    "name": "Klay Thompson",
+    "team": "GSW",
+    "usg_pct": 29.6,
+    "ts_pct": 54.7,
+    "playoff_mp": 173,
+    "playoff_usg_pct": 24.4,
+    "playoff_ts_pct": 64.5,
+    "playoff_mpg": 34.6
+  },
+  {
+    "name": "Tristan Thompson",
+    "team": "CHI",
+    "usg_pct": 17.5,
+    "ts_pct": 54.1,
+    "playoff_mp": 38,
+    "playoff_usg_pct": 11.5,
+    "playoff_ts_pct": 40,
+    "playoff_mpg": 7.6
+  },
+  {
+    "name": "Matisse Thybulle",
+    "team": "PHI",
+    "usg_pct": 9.5,
+    "ts_pct": 59.4,
+    "playoff_mp": 43,
+    "playoff_usg_pct": 13,
+    "playoff_ts_pct": 46,
+    "playoff_mpg": 14.33
+  },
+  {
+    "name": "Xavier Tillman Sr.",
+    "team": "MEM",
+    "usg_pct": 16.4,
+    "ts_pct": 51,
+    "playoff_mp": 80,
+    "playoff_usg_pct": 12.3,
+    "playoff_ts_pct": 69.8,
+    "playoff_mpg": 16
+  },
+  {
+    "name": "Juan Toscano-Anderson",
+    "team": "GSW",
+    "usg_pct": 14.7,
+    "ts_pct": 56.10000000000001,
+    "playoff_mp": 8,
+    "playoff_usg_pct": 16.2,
+    "playoff_ts_pct": 104.2,
+    "playoff_mpg": 4
+  },
+  {
+    "name": "Karl-Anthony Towns",
+    "team": "MIN",
+    "usg_pct": 27.8,
+    "ts_pct": 64,
+    "playoff_mp": 222,
+    "playoff_usg_pct": 24.9,
+    "playoff_ts_pct": 64.2,
+    "playoff_mpg": 37
+  },
+  {
+    "name": "Gary Trent Jr.",
+    "team": "TOR",
+    "usg_pct": 21.8,
+    "ts_pct": 54.6,
+    "playoff_mp": 199,
+    "playoff_usg_pct": 21.8,
+    "playoff_ts_pct": 50.9,
+    "playoff_mpg": 33.17
+  },
+  {
+    "name": "P.J. Tucker",
+    "team": "MIA",
+    "usg_pct": 11.7,
+    "ts_pct": 59.3,
+    "playoff_mp": 141,
+    "playoff_usg_pct": 10.6,
+    "playoff_ts_pct": 75.6,
+    "playoff_mpg": 28.2
+  },
+  {
+    "name": "Rayjon Tucker",
+    "team": "MIL",
+    "usg_pct": 7.9,
+    "ts_pct": 86.9,
+    "playoff_mp": 12,
+    "playoff_usg_pct": 0,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 4
+  },
+  {
+    "name": "Jonas Valančiūnas",
+    "team": "NOP",
+    "usg_pct": 23.8,
+    "ts_pct": 61.7,
+    "playoff_mp": 175,
+    "playoff_usg_pct": 22.5,
+    "playoff_ts_pct": 54.800000000000004,
+    "playoff_mpg": 29.17
+  },
+  {
+    "name": "Jarred Vanderbilt",
+    "team": "MIN",
+    "usg_pct": 10.9,
+    "ts_pct": 61.199999999999996,
+    "playoff_mp": 129,
+    "playoff_usg_pct": 12.1,
+    "playoff_ts_pct": 52.5,
+    "playoff_mpg": 21.5
+  },
+  {
+    "name": "Fred VanVleet",
+    "team": "TOR",
+    "usg_pct": 23.7,
+    "ts_pct": 55.2,
+    "playoff_mp": 140,
+    "playoff_usg_pct": 20.1,
+    "playoff_ts_pct": 48.6,
+    "playoff_mpg": 35
+  },
+  {
+    "name": "Gabe Vincent",
+    "team": "MIA",
+    "usg_pct": 17.8,
+    "ts_pct": 55.1,
+    "playoff_mp": 126,
+    "playoff_usg_pct": 16.4,
+    "playoff_ts_pct": 53,
+    "playoff_mpg": 25.2
+  },
+  {
+    "name": "Nikola Vučević",
+    "team": "CHI",
+    "usg_pct": 24.5,
+    "ts_pct": 53.300000000000004,
+    "playoff_mp": 181,
+    "playoff_usg_pct": 24.5,
+    "playoff_ts_pct": 52,
+    "playoff_mpg": 36.2
+  },
+  {
+    "name": "Ish Wainright",
+    "team": "PHO",
+    "usg_pct": 14.7,
+    "ts_pct": 49.4,
+    "playoff_mp": 2,
+    "playoff_usg_pct": 46.8,
+    "playoff_ts_pct": null,
+    "playoff_mpg": 2
+  },
+  {
+    "name": "Yuta Watanabe",
+    "team": "TOR",
+    "usg_pct": 16.8,
+    "ts_pct": 52.400000000000006,
+    "playoff_mp": 10,
+    "playoff_usg_pct": 32.5,
+    "playoff_ts_pct": 33.300000000000004,
+    "playoff_mpg": 2.5
+  },
+  {
+    "name": "Coby White",
+    "team": "CHI",
+    "usg_pct": 19.8,
+    "ts_pct": 56.39999999999999,
+    "playoff_mp": 98,
+    "playoff_usg_pct": 23.8,
+    "playoff_ts_pct": 44.5,
+    "playoff_mpg": 19.6
+  },
+  {
+    "name": "Derrick White",
+    "team": "BOS",
+    "usg_pct": 19.9,
+    "ts_pct": 54.900000000000006,
+    "playoff_mp": 81,
+    "playoff_usg_pct": 15.4,
+    "playoff_ts_pct": 41.699999999999996,
+    "playoff_mpg": 20.25
+  },
+  {
+    "name": "Hassan Whiteside",
+    "team": "UTA",
+    "usg_pct": 17.1,
+    "ts_pct": 66.2,
+    "playoff_mp": 65,
+    "playoff_usg_pct": 9.9,
+    "playoff_ts_pct": 40,
+    "playoff_mpg": 10.83
+  },
+  {
+    "name": "Andrew Wiggins",
+    "team": "GSW",
+    "usg_pct": 23.1,
+    "ts_pct": 56.00000000000001,
+    "playoff_mp": 150,
+    "playoff_usg_pct": 19.3,
+    "playoff_ts_pct": 60.3,
+    "playoff_mpg": 30
+  },
+  {
+    "name": "Grant Williams",
+    "team": "BOS",
+    "usg_pct": 12.6,
+    "ts_pct": 63.5,
+    "playoff_mp": 119,
+    "playoff_usg_pct": 11.7,
+    "playoff_ts_pct": 76.2,
+    "playoff_mpg": 29.75
+  },
+  {
+    "name": "Patrick Williams",
+    "team": "CHI",
+    "usg_pct": 14.2,
+    "ts_pct": 63.7,
+    "playoff_mp": 153,
+    "playoff_usg_pct": 16.9,
+    "playoff_ts_pct": 56.89999999999999,
+    "playoff_mpg": 30.6
+  },
+  {
+    "name": "Robert Williams",
+    "team": "BOS",
+    "usg_pct": 11.5,
+    "ts_pct": 74.5,
+    "playoff_mp": 30,
+    "playoff_usg_pct": 10.2,
+    "playoff_ts_pct": 42.5,
+    "playoff_mpg": 15
+  },
+  {
+    "name": "Ziaire Williams",
+    "team": "MEM",
+    "usg_pct": 14.9,
+    "ts_pct": 55.900000000000006,
+    "playoff_mp": 55,
+    "playoff_usg_pct": 17.3,
+    "playoff_ts_pct": 59.8,
+    "playoff_mpg": 11
+  },
+  {
+    "name": "Delon Wright",
+    "team": "ATL",
+    "usg_pct": 10.3,
+    "ts_pct": 57.599999999999994,
+    "playoff_mp": 137,
+    "playoff_usg_pct": 12.8,
+    "playoff_ts_pct": 62.2,
+    "playoff_mpg": 27.4
+  },
+  {
+    "name": "Thaddeus Young",
+    "team": "TOR",
+    "usg_pct": 17.4,
+    "ts_pct": 54.800000000000004,
+    "playoff_mp": 87,
+    "playoff_usg_pct": 12.1,
+    "playoff_ts_pct": 50.6,
+    "playoff_mpg": 14.5
+  },
+  {
+    "name": "Trae Young",
+    "team": "ATL",
+    "usg_pct": 34.4,
+    "ts_pct": 60.3,
+    "playoff_mp": 186,
+    "playoff_usg_pct": 28.3,
+    "playoff_ts_pct": 46.1,
+    "playoff_mpg": 37.2
+  },
+  {
+    "name": "Omer Yurtseven",
+    "team": "MIA",
+    "usg_pct": 19.9,
+    "ts_pct": 54.6,
+    "playoff_mp": 8,
+    "playoff_usg_pct": 29.5,
+    "playoff_ts_pct": 65.8,
+    "playoff_mpg": 4
+  }
+]
