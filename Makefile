@@ -23,6 +23,8 @@ production:
 html: dist/index.html
 	# the teams viewer is still just raw HTML, so copy it straight into dist
 	cp -r src/teams/ dist/teams/
+	# playoff is an observable plot experiment at the moment
+	cp -r playoff/ dist/playoff/
 	cp favicon.ico dist/
 
 # build our index file. We're only doing one substitution, so we just do it by
