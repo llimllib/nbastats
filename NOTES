@@ -66,3 +66,13 @@ Success. Encryption and decryption worked fine :-)
 
 Save settings? [y/N] y
 Configuration saved to '/Users/llimllib/.s3cfg'
+
+Good example diamond chart:
+
+https://twitter.com/owenlhjphillips/status/1572196371322765315
+
+he gives some resources for R:
+
+https://gist.github.com/benmarwick/8cf22ecb74ac511f8ac1c70aef6038a7
+https://unarsezer.medium.com/how-to-make-peter-mckeevers-diamond-chart-in-ggplot2-8b9321e7b2ee
+https://gist.github.com/Henryjean/885108b96e5e556d9429e9484e072ddb
