@@ -1,6 +1,4 @@
 import * as duckdb from "@duckdb/duckdb-wasm";
-// import duckdb_wasm from "../node_modules/@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm";
-// import duckdb_wasm_next from "../node_modules/@duckdb/duckdb-wasm/dist/duckdb-eh.wasm";
 
 import { axisTop, axisRight } from "d3-axis";
 import { pointer, select, selectAll } from "d3-selection";
