@@ -13,7 +13,7 @@ static:
 # - the duckdb wasm files, which are copied from the node_modules dir if they
 #   are newer than the ones we already have in dist/duckdb
 # - the bundle output, dist/viewer_duckdb.js
-wasm: duckdb_files dist/viewer_duckdb.js
+wasm: dist/viewer_duckdb.js
 
 # make a production build. Force all files to be rebuilt with
 # the production values
@@ -45,12 +45,6 @@ endif
 # if our source files have changed, rebuild the otuput bundle
 dist/viewer_duckdb.js: src/viewer.js package-lock.json $(BUILD_PREREQS_FULL) build.mjs
 	node build.mjs
-
-# If the files contained in the duckdb node_modules dir have changed, copy them
-# to dist/duckdb
-duckdb_files:
-	# only update files if they're newer
-	rsync --update $(DUCKDB_PREREQS_FULL) $(DIST)/duckdb/
 
 # clean up the build files
 clean:
@@ -145,4 +139,4 @@ freeze:
 		pip freeze > requirements.txt && \
 		deactivate
 
-.PHONY: all html static serve publish lint update syncdata requirements freeze flush duckdb_files wasm clean
+.PHONY: all html static serve publish lint update syncdata requirements freeze flush wasm clean

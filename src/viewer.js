@@ -1,5 +1,13 @@
 import * as duckdb from "@duckdb/duckdb-wasm";
 
+import { axisTop, axisRight } from "d3-axis";
+import { pointer, select, selectAll } from "d3-selection";
+import { polygonCentroid, polygonArea } from "d3-polygon";
+import { Delaunay } from "d3-delaunay";
+import { extent, reverse } from "d3-array";
+import { scaleBand, scaleLinear, scaleRadial } from "d3-scale";
+import { format } from "d3-format";
+
 const $ = (s) => document.querySelector(s);
 
 const settings = {
@@ -21,8 +29,8 @@ async function query(conn, query) {
   return table.toArray().map((x) => x.toJSON());
 }
 
-function hover(event, tooltip, stats, scales, fields, delaunay, cells) {
-  const [mx, my] = d3.pointer(event, this);
+function hover(event, tooltip, fields, delaunay, cells) {
+  const [mx, my] = pointer(event, this);
 
   const nearest = delaunay.find(mx, my);
   const closestPlayer = cells[nearest][0];
@@ -70,7 +78,7 @@ function orientText(scales, fields) {
     if (!cell) {
       return;
     }
-    const [cx, cy] = d3.polygonCentroid(cell);
+    const [cx, cy] = polygonCentroid(cell);
     const angle =
       (Math.round(
         (Math.atan2(
@@ -83,7 +91,7 @@ function orientText(scales, fields) {
         4) %
       4;
     const r = scales.r(player[fields.r]) * 1.1;
-    d3.select(this).call(
+    select(this).call(
       angle === 0
         ? orient("right", r)
         : angle === 3
@@ -96,7 +104,7 @@ function orientText(scales, fields) {
 }
 
 function calcVoronoi(stats, scales, fields) {
-  const delaunay = d3.Delaunay.from(
+  const delaunay = Delaunay.from(
     stats,
     (p) => scales.x(p[fields.x]),
     (p) => scales.y(p[fields.y])
@@ -113,7 +121,7 @@ function calcVoronoi(stats, scales, fields) {
   return [delaunay, cells];
 }
 
-function pointLabels(svg, stats, scales, fields, cells) {
+function pointLabels(svg, scales, fields, cells) {
   var orienter = orientText(scales, fields);
 
   const container = svg
@@ -132,11 +140,11 @@ function pointLabels(svg, stats, scales, fields, cells) {
       ([p, _]) => `translate(${scales.x(p[fields.x])},${scales.y(p[fields.y])})`
     )
     .attr("display", ([, cell]) =>
-      !cell || -d3.polygonArea(cell) > 3000 ? null : "none"
+      !cell || -polygonArea(cell) > 3000 ? null : "none"
     )
     .text(([p, _]) => p.name);
 
-  return function (stats, scales, fields, cells) {
+  return function (scales, fields, cells) {
     var orienter = orientText(scales, fields);
 
     // TODO the label immediately changes orientation instead of
@@ -154,14 +162,14 @@ function pointLabels(svg, stats, scales, fields, cells) {
           `translate(${scales.x(p[fields.x])},${scales.y(p[fields.y])})`
       )
       .attr("display", ([, cell]) =>
-        !cell || -d3.polygonArea(cell) > 3000 ? null : "none"
+        !cell || -polygonArea(cell) > 3000 ? null : "none"
       )
       .text(([p, _]) => p.name);
   };
 }
 
 function paddedExtent(lst, fn, reversed) {
-  var [min, max] = d3.extent(lst, fn);
+  var [min, max] = extent(lst, fn);
   if (reversed === undefined || !reversed) {
     return [
       min * (1 - settings.domainPadding),
@@ -181,13 +189,12 @@ function makeScales(stats, fields) {
   var x;
   if (xAxType == "categorical") {
     const domain = new Set(stats.map((p) => p[fields.x]));
-    x = d3.scaleBand(domain, [
+    x = scaleBand(domain, [
       settings.padding.left,
       settings.width - settings.padding.right,
     ]);
   } else {
-    x = d3
-      .scaleLinear()
+    x = scaleLinear()
       .domain(paddedExtent(stats, (s) => s[fields.x], xreversed))
       .range([settings.padding.left, settings.width - settings.padding.right]);
   }
@@ -197,14 +204,13 @@ function makeScales(stats, fields) {
   var y;
   if (yAxType == "categorical") {
     const domain = new Set(stats.map((p) => p[fields.y]));
-    y = d3.scaleBand(domain, [
+    y = scaleBand(domain, [
       settings.padding.top,
       settings.height - settings.padding.bottom,
     ]);
   } else {
-    y = d3
-      .scaleLinear()
-      .domain(d3.reverse(paddedExtent(stats, (s) => s[fields.y], yreversed)))
+    y = scaleLinear()
+      .domain(reverse(paddedExtent(stats, (s) => s[fields.y], yreversed)))
       .range([settings.padding.top, settings.height - settings.padding.bottom]);
   }
 
@@ -213,9 +219,8 @@ function makeScales(stats, fields) {
     // if radius is a number, the scale is just a constant
     r = (_) => parseFloat(fields.r);
   } else {
-    r = d3
-      .scaleRadial()
-      .domain(d3.extent(stats, (s) => s[fields.r]))
+    r = scaleRadial()
+      .domain(extent(stats, (s) => s[fields.r]))
       .range([settings.minRadius, settings.maxRadius]);
   }
 
@@ -223,11 +228,10 @@ function makeScales(stats, fields) {
 }
 
 // https://observablehq.com/@d3/styled-axes
-function axes(svg, stats, scales) {
-  var xaxis = d3
-    .axisTop(scales.x)
+function axes(svg, scales) {
+  var xaxis = axisTop(scales.x)
     .tickSize(settings.height - settings.padding.top)
-    .tickFormat(d3.format(".2r"));
+    .tickFormat(format(".2r"));
 
   const xaxisg = svg
     .append("g")
@@ -238,10 +242,9 @@ function axes(svg, stats, scales) {
     .call((g) => g.selectAll(".tick line").attr("stroke-opacity", 0.1))
     .call((g) => g.selectAll(".tick text").attr("y", 0).attr("dx", -15));
 
-  const yaxis = d3
-    .axisRight(scales.y)
+  const yaxis = axisRight(scales.y)
     .tickSize(settings.width - settings.padding.right)
-    .tickFormat(d3.format(".2r"));
+    .tickFormat(format(".2r"));
 
   const yaxisg = svg
     .append("g")
@@ -253,19 +256,19 @@ function axes(svg, stats, scales) {
     .call((g) => g.selectAll(".tick text").attr("dy", -4).attr("x", 4));
 
   // return an update function
-  return function (stats, scales, fields) {
+  return function (scales, fields) {
     const xAxType = statMeta[fields.x].type;
     if (xAxType == "categorical") {
       xaxis.scale(scales.x).tickFormat((p) => p);
     } else {
-      xaxis.scale(scales.x).tickFormat(d3.format(".2r"));
+      xaxis.scale(scales.x).tickFormat(format(".2r"));
     }
 
     const yAxType = statMeta[fields.y].type;
     if (yAxType == "categorical") {
       yaxis.scale(scales.y).tickFormat((p) => p);
     } else {
-      yaxis.scale(scales.y).tickFormat(d3.format(".2r"));
+      yaxis.scale(scales.y).tickFormat(format(".2r"));
     }
 
     xaxisg
@@ -335,7 +338,7 @@ function points(svg, stats, scales, fields) {
 
   return function (stats, scales, fields) {
     useTeamColors = $("#teamcolors").checked;
-    d3.selectAll(".player_label").remove();
+    selectAll(".player_label").remove();
 
     // TODO: does this handle entries and exits?
     container
@@ -378,13 +381,13 @@ function points(svg, stats, scales, fields) {
           // jump to smaller?
           update.call((update) =>
             update
-              .each((p, i, ns) => {
-                d3.select(ns[i])
+              .each((_, i, ns) => {
+                select(ns[i])
                   .select("circle.outer")
                   .transition()
                   .duration(settings.duration)
                   .attr("r", (d) => scales.r(d[fields.r]));
-                d3.select(ns[i])
+                select(ns[i])
                   .select("circle.inner")
                   .transition()
                   .duration(settings.duration)
@@ -462,7 +465,7 @@ function randn_bm() {
 }
 
 function loading() {
-  const svg = d3.select("#canvas");
+  const svg = select("#canvas");
   const r = 8;
   let t = 0;
 
@@ -556,7 +559,7 @@ function loading() {
       .attr("cx", (_, idx, nodes) => {
         // the d3 docs suggest that `this` should be nodes[idx], but I'm
         // getting window instead
-        const me = d3.select(nodes[idx]);
+        const me = select(nodes[idx]);
         const i = +me.attr("i");
         return (
           (groupr + Math.abs(Math.sin(t / 1000 + i / nCircles)) * bounce) *
@@ -564,7 +567,7 @@ function loading() {
         );
       })
       .attr("cy", (_, idx, nodes) => {
-        const me = d3.select(nodes[idx]);
+        const me = select(nodes[idx]);
         const i = +me.attr("i");
         return (
           (groupr + Math.abs(Math.sin(t / 1000 + i / nCircles) * bounce)) *
@@ -577,22 +580,22 @@ function loading() {
 
 // stats should be a list of player objects
 function graph(stats, fields) {
-  const svg = d3.select("#canvas");
+  const svg = select("#canvas");
   svg.selectAll("*").remove();
 
   var scales = makeScales(stats, fields);
   var [delaunay, voronoiCells] = calcVoronoi(stats, scales, fields);
-  const updateAxes = axes(svg, stats, scales);
+  const updateAxes = axes(svg, scales);
   const updateAxisLabels = axisLabels(svg, fields);
   const updatePoints = points(svg, stats, scales, fields);
-  const updateLabels = pointLabels(svg, stats, scales, fields, voronoiCells);
+  const updateLabels = pointLabels(svg, scales, fields, voronoiCells);
 
-  const tooltip = d3.select(".tooltip");
+  const tooltip = select(".tooltip");
 
   svg.append("g").attr("class", "titleg");
 
   svg.on("touchmove mousemove", (evt) =>
-    hover(evt, tooltip, stats, scales, fields, delaunay, voronoiCells)
+    hover(evt, tooltip, fields, delaunay, voronoiCells)
   );
 
   svg.on("touchend mouseleave", () => tooltip.style("visibility", "hidden"));
@@ -601,7 +604,7 @@ function graph(stats, fields) {
   return Object.assign(svg.node(), {
     update(stats, fields) {
       scales.y.domain(
-        d3.reverse(
+        reverse(
           paddedExtent(stats, (s) => s[fields.y], statMeta[fields.y].reversed)
         )
       );
@@ -611,25 +614,17 @@ function graph(stats, fields) {
 
       scales = makeScales(stats, fields);
       [delaunay, voronoiCells] = calcVoronoi(stats, scales, fields);
-      updateAxes(stats, scales, fields);
+      updateAxes(scales, fields);
       updateAxisLabels(fields);
       updatePoints(stats, scales, fields);
-      updateLabels(stats, scales, fields, voronoiCells);
+      updateLabels(scales, fields, voronoiCells);
 
       // If an event listener was previously registered for the same typename
       // on a selected element, the old listener is removed before the new
       // listener is added.
-      // https://github.com/d3/d3-selection/blob/v2.0.0/README.md#selection_on
+      // https://github.com/d3/selection/blob/v2.0.0/README.md#selection_on
       svg.on("touchmove mousemove", (evt) => {
-        return hover(
-          evt,
-          tooltip,
-          stats,
-          scales,
-          fields,
-          delaunay,
-          voronoiCells
-        );
+        return hover(evt, tooltip, fields, delaunay, voronoiCells);
       });
     },
   });
@@ -1185,27 +1180,27 @@ function prepare() {
       if (meta.name == "") {
         return;
       }
-      d3.select("#statx")
+      select("#statx")
         .append("option")
         .attr("value", key)
         .attr("id", `statx_${key}`)
         .text(meta.name);
-      d3.select("#staty")
+      select("#staty")
         .append("option")
         .attr("value", key)
         .attr("id", `staty_${key}`)
         .text(meta.name);
       // TODO: only append fields to radius that make sense... float only maybe?
       if (["numeric"].indexOf(meta.type) != -1) {
-        d3.select("#radius")
+        select("#radius")
           .append("option")
           .attr("value", key)
           .attr("id", `staty_${key}`)
           .text(meta.name);
       }
     });
-  d3.select("#statx_ts_pct").attr("selected", true);
-  d3.select("#staty_usg_pct").attr("selected", true);
+  select("#statx_ts_pct").attr("selected", true);
+  select("#staty_usg_pct").attr("selected", true);
 }
 
 async function changeYear(_) {
@@ -1215,7 +1210,7 @@ async function changeYear(_) {
     r: $("#radius").value,
   };
 
-  d3.selectAll("#canvas").html("");
+  selectAll("#canvas").html("");
   graph(await applyFilter(window.conn), fields);
 }
 
@@ -1226,7 +1221,7 @@ async function changeUseTeamColors(_) {
     r: $("#radius").value,
   };
 
-  d3.selectAll("#canvas").html("");
+  selectAll("#canvas").html("");
   graph(await applyFilter(window.conn), fields);
 }
 
@@ -1308,7 +1303,7 @@ async function updateSettings(_evt) {
     r: $("#radius").value,
   };
 
-  d3.selectAll("#canvas").html("");
+  selectAll("#canvas").html("");
   graph(await applyFilter(window.conn), fields);
 }
 
@@ -1344,8 +1339,8 @@ function centeredText(txt, x, y, size, lines) {
 
 function changeTitle(svg) {
   const handler = (_evt) => {
-    let lines = d3.select("#title").node().value.split("\n");
-    const titleg = d3.select(svg).select(".titleg");
+    let lines = select("#title").node().value.split("\n");
+    const titleg = select(svg).select(".titleg");
     titleg.node().innerHTML = "";
     centeredText(titleg, settings.width / 2, 30, 15, lines);
   };
@@ -1364,9 +1359,14 @@ window.addEventListener("DOMContentLoaded", async (_evt) => {
   // https://stackoverflow.com/questions/21913673/execute-web-worker-from-different-origin
   const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
   const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
+  const worker_url = URL.createObjectURL(
+    new Blob([`importScripts("${bundle.mainWorker}");`], {
+      type: "text/javascript",
+    })
+  );
 
   // Instantiate the asynchronus version of DuckDB-wasm
-  const worker = new Worker(bundle.mainWorker);
+  const worker = new Worker(worker_url);
   const logger = new duckdb.ConsoleLogger();
   const db = new duckdb.AsyncDuckDB(logger, worker);
   await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
