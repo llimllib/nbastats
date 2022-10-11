@@ -3,4 +3,6 @@ __pycache__
 node_modules
 .envrc
 data
-dist/*
+
+# ignore any file named "dist"
+dist
