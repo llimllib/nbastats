@@ -67,14 +67,14 @@ export function addTooltips(chart, styles) {
         if (pointer[0] + tipSize.x < 0)
           tip.attr(
             "transform",
-            `translate(${tipSize.width / 2}, ${pointer[1] + 7})`
+            `translate(${tipSize.width / 2}, ${pointer[1] + 7}) rotate(45)`
           );
         else if (pointer[0] + tipSize.width / 2 > wrapper.attr("width"))
           tip.attr(
             "transform",
             `translate(${wrapper.attr("width") - tipSize.width / 2}, ${
               pointer[1] + 7
-            })`
+            }) rotate(45)`
           );
       })
       .on("pointerout", function (event) {
@@ -109,7 +109,7 @@ hover = (tip, pos, text) => {
   tip
     .style("text-anchor", "middle")
     .style("pointer-events", "none")
-    .attr("transform", `translate(${pos[0]}, ${pos[1] + 7})`)
+    .attr("transform", `translate(${pos[0]}, ${pos[1] + 7}) rotate(45)`)
     .selectAll("text")
     .data(text)
     .join("text")

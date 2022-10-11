@@ -1,5 +1,6 @@
 import * as Plot from "@observablehq/plot";
-import { extent } from "d3-array";
+import { select } from "d3-selection";
+import { extent, Numeric } from "d3-array";
 
 import { addTooltips } from "tooltip";
 
@@ -63,30 +64,81 @@ interface TeamsMeta {
   teams: Array<TeamData>;
 }
 
+// Wrap `extent` with a function that adds padding to the extent, by a given #
+// of the width of the extent
+function paddedExtent<T>(
+  iterable: Iterable<T>,
+  accessor: (
+    datum: T,
+    index: number,
+    array: Iterable<T>
+  ) => number | undefined | null,
+  paddingPct: number
+): [number, number] | [undefined, undefined] {
+  const ext = extent(iterable, accessor);
+  if (!ext[0] || !ext[1]) {
+    return [undefined, undefined];
+  }
+  const diff = ext[1] - ext[0];
+  const padding = diff * paddingPct;
+  return [ext[0] - padding, ext[1] + padding];
+}
+
 async function main(): Promise<void> {
   const res = await fetch(`data/team_stats.json`);
   const data = (await res.json()) as TeamsMeta;
   const teams = Object.values(data.teams);
-  console.log(data.teams);
-  const chart = addTooltips(
-    Plot.plot({
-      width: 640,
-      height: 640,
-      grid: true,
-      y: {
-        domain: extent(teams, (d: TeamData) => d.def_rtg),
-      },
-      marks: [
-        Plot.dot(teams, {
-          x: "off_rtg",
-          y: "def_rtg",
-          title: (d: TeamData) => d.name,
-        }),
-        Plot.ruleY([0]),
-      ],
-    })
-  );
-  document.querySelector("#plot")?.append(chart);
+
+  const imageSize = 40;
+  const paddingPct = 0.1;
+  const chart = Plot.plot({
+    width: 640,
+    height: 640,
+    grid: true,
+    y: {
+      domain: paddedExtent(teams, (d: TeamData) => d.def_rtg, paddingPct),
+      reverse: true,
+      tickFormat: ".3",
+      ticks: 6,
+      tickRotate: 45,
+      label: "",
+    },
+    x: {
+      domain: paddedExtent(teams, (d: TeamData) => d.off_rtg, paddingPct),
+      tickFormat: ".3",
+      ticks: 6,
+      tickRotate: 45,
+      label: "",
+    },
+    marks: [
+      Plot.image(teams, {
+        x: "off_rtg",
+        y: "def_rtg",
+        width: imageSize,
+        height: imageSize,
+        title: (d: TeamData) =>
+          `${d.name}\nOffensive rating: ${d.off_rtg}\nDefensive rating: ${d.def_rtg}`,
+        src: (d: TeamData) => `logos/${d.name}.svg`,
+      }),
+    ],
+  });
+
+  select(chart).attr("transform", "rotate(-45)");
+  document.querySelector("#plot")?.append(addTooltips(chart));
+
+  // There's no option to rotate images;
+  // https://github.com/observablehq/plot/issues/1083
+  //
+  // maybe could do this with a custom initializer? not clear to me:
+  // https://github.com/observablehq/plot#custom-initializers
+  select("#plot")
+    .selectAll("image")
+    .attr("transform", (_, i, nodes) => {
+      const d = select(nodes[i]);
+      const rx = +d.attr("x") + imageSize / 2;
+      const ry = +d.attr("y") + imageSize / 2;
+      return `rotate(45 ${rx} ${ry})`;
+    });
 }
 
 window.addEventListener("DOMContentLoaded", async (_evt) => {
