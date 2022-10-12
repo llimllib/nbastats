@@ -91,9 +91,11 @@ async function main(): Promise<void> {
 
   const imageSize = 40;
   const paddingPct = 0.1;
+  const chartSize = 640;
+  const helpFontSize = 25;
   const chart = Plot.plot({
-    width: 640,
-    height: 640,
+    width: chartSize,
+    height: chartSize,
     grid: true,
     y: {
       domain: paddedExtent(teams, (d: TeamData) => d.def_rtg, paddingPct),
@@ -120,10 +122,86 @@ async function main(): Promise<void> {
           `${d.name}\nOffensive rating: ${d.off_rtg}\nDefensive rating: ${d.def_rtg}`,
         src: (d: TeamData) => `logos/${d.name}.svg`,
       }),
+      // Think I'm gonna do this in d3 instead because the placement should be easier
+      // Plot.text(["Good O, Bad D"], {
+      //   frameAnchor: "bottom-right",
+      //   rotate: 45,
+      //   dx: -10,
+      //   fontSize: helpFontSize,
+      //   fill: "orange",
+      //   stroke: "grey",
+      //   strokeWidth: 2,
+      //   lineHeight: 2,
+      // }),
+      // Plot.text(["Bad O, Good D"], {
+      //   frameAnchor: "top-left",
+      //   rotate: 45,
+      //   dx: 20,
+      //   fontSize: helpFontSize,
+      //   fill: "orange",
+      //   stroke: "grey",
+      //   strokeWidth: 2,
+      //   lineHeight: 2,
+      // }),
+      // Plot.text(["Good O and D"], {
+      //   frameAnchor: "top-right",
+      //   rotate: 45,
+      //   dx: 40,
+      //   dy: 100,
+      //   fontSize: helpFontSize,
+      //   fill: "green",
+      //   stroke: "grey",
+      //   strokeWidth: 2,
+      //   lineHeight: 2,
+      // }),
+      // Plot.text(["Bad O and D"], {
+      //   frameAnchor: "bottom-left",
+      //   rotate: 45,
+      //   dx: -30,
+      //   dy: -100,
+      //   fontSize: helpFontSize,
+      //   fill: "red",
+      //   stroke: "grey",
+      //   strokeWidth: 2,
+      //   lineHeight: 2,
+      // }),
     ],
   });
 
   select(chart).attr("transform", "rotate(-45)");
+  const bgpadding = 50;
+  select(chart)
+    .insert("rect", ":first-child")
+    .attr("x", bgpadding)
+    .attr("y", bgpadding)
+    .attr("width", chartSize / 2 - bgpadding)
+    .attr("height", chartSize / 2 - bgpadding)
+    .attr("fill", "#fbe8c8");
+  select(chart)
+    .insert("rect", ":first-child")
+    .attr("x", chartSize / 2)
+    .attr("y", bgpadding)
+    .attr("width", chartSize / 2 - bgpadding)
+    .attr("height", chartSize / 2 - bgpadding)
+    .attr("fill", "#e2e6cf");
+  select(chart)
+    .insert("rect", ":first-child")
+    .attr("x", bgpadding)
+    .attr("y", chartSize / 2)
+    .attr("width", chartSize / 2 - bgpadding)
+    .attr("height", chartSize / 2 - bgpadding)
+    .attr("fill", "#f8d9d4");
+  select(chart)
+    .insert("rect", ":first-child")
+    .attr("x", chartSize / 2)
+    .attr("y", chartSize / 2)
+    .attr("width", chartSize / 2 - bgpadding)
+    .attr("height", chartSize / 2 - bgpadding)
+    .attr("fill", "#fbe8c8");
+  select("#plot")
+    .append("span")
+    .text("Bad O, Good D")
+    .attr("class", "helptext-ok");
   document.querySelector("#plot")?.append(addTooltips(chart));
 
   // There's no option to rotate images;
