@@ -2,7 +2,7 @@ all: dist/index.js
 
 dist/index.js: index.ts
 	tsc --noEmit --skipLibCheck && \
-		node esbuild.config.mjs production
+		DATA_URL=https://cdn.billmill.org/nbastats node esbuild.config.mjs production
 
 watch:
 	node esbuild.config.mjs

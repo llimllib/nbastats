@@ -25,5 +25,10 @@ esbuild
     treeShaking: true,
     outfile: "index.js",
     minify: true,
+    define: {
+      "process.env.DATA_URL":
+        JSON.stringify(process.env.DATA_URL) ||
+        '"https://cdn.billmill.org/nbastats"',
+    },
   })
   .catch(() => process.exit(1));
