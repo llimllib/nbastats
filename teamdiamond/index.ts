@@ -19,7 +19,7 @@ interface TeamsMeta {
 }
 
 async function main(): Promise<void> {
-  const res = await fetch(`${DATA_URL}/data/2022/team_stats.json`);
+  const res = await fetch(`${DATA_URL}/2022/team_stats.json`);
   const data = (await res.json()) as TeamsMeta;
   const teams = Object.values(data.teams);
 

@@ -145,4 +145,4 @@ freeze:
 		pip freeze > requirements.txt && \
 		deactivate
 
-.PHONY: all html static serve publish lint update syncdata requirements freeze flush wasm clean
+.PHONY: all html static serve publish lint update syncdata requirements freeze flush wasm clean teamdiamond
