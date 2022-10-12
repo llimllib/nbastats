@@ -1,87 +1,19 @@
 import * as Plot from "@observablehq/plot";
 import { select } from "d3-selection";
-import { extent, Numeric } from "d3-array";
+import { extent } from "d3-array";
 
 import { addTooltips } from "tooltip";
 
+// there are more attributes, I just removed them for simplicity
 interface TeamData {
-  team: string;
-  g: number;
-  mp: number;
-  fg: number;
-  fga: number;
-  fg_pct: number;
-  fg3: number;
-  fg3a: number;
-  fg3_pct: number;
-  fg2: number;
-  fg2a: number;
-  fg2_pct: number;
-  ft: number;
-  fta: number;
-  ft_pct: number;
-  orb: number;
-  drb: number;
-  trb: number;
-  ast: number;
-  stl: number;
-  blk: number;
-  tov: number;
-  pf: number;
-  pts: number;
   name: string;
-  shortname: string;
-  age: number;
-  wins: number;
-  losses: number;
-  wins_pyth: number;
-  losses_pyth: number;
-  mov: number;
-  sos: number;
-  srs: number;
   off_rtg: number;
   def_rtg: number;
-  net_rtg: number;
-  pace: number;
-  fta_per_fga_pct: number;
-  fg3a_per_fga_pct: number;
-  ts_pct: number;
-  efg_pct: number;
-  tov_pct: number;
-  orb_pct: number;
-  ft_rate: number;
-  opp_efg_pct: number;
-  opp_tov_pct: number;
-  drb_pct: number;
-  opp_ft_rate: number;
-  arena_name: string;
-  attendance: string;
-  attendance_per_g: string;
 }
 
 interface TeamsMeta {
   updated: string;
   teams: Array<TeamData>;
-}
-
-// Wrap `extent` with a function that adds padding to the extent, by a given #
-// of the width of the extent
-function paddedExtent<T>(
-  iterable: Iterable<T>,
-  accessor: (
-    datum: T,
-    index: number,
-    array: Iterable<T>
-  ) => number | undefined | null,
-  paddingPct: number
-): [number, number] | [undefined, undefined] {
-  const ext = extent(iterable, accessor);
-  if (!ext[0] || !ext[1]) {
-    return [undefined, undefined];
-  }
-  const diff = ext[1] - ext[0];
-  const padding = diff * paddingPct;
-  return [ext[0] - padding, ext[1] + padding];
 }
 
 async function main(): Promise<void> {
@@ -90,15 +22,24 @@ async function main(): Promise<void> {
   const teams = Object.values(data.teams);
 
   const imageSize = 40;
-  const paddingPct = 0.1;
   const chartSize = 640;
-  const helpFontSize = 25;
+
+  // we want to use the same domain for both sides of the graph, so get all
+  // efficiencies, flatten the list, and pad it out a bit
+  const allEficiencies = teams.map((t) => [t.def_rtg, t.off_rtg]).flat();
+  const effExt = extent(allEficiencies);
+  if (!effExt[0] || !effExt[1]) return;
+  const paddedExtent = [effExt[0] * 0.99, effExt[1] * 1.01];
+
   const chart = Plot.plot({
     width: chartSize,
     height: chartSize,
     grid: true,
+    style: {
+      background: "#fff9eb",
+    },
     y: {
-      domain: paddedExtent(teams, (d: TeamData) => d.def_rtg, paddingPct),
+      domain: paddedExtent,
       reverse: true,
       tickFormat: ".3",
       ticks: 6,
@@ -106,7 +47,7 @@ async function main(): Promise<void> {
       label: "",
     },
     x: {
-      domain: paddedExtent(teams, (d: TeamData) => d.off_rtg, paddingPct),
+      domain: paddedExtent,
       tickFormat: ".3",
       ticks: 6,
       tickRotate: 45,
@@ -122,53 +63,28 @@ async function main(): Promise<void> {
           `${d.name}\nOffensive rating: ${d.off_rtg}\nDefensive rating: ${d.def_rtg}`,
         src: (d: TeamData) => `logos/${d.name}.svg`,
       }),
-      // Think I'm gonna do this in d3 instead because the placement should be easier
-      // Plot.text(["Good O, Bad D"], {
-      //   frameAnchor: "bottom-right",
-      //   rotate: 45,
-      //   dx: -10,
-      //   fontSize: helpFontSize,
-      //   fill: "orange",
-      //   stroke: "grey",
-      //   strokeWidth: 2,
-      //   lineHeight: 2,
-      // }),
-      // Plot.text(["Bad O, Good D"], {
-      //   frameAnchor: "top-left",
-      //   rotate: 45,
-      //   dx: 20,
-      //   fontSize: helpFontSize,
-      //   fill: "orange",
-      //   stroke: "grey",
-      //   strokeWidth: 2,
-      //   lineHeight: 2,
-      // }),
-      // Plot.text(["Good O and D"], {
-      //   frameAnchor: "top-right",
-      //   rotate: 45,
-      //   dx: 40,
-      //   dy: 100,
-      //   fontSize: helpFontSize,
-      //   fill: "green",
-      //   stroke: "grey",
-      //   strokeWidth: 2,
-      //   lineHeight: 2,
-      // }),
-      // Plot.text(["Bad O and D"], {
-      //   frameAnchor: "bottom-left",
-      //   rotate: 45,
-      //   dx: -30,
-      //   dy: -100,
-      //   fontSize: helpFontSize,
-      //   fill: "red",
-      //   stroke: "grey",
-      //   strokeWidth: 2,
-      //   lineHeight: 2,
-      // }),
+      Plot.text(["Offensive Rating"], {
+        frameAnchor: "bottom",
+        dy: 70,
+        fontSize: 25,
+        fontWeight: "bold",
+        textAnchor: "middle",
+      }),
+      Plot.text(["Defensive Rating"], {
+        frameAnchor: "Left",
+        dx: -60,
+        fontSize: 25,
+        fontWeight: "bold",
+        rotate: 90,
+        textAnchor: "middle",
+      }),
     ],
   });
 
+  // rotate the entire chart
   select(chart).attr("transform", "rotate(-45)");
+
+  // Add quadrant backgrounds
   const bgpadding = 50;
   select(chart)
     .insert("rect", ":first-child")
@@ -198,18 +114,34 @@ async function main(): Promise<void> {
     .attr("width", chartSize / 2 - bgpadding)
     .attr("height", chartSize / 2 - bgpadding)
     .attr("fill", "#fbe8c8");
-  select("#plot")
-    .append("span")
-    .text("Bad O, Good D")
-    .attr("class", "helptext-ok");
-  document.querySelector("#plot")?.append(addTooltips(chart));
 
-  // There's no option to rotate images;
+  // Add quadrant labels
+  function helptext(text: string, bgcolor: string, top: number, left: number) {
+    return select("#plot")
+      .append("span")
+      .text(text)
+      .attr("class", "helptext-ok")
+      .style("font-size", "17px")
+      .style("font-weight", "bold")
+      .style("background", bgcolor)
+      .style("padding", "6px")
+      .style("border-radius", "4px")
+      .style("position", "relative")
+      .style("top", `${top}px`)
+      .style("left", `${left}px`)
+      .style("z-index", "100");
+  }
+  helptext("Bad O, Good D", "#f1cb9a88", 330, -80);
+  helptext("Good O, Bad D", "#f1cb9a88", 330, 450);
+  helptext("Good O and D", "#9fc3b588", 0, -10);
+  helptext("Bad O and D", "#eca5aa88", 680, -130);
+
+  // There's not yet an option to rotate images;
   // https://github.com/observablehq/plot/issues/1083
   //
-  // maybe could do this with a custom initializer? not clear to me:
-  // https://github.com/observablehq/plot#custom-initializers
-  select("#plot")
+  // once the referenced PR is merged and released, this can be removed in
+  // favor of a "rotate" channel on the image mark
+  select(chart)
     .selectAll("image")
     .attr("transform", (_, i, nodes) => {
       const d = select(nodes[i]);
@@ -217,6 +149,9 @@ async function main(): Promise<void> {
       const ry = +d.attr("y") + imageSize / 2;
       return `rotate(45 ${rx} ${ry})`;
     });
+
+  // append the chart to the document
+  document.querySelector("#plot")?.append(addTooltips(chart));
 }
 
 window.addEventListener("DOMContentLoaded", async (_evt) => {
