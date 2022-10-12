@@ -31,7 +31,7 @@ html: dist/index.html
 	rm -rf dist/teams
 	mkdir -p dist/teams
 	cp teamdiamond/index.html dist/teams/
-	cp teamdiamond/dist/index.js dist/teams/
+	cp teamdiamond/index.js dist/teams/
 
 # build our index file. We're only doing one substitution, so we just do it by
 # sed-ing it in, think about a more comprehensive solution if we start doing
