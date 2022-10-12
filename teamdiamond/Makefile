@@ -17,4 +17,4 @@ ci:
 	npm ci
 	node_modules/.bin/eslint *.ts
 
-.PHONY: watch serve ci
+.PHONY: all watch serve ci

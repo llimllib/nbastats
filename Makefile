@@ -4,7 +4,7 @@ DUCKDB_PREREQS = duckdb.wasm duckdb-next.wasm duckdb-browser.worker.js duckdb-br
 DUCKDB_PREREQS_FULL = $(addprefix $(DUCKDB_DIST),$(DUCKDB_PREREQS))
 BUILD_PREREQS_FULL = $(addprefix $(DIST)/duckdb/,$(DUCKDB_PREREQS))
 
-all: wasm html static
+all: wasm teamdiamond html static
 
 static:
 	cp -r logos dist/
@@ -20,12 +20,18 @@ wasm: dist/viewer_duckdb.js
 production:
 	ENV=production DATA_URL=https://cdn.billmill.org/nbastats make -B all
 
+teamdiamond:
+	make -C teamdiamond all
+
 html: dist/index.html
-	# the teams viewer is still just raw HTML, so copy it straight into dist
-	cp -r src/teams/ dist/teams/
 	# playoff is an observable plot experiment at the moment
 	cp -r playoff/ dist/playoff/
 	cp favicon.ico dist/
+
+	rm -rf dist/teams
+	mkdir -p dist/teams
+	cp teamdiamond/index.html dist/teams/
+	cp teamdiamond/dist/index.js dist/teams/
 
 # build our index file. We're only doing one substitution, so we just do it by
 # sed-ing it in, think about a more comprehensive solution if we start doing
@@ -71,7 +77,7 @@ publish: distribute
 	# delete the current gh-pages branch
 	-git branch -D gh-pages
 
-	# copy dist folder to a temp rid
+	# copy dist folder to a temp dir
 	$(eval TMP = $(shell mktemp -d))
 	cp -r dist/* $(TMP)
 

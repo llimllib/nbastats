@@ -61,7 +61,7 @@ async function main(): Promise<void> {
         height: imageSize,
         title: (d: TeamData) =>
           `${d.name}\nOffensive rating: ${d.off_rtg}\nDefensive rating: ${d.def_rtg}`,
-        src: (d: TeamData) => `logos/${d.name}.svg`,
+        src: (d: TeamData) => `../logos/${d.name}.svg`,
       }),
       Plot.text(["Offensive Rating"], {
         frameAnchor: "bottom",
@@ -133,7 +133,7 @@ async function main(): Promise<void> {
   }
   helptext("Bad O, Good D", "#f1cb9a88", 330, -80);
   helptext("Good O, Bad D", "#f1cb9a88", 330, 450);
-  helptext("Good O and D", "#9fc3b588", 0, -10);
+  helptext("Good O and D", "#9fc3b588", -20, -10);
   helptext("Bad O and D", "#eca5aa88", 680, -130);
 
   // There's not yet an option to rotate images;
