@@ -18,8 +18,8 @@ interface TeamsMeta {
   teams: Array<TeamData>;
 }
 
-async function main(): Promise<void> {
-  const res = await fetch(`${DATA_URL}/2022/team_stats.json`);
+async function main(year: string): Promise<void> {
+  const res = await fetch(`${DATA_URL}/${year}/team_stats.json`);
   const data = (await res.json()) as TeamsMeta;
   const teams = Object.values(data.teams);
 
@@ -149,5 +149,10 @@ async function main(): Promise<void> {
 }
 
 window.addEventListener("DOMContentLoaded", async (_evt) => {
-  await main();
+  await main("2022");
+});
+
+document.querySelector("#year")?.addEventListener("change", async (evt) => {
+  select("#plot").html("");
+  await main((evt.target as HTMLInputElement).value);
 });
