@@ -3,6 +3,7 @@ import { html } from "htl";
 
 // taken wholesale from
 // https://observablehq.com/@mkfreeman/plot-tooltip
+// and modified a bit to deal with the fact that this graph is rotated
 export function addTooltips(chart, styles) {
   const stroke_styles = { stroke: "blue", "stroke-width": 3 };
   const fill_styles = { fill: "blue", opacity: 0.5 };

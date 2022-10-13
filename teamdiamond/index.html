@@ -23,6 +23,8 @@ body {
 }
 #quadlabels {
   z-index: 10;
+  /* we want pointer events to go to the #plot container, not this one */
+  pointer-events: none;
 }
 .ql {
   text-align: center;
