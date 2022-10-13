@@ -4,14 +4,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body {
-  width: 640px;
+  width: 800px;
   margin: 40px auto 0 auto;
   font-family: sans-serif;
   background-color: #fff9eb;
 }
-#plot {
-  padding-top: 100px;
-  padding-bottom: 100px;
+#container {
+  position: relative;
+  width: 800px;
+  height: 800px;
+  margin-top: -20px;
+}
+#plot, #quadlabels {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#quadlabels {
+  z-index: 10;
+}
+.ql {
+  text-align: center;
+  padding: 4px;
+  border-radius: 4px;
+  font-size: 17px;
+  font-weight: bold;
+  border: 1px solid black;
+}
+#top_quad {
+  position: absolute;
+  left: 320px;
+  top: 70px;
+  background-color: #9fc3b588;
+}
+#right_quad {
+  position: absolute;
+  left: 650px;
+  top: 350px;
+  background-color: #f1cb9a88;
+}
+#left_quad {
+  position: absolute;
+  left: 20px;
+  top: 350px;
+  background-color: #f1cb9a88;
+}
+#bottom_quad {
+  position: absolute;
+  left: 320px;
+  top: 680px;
+  background-color: #eca5aa88;
 }
 h1, h2 {
   text-align: center;
@@ -21,7 +65,15 @@ h1, h2 {
   <body>
     <h1>NBA Team Efficiency</h1>
     <h2>2022 Regular Season</h2>
-    <div id="plot">
+    <div id="container">
+      <div id="plot">
+      </div>
+      <div id="quadlabels">
+        <span class="ql" id="top_quad">Good O and D</span>
+        <span class="ql" id="right_quad">Good O, Bad D</span>
+        <span class="ql" id="left_quad">Bad O, Good D</span>
+        <span class="ql" id="bottom_quad">Bad O, Good D</span>
+      </div>
     </div>
     <script src="index.js"></script>
   </body>

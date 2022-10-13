@@ -24,7 +24,7 @@ async function main(): Promise<void> {
   const teams = Object.values(data.teams);
 
   const imageSize = 40;
-  const chartSize = 640;
+  const chartSize = 800 / Math.sqrt(2);
 
   // we want to use the same domain for both sides of the graph, so get all
   // efficiencies, flatten the list, and pad it out a bit
@@ -44,14 +44,14 @@ async function main(): Promise<void> {
       domain: paddedExtent,
       reverse: true,
       tickFormat: ".3",
-      ticks: 6,
+      ticks: 5,
       tickRotate: 45,
       label: "",
     },
     x: {
       domain: paddedExtent,
       tickFormat: ".3",
-      ticks: 6,
+      ticks: 5,
       tickRotate: 45,
       label: "",
     },
@@ -82,9 +82,6 @@ async function main(): Promise<void> {
       }),
     ],
   });
-
-  // rotate the entire chart
-  select(chart).attr("transform", "rotate(-45)");
 
   // Add quadrant backgrounds
   const bgpadding = 50;
@@ -117,27 +114,6 @@ async function main(): Promise<void> {
     .attr("height", chartSize / 2 - bgpadding)
     .attr("fill", "#fbe8c8");
 
-  // Add quadrant labels
-  function helptext(text: string, bgcolor: string, top: number, left: number) {
-    return select("#plot")
-      .append("span")
-      .text(text)
-      .attr("class", "helptext-ok")
-      .style("font-size", "17px")
-      .style("font-weight", "bold")
-      .style("background", bgcolor)
-      .style("padding", "6px")
-      .style("border-radius", "4px")
-      .style("position", "relative")
-      .style("top", `${top}px`)
-      .style("left", `${left}px`)
-      .style("z-index", "100");
-  }
-  helptext("Bad O, Good D", "#f1cb9a88", 330, -80);
-  helptext("Good O, Bad D", "#f1cb9a88", 330, 450);
-  helptext("Good O and D", "#9fc3b588", -20, -10);
-  helptext("Bad O and D", "#eca5aa88", 680, -130);
-
   // There's not yet an option to rotate images;
   // https://github.com/observablehq/plot/issues/1083
   //
@@ -152,8 +128,24 @@ async function main(): Promise<void> {
       return `rotate(45 ${rx} ${ry})`;
     });
 
-  // append the chart to the document
-  document.querySelector("#plot")?.append(addTooltips(chart));
+  const fullSize = 800;
+
+  // I cannot find a way to get the actual height & width of the inner plot
+  // here so I'm just going to put it in manually. Neither getBBox nor
+  // getClientBoundingRect worked. Hate those ugly magic constants.
+  select("#plot")
+    .append("svg")
+    .attr("width", fullSize)
+    .attr("height", fullSize)
+    .append("g")
+    .attr(
+      "transform",
+      ` translate(${(fullSize - 506) / 2} ${(fullSize - 828) / 2}) rotate(-45 ${
+        fullSize / 2
+      } ${fullSize / 2})`
+    )
+    .node()
+    ?.append(addTooltips(chart));
 }
 
 window.addEventListener("DOMContentLoaded", async (_evt) => {
