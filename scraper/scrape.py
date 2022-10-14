@@ -28,8 +28,8 @@ import pyarrow.parquet as pq
 # * explore saving data as a sqlite database instead and importing into javscript
 #   * I did this, but the queries for quantiles were so so painful. Possibly
 #   worth re-exploring?
-#   * Sadly, custom aggregate functions are not possible:
-#     https://github.com/sql-js/sql.js/issues/204
+#   * I landed custom aggregates, that would help:
+#     https://github.com/sql-js/sql.js/pull/529
 # * handle playoff data
 #   * raptor breaks down data into regular season and playoff - currently we're
 #     ignoring playoff. I assume bbref has playoff data? we should scrape that
@@ -52,7 +52,7 @@ PlayerStats = Dict[str, Any]
 StatDict = Dict[PlayerKey, PlayerStats]
 
 
-def log(msg: str):
+def log(msg: str) -> None:
     if DEBUG:
         print(msg)
 
@@ -87,7 +87,7 @@ def stale(fname: Path) -> bool:
     return (time() - fname.stat().st_mtime) / (60 * 60) > 1
 
 
-def save(url: str, fname: Path):
+def save(url: str, fname: Path) -> None:
     """save the contents of url to fname"""
     res = requests.get(url)
     if res.status_code != 200:
@@ -96,7 +96,7 @@ def save(url: str, fname: Path):
         f.write(res.text)
 
 
-def get_bbref_data(year: str, datadir: Path):
+def get_bbref_data(year: str, datadir: Path) -> None:
     if not datadir.is_dir():
         datadir.mkdir(parents=True)
 
@@ -127,7 +127,10 @@ def get_bbref_data(year: str, datadir: Path):
     )
 
 
-def parse_team_stats(year: str):
+TEAMRE = re.compile("teams/(.*?)/")
+
+
+def parse_team_stats(year: str) -> None:
     datadir = Path(f"data/{year}")
 
     teamdata = {}
@@ -143,8 +146,14 @@ def parse_team_stats(year: str):
                 )
                 for t in team.find_all("td")
             }
+            assert isinstance(teamstats["team"], str)
             name = BeautifulSoup(teamstats["team"], "html.parser").text.rstrip("*")
-            shortname = re.search("teams/(.*?)/", teamstats["team"]).group(1)
+
+            # pull the short name out of the team column. For example, "MIA"
+            # for Miami
+            teamshort_match = TEAMRE.search(teamstats["team"])
+            assert teamshort_match
+            shortname = teamshort_match.group(1)
 
             teamstats["name"] = name
             teamstats["shortname"] = shortname
@@ -160,8 +169,12 @@ def parse_team_stats(year: str):
                 )
                 for t in team.find_all("td")
             }
+            assert isinstance(miscstats["team"], str)
             name = BeautifulSoup(miscstats["team"], "html.parser").text.rstrip("*")
-            shortname = re.search("teams/(.*?)/", miscstats["team"]).group(1)
+
+            shortname_match = TEAMRE.search(miscstats["team"])
+            assert shortname_match
+            shortname = shortname_match.group(1)
 
             teamdata[shortname] = {**teamdata[shortname], **miscstats}
 
@@ -175,7 +188,7 @@ def parse_team_stats(year: str):
     )
 
 
-def parse_bbref_row(players: StatDict, player: element.Tag, year: str):
+def parse_bbref_row(players: StatDict, player: element.Tag, year: str) -> None:
     ignore = ["bpm-dum", "ws-dum", "DUMMY"]
     stats = {
         t["data-stat"].replace("-", "_"): tryint("".join(str(c) for c in t.children))
@@ -200,22 +213,23 @@ def parse_bbref_row(players: StatDict, player: element.Tag, year: str):
         players[key] = {**players[key], **stats}
 
 
+PLAYER_ROW = re.compile(r".*\b(full_table|partial_table)\b.*")
+
+
 def parse_player_stats(year: str) -> StatDict:
     datadir = f"data/{year}"
 
     players: StatDict = {}
 
-    player_row = re.compile(r".*\b(full_table|partial_table)\b.*")
-
     for page in ["totals", "advanced", "per_minute", "per_poss", "per_game"]:
         soup = BeautifulSoup(open(f"{datadir}/{page}.html"), "html.parser")
-        for player in soup.find_all("tr", {"class": player_row}):
+        for player in soup.find_all("tr", {"class": PLAYER_ROW}):
             parse_bbref_row(players, player, year)
 
     return players
 
 
-def download_data(years: Sequence[str], force_download: bool = False):
+def download_data(years: Sequence[str], force_download: bool = False) -> None:
     for year in years:
         datadir = Path(f"data/{year}")
         if not datadir.is_dir():
@@ -269,7 +283,7 @@ def fix_team(team: str, year: str) -> str:
     return team
 
 
-def parse_raptor_stats(data: StatDict, years: Sequence[str]):
+def parse_raptor_stats(data: StatDict, years: Sequence[str]) -> None:
     raptord = Path("data/raptor")
     for raptorfile in ("latest_RAPTOR", "modern_RAPTOR", "historical_RAPTOR"):
         for row in csv.DictReader(open(raptord / f"{raptorfile}.csv")):
@@ -299,7 +313,7 @@ def parse_raptor_stats(data: StatDict, years: Sequence[str]):
                 data[(pid, team, year)][key] = tryint(row[key])
 
 
-def process_data(years: Sequence[str]):
+def process_data(years: Sequence[str]) -> None:
     """Process the requested years' data and write it out as a parquet file"""
     data: StatDict = {}
 
@@ -321,15 +335,18 @@ def process_data(years: Sequence[str]):
     # that makes breaking changes much more likely, but I might have to do that
     # eventually
     for col in df.columns:
-        for elt in df.head(20)[col]:
+        column = df[col]
+        assert column is not None
+        colHead = column.head(20)
+        for elt in colHead:
             if isinstance(elt, (float, int)):
-                df[col].replace("", 0.0, inplace=True)
+                column.replace("", 0.0, inplace=True)
                 break
         # downcast any int64 columns into int32, because the int64s are painful
         # to deal with in javascript where they get represented as a pair of
         # int32s
-        if df[col].dtype == "int64":
-            df[col] = df[col].astype("int32")
+        if column.dtype == "int64":
+            df[col] = column.astype("int32")
 
     dt = datetime.utcnow().isoformat() + "Z"
     schema = pa.Schema.from_pandas(df).with_metadata(
@@ -347,7 +364,7 @@ def process_data(years: Sequence[str]):
     )
 
 
-def main(args):
+def main(args) -> None:
     if args.year_only:
         years = [args.year_only]
     else:
