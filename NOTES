@@ -76,3 +76,23 @@ he gives some resources for R:
 https://gist.github.com/benmarwick/8cf22ecb74ac511f8ac1c70aef6038a7
 https://unarsezer.medium.com/how-to-make-peter-mckeevers-diamond-chart-in-ggplot2-8b9321e7b2ee
 https://gist.github.com/Henryjean/885108b96e5e556d9429e9484e072ddb
+
+Owen Phillips gave his R code for the plot:
+
+https://gist.github.com/Henryjean/9d6c624ce1768f479c6046cb08803a56
+https://twitter.com/owenlhjphillips/status/1582359090478559233
+
+---------------
+
+Trying out superset. install instructions: https://superset.apache.org/docs/installation/installing-superset-using-docker-compose
+
+installing it seems to be a reasonably legit PITA!
+
+git clone https://github.com/apache/superset.git
+cd superset
+docker-compose -f docker-compose-non-dev.yml pull
+# this takes a while, don't be impatient. You can't start until you get "Creating database reference for examples"
+docker-compose -f docker-compose-non-dev.yml up
+
+# login with admin/admin
+open http://localhost:8088
