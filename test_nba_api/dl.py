@@ -5,6 +5,8 @@ from nba_api.stats.endpoints import teamgamelog
 import pandas as pd
 from nba_api.stats.static import teams
 
+CURRENT_SEASON = 2022
+
 
 def fresh(fname: Path) -> bool:
     """
@@ -16,13 +18,18 @@ def fresh(fname: Path) -> bool:
     return fname.is_file() and (time() - fname.stat().st_mtime) / 60 * 60 < 1
 
 
+seasons = []
 for year in range(2010, 2023):
+    file = f"gamelog_{year}.parquet"
+
     # we don't need to redownload old years, (presumably?) nothing has changed
-    if year != 2022:
-        if Path(f"{year}_gamelog.parquet").is_file():
+    if year != CURRENT_SEASON:
+        if Path(file).is_file():
+            seasons.append(pd.read_parquet(file))
             continue
     else:
-        if fresh(Path(f"{year}_gamelog.parquet")):
+        if fresh(Path(file)):
+            seasons.append(pd.read_parquet(file))
             continue
 
     print(f"Downloading {year} game logs")
@@ -50,4 +57,9 @@ for year in range(2010, 2023):
         ].iloc[0]["o_eff"],
         axis=1,
     )
-    games.to_parquet(f"gamelog.{year}.parquet")
+    games["season"] = year
+    seasons.append(games)
+    games.to_parquet(file)
+
+allseasons = pd.concat(seasons)
+allseasons.to_parquet("gamelogs.parquet")
