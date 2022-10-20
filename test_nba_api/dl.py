@@ -162,6 +162,7 @@ def download_player_stats():
         )
 
         playerstats.append(allstats)
+        allstats.to_parquet(file)
 
     allstats = pd.concat(playerstats)
     allstats.reset_index(drop=True, inplace=True)
