@@ -114,30 +114,12 @@ def download_player_stats():
                         per_mode_detailed=per,
                     ).get_data_frames()[0]
                 )
+
+        # join all the resulting dataframes, adding a _DROP suffix for repeated
+        # columns, which we can then filter out
         allstats = reduce(lambda x, y: x.join(y, rsuffix="_DROP"), stats).filter(
             regex="^(?!.*_DROP$)"
         )
-
-        # stats = LeagueDashPlayerStats(season=season).get_data_frames()[0]
-        # adv_stats = LeagueDashPlayerStats(
-        #     season=season, measure_type_detailed_defense="Advanced"
-        # ).get_data_frames()[0]
-        # per36 = LeagueDashPlayerStats(
-        #     season=season, per_mode_detailed="Per36"
-        # ).get_data_frames()[0]
-        # per100 = LeagueDashPlayerStats(
-        #     season=season, per_mode_detailed="Per100Possessions"
-        # ).get_data_frames()[0]
-
-        # allstats = (
-        #     stats.join(adv_stats, rsuffix="_DROP")
-        #     .join(per36, rsuffix="_DROP")
-        #     .join(per100, rsuffix="_DROP")
-        #     .join(per100, rsuffix="_DROP")
-        # ).filter(regex="^(?!.*_DROP$)")
-        import ipdb
-
-        ipdb.set_trace()
 
         playerstats.append(allstats)
 
