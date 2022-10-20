@@ -170,5 +170,5 @@ def download_player_stats():
 
 
 if __name__ == "__main__":
-    # download_gamelogs()
+    download_gamelogs()
     download_player_stats()
