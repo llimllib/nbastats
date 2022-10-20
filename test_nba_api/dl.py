@@ -2,6 +2,7 @@
 from time import time, sleep
 from pathlib import Path
 
+# there's a "leageugamelog" endpoint, would that be more efficient?
 from nba_api.stats.endpoints import teamgamelog
 import pandas as pd
 from nba_api.stats.static import teams
