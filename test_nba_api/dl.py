@@ -5,8 +5,8 @@ from pathlib import Path
 
 # there's a "leageugamelog" endpoint, would that be more efficient?
 from nba_api.stats.endpoints import LeagueDashPlayerStats, TeamGameLog
-import pandas as pd
 from nba_api.stats.static import teams
+import pandas as pd
 
 FIRST_SEASON = 2010
 CURRENT_SEASON = 2023
@@ -78,6 +78,30 @@ def download_gamelogs():
     allseasons.to_parquet("gamelogs.parquet")
 
 
+columns_to_suffix = [
+    "MIN",
+    "FGM",
+    "FGA",
+    "FG3M",
+    "FG3A",
+    "FTM",
+    "FTA",
+    "OREB",
+    "DREB",
+    "REB",
+    "AST",
+    "TOV",
+    "STL",
+    "BLK",
+    "BLKA",
+    "PF",
+    "PFD",
+    "PTS",
+    "PLUS_MINUS",
+    "NBA_FANTASY_PTS",
+]
+
+
 def download_player_stats():
     playerstats = []
     for year in range(FIRST_SEASON, CURRENT_SEASON + 1):
@@ -105,15 +129,31 @@ def download_player_stats():
         # table should not get duplicated because I added a prefix to every
         # column. TODO
         stats = []
-        for measure in ["Base", "Advanced"]:
-            for per in ["Totals", "PerGame", "Per36", "Per100Possessions"]:
-                stats.append(
-                    LeagueDashPlayerStats(
-                        season=season,
-                        measure_type_detailed_defense=measure,
-                        per_mode_detailed=per,
-                    ).get_data_frames()[0]
-                )
+        for per in ["Totals", "PerGame", "Per36", "Per100Possessions"]:
+            df = LeagueDashPlayerStats(
+                season=season,
+                measure_type_detailed_defense="Base",
+                per_mode_detailed=per,
+            ).get_data_frames()[0]
+            df["year"] = year
+
+            # we want the PTS column (for exmample) to contain the total # of
+            # points, not PTS_Totals, so only suffix the columns of the other
+            # `per` values
+            if per != "Totals":
+                df.rename(columns={col: f"{col}_{per}" for col in columns_to_suffix})
+
+            stats.append(df)
+
+        # the advanced stats don't have any differences between totals,
+        # pergame, &c, so only download them once
+        stats.append(
+            LeagueDashPlayerStats(
+                season=season,
+                measure_type_detailed_defense="Advanced",
+                per_mode_detailed="Totals",
+            ).get_data_frames()[0]
+        )
 
         # join all the resulting dataframes, adding a _DROP suffix for repeated
         # columns, which we can then filter out
@@ -122,6 +162,10 @@ def download_player_stats():
         )
 
         playerstats.append(allstats)
+
+    allstats = pd.concat(playerstats)
+    allstats.reset_index(drop=True, inplace=True)
+    allstats.to_parquet("playerstats.parquet")
 
 
 if __name__ == "__main__":
