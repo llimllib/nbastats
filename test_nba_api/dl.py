@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import argparse
 from functools import reduce
 from time import time, sleep
 from pathlib import Path
@@ -173,5 +174,15 @@ def download_player_stats():
 
 
 if __name__ == "__main__":
-    download_gamelogs()
-    download_player_stats()
+    parser = argparse.ArgumentParser(description="download stats from stats.nba.com")
+    parser.add_argument("-g", "--gamelogs", const=True, action="store_const")
+    parser.add_argument("-s", "--player-stats", const=True, action="store_const")
+    args = parser.parse_args()
+
+    # if no arguments passed, download both
+    runall = not args.gamelogs and not args.player_stats
+
+    if args.gamelogs or runall:
+        download_gamelogs()
+    if args.player_stats or runall:
+        download_player_stats()
