@@ -141,7 +141,10 @@ def download_player_stats():
             # points, not PTS_Totals, so only suffix the columns of the other
             # `per` values
             if per != "Totals":
-                df.rename(columns={col: f"{col}_{per}" for col in columns_to_suffix})
+                df.rename(
+                    columns={col: f"{col}_{per}" for col in columns_to_suffix},
+                    inplace=True,
+                )
 
             stats.append(df)
 
