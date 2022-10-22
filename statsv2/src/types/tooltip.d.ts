@@ -1,0 +1,7 @@
+// it's unclear to me why this doesn't work when included in the
+// src/types/index.d.ts file, but :shrug: whatever
+//
+// docs: https://www.typescriptlang.org/docs/handbook/modules.html#working-with-other-javascript-libraries
+declare module "tooltip" {
+  export function addTooltips(chart: any): any;
+}

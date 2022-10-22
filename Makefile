@@ -32,6 +32,8 @@ html: dist/index.html
 	mkdir -p dist/teams
 	cp teamdiamond/index.html dist/teams/
 	cp teamdiamond/index.js dist/teams/
+	rm -rf dist/statsv2
+	cp -r statsv2/dist dist/statsv2
 
 # build our index file. We're only doing one substitution, so we just do it by
 # sed-ing it in, think about a more comprehensive solution if we start doing
