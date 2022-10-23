@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 import argparse
 from functools import reduce
-from time import time, sleep
+from time import time
 from pathlib import Path
 
 # there's a "leageugamelog" endpoint, would that be more efficient?
-from nba_api.stats.endpoints import LeagueDashPlayerStats, TeamGameLog
-from nba_api.stats.static import teams
+from nba_api.stats.endpoints import LeagueDashPlayerStats, LeagueGameLog
 import pandas as pd
 
 FIRST_SEASON = 2010
@@ -26,36 +25,48 @@ def fresh(fname: Path) -> bool:
 def download_gamelogs():
     seasons = []
     for year in range(FIRST_SEASON, CURRENT_SEASON + 1):
-        file = f"gamelog_{year}.parquet"
+        file = Path(f"gamelog_{year}.parquet")
+        season = f"{year-1}-{str(year)[2:]}"
+        most_recent = ""
+        old_games = None
 
         # we don't need to redownload old years, (presumably?) nothing has changed
-        if year != CURRENT_SEASON and Path(file).is_file():
+        if year != CURRENT_SEASON and file.is_file():
             seasons.append(pd.read_parquet(file))
             continue
 
         # If the current year's file is less than an hour old, don't re-download
-        elif year == CURRENT_SEASON and fresh(Path(file)):
+        elif year == CURRENT_SEASON and fresh(file):
             seasons.append(pd.read_parquet(file))
             continue
+        # If the current year's file isn't fresh, load it so we can download
+        # only the more recent games
+        elif file.is_file():
+            old_games = pd.read_parquet(file)
+            most_recent = (
+                pd.to_datetime(old_games["GAME_DATE"])
+                .max()
+                .to_pydatetime()
+                .strftime("%Y-%m-%d")
+            )
 
         print(f"Downloading {year} game logs")
 
-        gamelogs = []
-        for tid in [t[0] for t in teams.teams]:
-            gamelogs.append(
-                TeamGameLog(
-                    tid, season=f"{year-1}-{str(year)[2:]}", timeout=200
-                ).get_data_frames()[0]
-            )
-            # seems like we time out if we try to grab all the game logs without
-            # pausing
-            sleep(0.6)
+        games = LeagueGameLog(
+            date_from_nullable=most_recent, season=season
+        ).get_data_frames()[0]
 
-        games = pd.concat(gamelogs)
+        # if we had games from this season, we want to append the newly
+        # downloaded ones. Otherwise, we should have all the games for this
+        # season in the games dataframe
+        if old_games is not None:
+            games = pd.concat([games, old_games]).drop_duplicates()
+
+        assert isinstance(games, pd.DataFrame)
 
         # The index by default
         games.reset_index(inplace=True)
-        games.rename(columns={"index": "game_n"})
+        games.rename(columns={"index": "game_n"}, inplace=True)
 
         # Should I use a fancier possessions estimate?
         games["possessions"] = (
@@ -65,8 +76,8 @@ def download_gamelogs():
         games["o_eff"] = games["PTS"] / games["possessions"]
         games["d_eff"] = games.apply(
             lambda row: games[
-                (games["Game_ID"] == row["Game_ID"])
-                & (games["Team_ID"] != row["Team_ID"])
+                (games["GAME_ID"] == row["GAME_ID"])
+                & (games["TEAM_ID"] != row["TEAM_ID"])
             ].iloc[0]["o_eff"],
             axis=1,
         )
