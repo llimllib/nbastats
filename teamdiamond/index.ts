@@ -149,7 +149,7 @@ async function main(year: string): Promise<void> {
 }
 
 window.addEventListener("DOMContentLoaded", async (_evt) => {
-  await main("2022");
+  await main("2023");
 });
 
 document.querySelector("#year")?.addEventListener("change", async (evt) => {
