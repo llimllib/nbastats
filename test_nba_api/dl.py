@@ -4,7 +4,6 @@ from functools import reduce
 from time import time
 from pathlib import Path
 
-# there's a "leageugamelog" endpoint, would that be more efficient?
 from nba_api.stats.endpoints import LeagueDashPlayerStats, LeagueGameLog
 import pandas as pd
 
