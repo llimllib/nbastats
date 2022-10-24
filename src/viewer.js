@@ -8,6 +8,11 @@ import { extent, reverse } from "d3-array";
 import { scaleBand, scaleLinear, scaleRadial } from "d3-scale";
 import { format } from "d3-format";
 
+// This is needed for the .transition functions later on, see
+// https://github.com/d3/d3/issues/3262 for details, such as they are. Ignore
+// the "declared but never read" warning, it works by side effects I guess
+import { transition } from "d3-transition";
+
 const $ = (s) => document.querySelector(s);
 
 const settings = {
