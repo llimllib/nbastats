@@ -5,3 +5,5 @@
 declare module "tooltip-mark" {
   export function tooltip(Plot: any): any;
 }
+
+declare module "htl";
