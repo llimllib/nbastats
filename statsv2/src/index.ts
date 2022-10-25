@@ -6,12 +6,15 @@ import { html } from "htl";
 import { tooltip } from "./tooltip-mark";
 import { label } from "./labels";
 import { teams } from "./teams";
+import { Fields } from "./stats_meta";
 
 const $ = (s: string) => document.querySelector(s);
 
 // TODO: all stats are currently considering a player on their final team for
 //       the year. Is that the best we can do?
 // TODO: allow re-ordering of series
+// TODO: get nice names for all stats
+// TODO: add stat values to labels
 
 // https://observablehq.com/@fil/experimental-plot-tooltip-01#addTooltip
 const Tooltip = tooltip(Plot);
@@ -19,12 +22,12 @@ const Label = label(Plot);
 
 const DATA_URL = process.env.DATA_URL;
 
-interface Series {
+type Series = {
   year: string;
   useTeamColors: boolean;
   useLabels: boolean;
   data: any[];
-}
+};
 
 function makeMarks(series: Series, xfield: string, yfield: string): any[] {
   let marks: any[] = [];
@@ -87,6 +90,7 @@ async function main(
   yfield: string,
   ytitle: string
 ): Promise<void> {
+  console.log(xfield, yfield, data)
   const chartSize = 800;
   const marks = data.map((series) => makeMarks(series, xfield, yfield));
   const chart = Plot.plot({
@@ -155,12 +159,15 @@ function reGraph(
 ): (event: any) => Promise<void> {
   return async (_: Event) => {
     const serieses = await getSerieses(conn);
-    await main(serieses, "TS_PCT", "True Shooting %", "USG_PCT", "Usage %");
+    const xField = ($(".xField") as HTMLInputElement).value;
+    const yField = ($(".yField") as HTMLInputElement).value;
+    await main(serieses, xField, xField, yField, yField);
   };
 }
 
 async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   const n = Array.from(document.querySelectorAll(".series")).length + 1;
+
   const seriesNode = html`<div class="series">
         Year: <select class="yearChooser">
           <option value="2023" selected>2023</option>
@@ -199,7 +206,7 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   // disable the remove series button if there's only one element
   ($(".remove-series") as HTMLInputElement).disabled = serieses.length == 1;
 
-  await main(serieses, "TS_PCT", "True Shooting %", "USG_PCT", "Usage %");
+  reGraph(conn)(null);
 }
 
 async function removeSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
@@ -209,13 +216,7 @@ async function removeSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   }
   serieses[serieses.length - 1].remove();
 
-  await main(
-    await getSerieses(conn),
-    "TS_PCT",
-    "True Shooting %",
-    "USG_PCT",
-    "Usage %"
-  );
+  reGraph(conn)(null);
 }
 
 // getSeries Reads each series and turns its choices into a Series object for
@@ -255,10 +256,55 @@ async function getSerieses(
   );
 }
 
+function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
+  const xDefault = "TS_PCT";
+  // Iterating on this consumes it somehow? so do it twice. Yo no comprendo
+  const xfields = Object.keys(Fields)
+    .sort()
+    .map((key: string) => {
+      // You can't do "selected" as a ternary because if you try to return
+      // "selected" as a string, htl complains. See "Errors on invalid bindings"
+      // here: https://www.npmjs.com/package/htl
+      if (key == xDefault) {
+        return html.fragment`<option value="${key}" selected>${Fields[key].name}</option>`;
+      } else {
+        return html.fragment`<option value="${key}">${Fields[key].name}</option>`;
+      }
+    });
+
+  const yDefault = "USG_PCT";
+  const yfields = Object.keys(Fields)
+    .sort()
+    .map((key: string) => {
+      if (key == yDefault) {
+        return html.fragment`<option value="${key}" selected>${Fields[key].name}</option>`;
+      } else {
+        return html.fragment`<option value="${key}">${Fields[key].name}</option>`;
+      }
+    });
+
+  const graphOptions = html` X:
+    <select class="xField">
+      ${xfields}
+    </select>
+    Y:
+    <select class="yField">
+      ${yfields}
+    </select>`;
+  $(".graph-options")?.appendChild(graphOptions);
+  graphOptions
+    .querySelector(".xField")
+    .addEventListener("change", reGraph(conn));
+  graphOptions
+    .querySelector(".yField")
+    .addEventListener("change", reGraph(conn));
+}
+
 window.addEventListener("DOMContentLoaded", async (_evt) => {
   const conn = await initDuckDb();
   window.conn = conn;
 
+  addGraphOptions(conn);
   $(".add-series")?.addEventListener("click", () => addSeries(conn));
   $(".remove-series")?.addEventListener("click", () => removeSeries(conn));
 

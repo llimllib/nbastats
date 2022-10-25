@@ -6,7 +6,7 @@ dist/index.js: index.ts
 
 dev:
 	tsc --noEmit --skipLibCheck && \
-		DATA_URL=https://devd.io:8000/data2 node esbuild.config.mjs production
+		DATA_URL=https://devd.io:8000/data2 node esbuild.config.mjs
 
 # serve index.html and also automatically rebuild index.ts when it starts. Is
 # there a native javascripty solution to this? I use foreman in ruby and modd
