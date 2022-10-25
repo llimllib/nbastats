@@ -2,6 +2,7 @@
 import argparse
 from functools import reduce
 from time import time
+import os
 from pathlib import Path
 
 from nba_api.stats.endpoints import LeagueDashPlayerStats, LeagueGameLog
@@ -59,7 +60,12 @@ def download_gamelogs():
         # downloaded ones. Otherwise, we should have all the games for this
         # season in the games dataframe
         if old_games is not None:
-            games = pd.concat([games, old_games]).drop_duplicates()
+            # drop all our created columns; we'll recreate them in a second.
+            old_games.drop(
+                columns=["game_n", "o_eff", "season", "d_eff", "possessions"],
+                inplace=True,
+            )
+            games = pd.concat([old_games, games]).drop_duplicates()
 
         assert isinstance(games, pd.DataFrame)
 
@@ -86,6 +92,10 @@ def download_gamelogs():
 
     allseasons = pd.concat(seasons)
     allseasons.reset_index(drop=True, inplace=True)
+
+    # delete the old file and overwrite with the new. pandas parquet writing
+    # does not have any option to overwrite.
+    os.unlink("gamelogs.parquet")
     allseasons.to_parquet("gamelogs.parquet")
 
 
@@ -180,6 +190,9 @@ def download_player_stats():
 
     allstats = pd.concat(playerstats)
     allstats.reset_index(drop=True, inplace=True)
+
+    # delete the old playerstats.parquet and overwrite the new.
+    os.unlink("playerstats.parquet")
     allstats.to_parquet("playerstats.parquet")
 
 
