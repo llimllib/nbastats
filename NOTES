@@ -96,3 +96,11 @@ docker-compose -f docker-compose-non-dev.yml up
 
 # login with admin/admin
 open http://localhost:8088
+
+----------------
+
+this nba page has possessions (total per season tho):
+
+https://www.nba.com/stats/teams/advanced?sort=NET_RATING&dir=-1
+
+Can we get individual games?
