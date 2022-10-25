@@ -4,8 +4,9 @@ from functools import reduce
 from time import time
 import os
 from pathlib import Path
+from typing import List
 
-from nba_api.stats.endpoints import LeagueDashPlayerStats, LeagueGameLog
+from nba_api.stats.endpoints import LeagueDashPlayerStats, TeamGameLogs
 import pandas as pd
 
 FIRST_SEASON = 2010
@@ -20,6 +21,38 @@ def fresh(fname: Path) -> bool:
     an hour ago or does not exist
     """
     return fname.is_file() and (time() - fname.stat().st_mtime) / 60 * 60 < 1
+
+
+def convert_i64_to_i32(df: pd.DataFrame) -> None:
+    """
+    downcast any int64 columns into int32
+
+    the int64s are painful to deal with in javascript where they get
+    represented as a bigint, which observable plot can't handle: see
+    https://github.com/observablehq/plot/discussions/1099
+    """
+    for col in df.columns:
+        column = df[col]
+        assert column is not None  # pyright can be dumb sometimes. Make it believe
+        if column.dtype == "int64":
+            df[col] = column.astype("int32")
+
+
+def join(frames: List[pd.DataFrame]) -> pd.DataFrame:
+    """
+    join the resulting dataframes, adding a _DROP suffix for repeated
+    columns, which we can then filter out
+    """
+    return reduce(lambda x, y: x.join(y, rsuffix="_DROP"), frames).filter(
+        regex="^(?!.*_DROP$)"
+    )
+
+
+def tryrm(path: str | Path):
+    try:
+        os.unlink(path)
+    except FileNotFoundError:
+        pass
 
 
 def download_gamelogs():
@@ -52,9 +85,19 @@ def download_gamelogs():
 
         print(f"Downloading {year} game logs")
 
-        games = LeagueGameLog(
-            date_from_nullable=most_recent, season=season
-        ).get_data_frames()[0]
+        # you can get the game logs with ortg and drtg as "advanced"
+        # MeasureType at https://www.nba.com/stats/teams/boxscores-advanced
+        logs = []
+        for measure in [None, "Advanced"]:
+            logs.append(
+                TeamGameLogs(
+                    date_from_nullable=most_recent,
+                    season_nullable=season,
+                    measure_type_player_game_logs_nullable=measure,
+                ).get_data_frames()[0]
+            )
+
+        games = join(logs)
 
         # if we had games from this season, we want to append the newly
         # downloaded ones. Otherwise, we should have all the games for this
@@ -62,31 +105,17 @@ def download_gamelogs():
         if old_games is not None:
             # drop all our created columns; we'll recreate them in a second.
             old_games.drop(
-                columns=["game_n", "o_eff", "season", "d_eff", "possessions"],
+                columns=["game_n"],
                 inplace=True,
             )
             games = pd.concat([old_games, games]).drop_duplicates()
 
         assert isinstance(games, pd.DataFrame)
 
-        # The index by default
         games.reset_index(inplace=True)
         games.rename(columns={"index": "game_n"}, inplace=True)
+        convert_i64_to_i32(games)
 
-        # Should I use a fancier possessions estimate?
-        games["possessions"] = (
-            games["FGA"] - games["OREB"] + games["TOV"] + 0.4 * games["FTA"]
-        )
-
-        games["o_eff"] = games["PTS"] / games["possessions"]
-        games["d_eff"] = games.apply(
-            lambda row: games[
-                (games["GAME_ID"] == row["GAME_ID"])
-                & (games["TEAM_ID"] != row["TEAM_ID"])
-            ].iloc[0]["o_eff"],
-            axis=1,
-        )
-        games["season"] = year
         seasons.append(games)
         games.to_parquet(file)
 
@@ -95,7 +124,7 @@ def download_gamelogs():
 
     # delete the old file and overwrite with the new. pandas parquet writing
     # does not have any option to overwrite.
-    os.unlink("gamelogs.parquet")
+    tryrm("gamelogs.parquet")
     allseasons.to_parquet("gamelogs.parquet")
 
 
@@ -142,13 +171,6 @@ def download_player_stats():
         print(f"Downloading {season} player stats")
 
         # https://www.nba.com/stats/players/traditional and inspect to see the options
-        #
-        # This works, but we have a problem: the "totals" and "pergame"
-        # settings both return "pts", so I have to figure out a way to
-        # distinguish pts_per_game from total_pts, but also not end up with a
-        # million duplicated columns; for example the "name" column of each
-        # table should not get duplicated because I added a prefix to every
-        # column. TODO
         stats = []
         for per in ["Totals", "PerGame", "Per36", "Per100Possessions"]:
             df = LeagueDashPlayerStats(
@@ -179,11 +201,8 @@ def download_player_stats():
             ).get_data_frames()[0]
         )
 
-        # join all the resulting dataframes, adding a _DROP suffix for repeated
-        # columns, which we can then filter out
-        allstats = reduce(lambda x, y: x.join(y, rsuffix="_DROP"), stats).filter(
-            regex="^(?!.*_DROP$)"
-        )
+        allstats = join(stats)
+        convert_i64_to_i32(allstats)
 
         playerstats.append(allstats)
         allstats.to_parquet(file)
@@ -192,7 +211,7 @@ def download_player_stats():
     allstats.reset_index(drop=True, inplace=True)
 
     # delete the old playerstats.parquet and overwrite the new.
-    os.unlink("playerstats.parquet")
+    tryrm("playerstats.parquet")
     allstats.to_parquet("playerstats.parquet")
 
 
