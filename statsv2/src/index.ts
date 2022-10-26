@@ -1,6 +1,7 @@
 import * as duckdb from "@duckdb/duckdb-wasm";
 import * as Plot from "@observablehq/plot";
 import { select } from "d3-selection";
+import { extent, maxIndex } from "d3-array";
 import { html } from "htl";
 
 import { tooltip } from "./tooltip-mark";
@@ -29,8 +30,50 @@ type Series = {
   data: any[];
 };
 
+type GraphOptions = {
+  title: string;
+  xfield: string;
+  xtitle: string;
+  yfield: string;
+  ytitle: string;
+  marginTop: number;
+  marginRight: number;
+  marginBottom: number;
+  marginLeft: number;
+  xLabelOffset: number;
+  // "top"|"right"|"bottom"|"left"|"center"
+  // but actually typing it was making me insane
+  xLabelAnchor: string;
+  xTicks: number;
+  xPadding: number;
+  yLabelOffset: number;
+  yLabelAnchor: string;
+  yTicks: number;
+  yPadding: number;
+};
+
 function makeMarks(series: Series, xfield: string, yfield: string): any[] {
   let marks: any[] = [];
+
+  // For now, we're going to tie tooltips and labels together - it doesn't make
+  // much sense to allow tooltips for a series that isn't labeled, I don't
+  // think. Possibly revisit.
+  //
+  // Put these before the dots, so that if we mistakenly overlap text on a dot,
+  // the text goes behind the dot and it's still hover-able
+  if (series.useLabels) {
+    marks = [
+      ...marks,
+      Tooltip(series.data, { x: xfield, y: yfield, content: "PLAYER_NAME" }),
+      Label(series.data, {
+        x: xfield,
+        y: yfield,
+        label: "PLAYER_NAME",
+        padding: 10,
+        minCellSize: 3000,
+      }),
+    ];
+  }
 
   if (series.useTeamColors) {
     marks = [
@@ -59,54 +102,78 @@ function makeMarks(series: Series, xfield: string, yfield: string): any[] {
     );
   }
 
-  // For now, we're going to tie tooltips and labels together - it doesn't make
-  // much sense to allow tooltips for a series that isn't labeled, I don't
-  // think. Possibly revisit.
-  if (series.useLabels) {
-    marks = [
-      ...marks,
-      Tooltip(series.data, { x: xfield, y: yfield, content: "PLAYER_NAME" }),
-      Label(series.data, {
-        x: xfield,
-        y: yfield,
-        label: "PLAYER_NAME",
-        padding: 10,
-        minCellSize: 3000,
-      }),
-    ];
-  }
-
   return marks;
+}
+
+function paddedDomain(extent: [any, any], padding: number): [number, number] {
+  const half = extent[1] - (extent[0] + extent[1] / 2);
+  const pad = half * (padding / 100);
+  return [extent[0] - pad, extent[1] + pad];
 }
 
 // Q: Does it make sense to allow series to carry their own x and y fields? In
 // that case we would want to facet on them?
 //   - for now I'm going to restrict the graph to have one xfield and yfield,
 //     but this is an area for research
-async function main(
-  data: Series[],
-  xfield: string,
-  xtitle: string,
-  yfield: string,
-  ytitle: string
-): Promise<void> {
-  console.log(xfield, yfield, data)
+async function main(serieses: Series[], options: GraphOptions): Promise<void> {
   const chartSize = 800;
-  const marks = data.map((series) => makeMarks(series, xfield, yfield));
+  const marks = serieses.map((series) =>
+    makeMarks(series, options.xfield, options.yfield)
+  );
+  if (options.title != "") {
+    marks.push(
+      Plot.text([options.title], {
+        frameAnchor: "top",
+        fontSize: 25,
+        fontVariant: "bold",
+        fontFamily: "serif",
+      })
+    );
+  }
+
+  // For each series, get its extent; then get the extent for all of these.
+  // This gives us the maximum extent, which we'll need for setting the proper
+  // domain of each axis
+  const extX = extent(
+    serieses.flatMap((s) => extent(s.data, (d: any) => d[options.xfield]))
+  );
+  const extY = extent(
+    serieses.flatMap((s) => extent(s.data, (d: any) => d[options.yfield]))
+  );
+
+  console.log(
+    "ext",
+    extY,
+    serieses[0].data[maxIndex(serieses[0].data, (d) => d[options.yfield])]
+  );
+  console.log("pad", options.yPadding, paddedDomain(extY, options.yPadding));
+  console.log("options: ", options);
   const chart = Plot.plot({
     width: chartSize,
     height: chartSize,
+    marginTop: options.marginTop,
+    marginRight: options.marginRight,
+    marginBottom: options.marginBottom,
+    marginLeft: options.marginLeft,
     grid: true,
     style: {
       background: "#fff9eb",
     },
     x: {
-      label: xtitle,
-      ticks: 5,
+      label: options.xtitle,
+      labelOffset: options.xLabelOffset,
+      labelAnchor: options.xLabelAnchor,
+      ticks: options.xTicks,
+      nice: true,
+      domain: paddedDomain(extX, options.xPadding),
     },
     y: {
-      label: ytitle,
-      ticks: 5,
+      label: options.ytitle,
+      labelOffset: options.yLabelOffset,
+      labelAnchor: options.yLabelAnchor,
+      ticks: options.yTicks,
+      nice: true,
+      domain: paddedDomain(extY, options.yPadding),
     },
     marks: marks.flat(),
   });
@@ -159,9 +226,27 @@ function reGraph(
 ): (event: any) => Promise<void> {
   return async (_: Event) => {
     const serieses = await getSerieses(conn);
-    const xField = ($(".xField") as HTMLInputElement).value;
-    const yField = ($(".yField") as HTMLInputElement).value;
-    await main(serieses, xField, xField, yField, yField);
+    const xField = ($("#xField") as HTMLInputElement).value;
+    const yField = ($("#yField") as HTMLInputElement).value;
+    await main(serieses, {
+      title: ($("#title") as HTMLInputElement).value,
+      xfield: xField,
+      xtitle: xField,
+      yfield: yField,
+      ytitle: yField,
+      marginTop: ($("#marginTop") as HTMLInputElement).valueAsNumber,
+      marginRight: ($("#marginRight") as HTMLInputElement).valueAsNumber,
+      marginBottom: ($("#marginBottom") as HTMLInputElement).valueAsNumber,
+      marginLeft: ($("#marginLeft") as HTMLInputElement).valueAsNumber,
+      xTicks: ($("#xTicks") as HTMLInputElement).valueAsNumber,
+      xLabelOffset: ($("#xLabelOffset") as HTMLInputElement).valueAsNumber,
+      xPadding: ($("#xPadding") as HTMLInputElement).valueAsNumber,
+      xLabelAnchor: ($("#xLabelAnchor") as HTMLInputElement).value,
+      yTicks: ($("#yTicks") as HTMLInputElement).valueAsNumber,
+      yLabelOffset: ($("#yLabelOffset") as HTMLInputElement).valueAsNumber,
+      yLabelAnchor: ($("#yLabelAnchor") as HTMLInputElement).value,
+      yPadding: ($("#yPadding") as HTMLInputElement).valueAsNumber,
+    });
   };
 }
 
@@ -283,21 +368,78 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
       }
     });
 
-  const graphOptions = html` X:
-    <select class="xField">
+  const graphOptions = html`
+    X:
+    <select id="xField">
       ${xfields}
     </select>
     Y:
-    <select class="yField">
+    <select id="yField">
       ${yfields}
-    </select>`;
+    </select>
+    <div>Title: <input type="text" id="title" /></div>
+    <div>
+      margin top:
+      <input type="number" class="margin number" id="marginTop" value="40" />
+      right:
+      <input type="number" class="margin number" id="marginRight" value="40" />
+      bottom:
+      <input type="number" class="margin number" id="marginBottom" value="30" />
+      left:
+      <input type="number" class="margin number" id="marginLeft" value="40" />
+    </div>
+    <div>
+      x ticks:
+      <input type="number" class="axis number" id="xTicks" value="5" /> x label
+      offset:
+      <input type="number" class="axis number" id="xLabelOffset" value="0" /> x
+      padding:
+      <input type="number" class="axis number" id="xPadding" value="5" /> x
+      label anchor:
+      <select id="xLabelAnchor">
+        <option value="right" selected>right</option>
+        <option value="left">left</option>
+        <option value="center">center</option>
+      </select>
+    </div>
+    <div>
+      y ticks:
+      <input type="number" class="axis number" id="yTicks" value="5" /> y label
+      offset:
+      <input type="number" class="axis number" id="yLabelOffset" value="0" /> y
+      padding:
+      <input type="number" class="axis number" id="yPadding" value="5" /> y
+      label anchor:
+      <select id="yLabelAnchor">
+        <option value="top" selected>top</option>
+        <option value="bottom">bottom</option>
+        <option value="center">center</option>
+      </select>
+    </div>
+  `;
   $(".graph-options")?.appendChild(graphOptions);
-  graphOptions
-    .querySelector(".xField")
-    .addEventListener("change", reGraph(conn));
-  graphOptions
-    .querySelector(".yField")
-    .addEventListener("change", reGraph(conn));
+
+  // hook up each graph setting to redraw the graph
+  [
+    "#title",
+    "#xField",
+    "#yField",
+    "#marginTop",
+    "#marginRight",
+    "#marginLeft",
+    "#marginBottom",
+    "#xTicks",
+    "#xLabelOffset",
+    "#xLabelAnchor",
+    "#xPadding",
+    "#yTicks",
+    "#yLabelOffset",
+    "#yLabelAnchor",
+    "#yPadding",
+  ].forEach((cls) => {
+    graphOptions.querySelector(cls).addEventListener("change", reGraph(conn));
+    graphOptions.querySelector(cls).addEventListener("input", reGraph(conn));
+  });
 }
 
 window.addEventListener("DOMContentLoaded", async (_evt) => {
