@@ -2,7 +2,6 @@ import * as duckdb from "@duckdb/duckdb-wasm";
 import * as Plot from "@observablehq/plot";
 import { select } from "d3-selection";
 import d3ToPng from "d3-svg-to-png";
-import { extent, maxIndex } from "d3-array";
 import { html } from "htl";
 
 import { tooltip } from "./tooltip-mark";
@@ -13,7 +12,7 @@ import { Fields } from "./stats_meta";
 const $ = (s: string) => document.querySelector(s);
 
 // TODO: all stats are currently considering a player on their final team for
-//       the year. Is that the best we can do?
+//       the year (I think?). Is that the best we can do?
 // TODO: allow re-ordering of series
 // TODO: get nice names for all stats
 // TODO: add stat values to labels
@@ -34,6 +33,7 @@ type Series = {
 
 type GraphOptions = {
   title: string;
+  subtitle: string;
   xfield: string;
   yfield: string;
   marginTop: number;
@@ -123,7 +123,18 @@ async function main(serieses: Series[], options: GraphOptions): Promise<void> {
         fontSize: 25,
         fontVariant: "bold",
         fontFamily: "serif",
-        dy: -30,
+        dy: 10 - options.marginTop,
+      })
+    );
+  }
+
+  if (options.subtitle != "") {
+    marks.push(
+      Plot.text([options.subtitle], {
+        frameAnchor: "top",
+        fontSize: 15,
+        fontFamily: "serif",
+        dy: 35 - options.marginTop,
       })
     );
   }
@@ -222,32 +233,50 @@ async function query(
   return data.toArray().map((x) => x.toJSON());
 }
 
+// this sucks, what's a better way to figure out if we're on the first run?
+let firstRun = true;
+
 function reGraph(
   conn: duckdb.AsyncDuckDBConnection
 ): (event: any) => Promise<void> {
   return async (_: Event) => {
     const serieses = await getSerieses(conn);
-    const xField = ($("#xField") as HTMLInputElement).value;
-    const yField = ($("#yField") as HTMLInputElement).value;
-    await main(serieses, {
-      title: ($("#title") as HTMLInputElement).value,
-      xfield: xField,
-      yfield: yField,
-      marginTop: ($("#marginTop") as HTMLInputElement).valueAsNumber,
-      marginRight: ($("#marginRight") as HTMLInputElement).valueAsNumber,
-      marginBottom: ($("#marginBottom") as HTMLInputElement).valueAsNumber,
-      marginLeft: ($("#marginLeft") as HTMLInputElement).valueAsNumber,
-      xTicks: ($("#xTicks") as HTMLInputElement).valueAsNumber,
-      xLabelOffset: ($("#xLabelOffset") as HTMLInputElement).valueAsNumber,
-      xPadding: ($("#xPadding") as HTMLInputElement).valueAsNumber,
-      xLabelAnchor: ($("#xLabelAnchor") as HTMLInputElement).value,
-      xLabel: ($("#xLabel") as HTMLInputElement).value,
-      yTicks: ($("#yTicks") as HTMLInputElement).valueAsNumber,
-      yLabelOffset: ($("#yLabelOffset") as HTMLInputElement).valueAsNumber,
-      yLabelAnchor: ($("#yLabelAnchor") as HTMLInputElement).value,
-      yLabel: ($("#yLabel") as HTMLInputElement).value,
-      yPadding: ($("#yPadding") as HTMLInputElement).valueAsNumber,
-    });
+    if (firstRun) {
+      firstRun = false;
+      const options = JSON.parse(
+        atob(
+          new URL(window.location.toString()).searchParams.get(
+            "options"
+          ) as string
+        )
+      );
+      // TODO: now set the options HTML elements to the value from the options
+      //       object
+      await main(serieses, options);
+    } else {
+      const xField = ($("#xField") as HTMLInputElement).value;
+      const yField = ($("#yField") as HTMLInputElement).value;
+      await main(serieses, {
+        title: inputValue("#title"),
+        subtitle: inputValue("#subtitle"),
+        xfield: xField,
+        yfield: yField,
+        marginTop: numValue("#marginTop"),
+        marginRight: numValue("#marginRight"),
+        marginBottom: numValue("#marginBottom"),
+        marginLeft: numValue("#marginLeft"),
+        xTicks: numValue("#xTicks"),
+        xLabelOffset: numValue("#xLabelOffset"),
+        xPadding: numValue("#xPadding"),
+        xLabelAnchor: inputValue("#xLabelAnchor"),
+        xLabel: inputValue("#xLabel"),
+        yTicks: numValue("#yTicks"),
+        yLabelOffset: numValue("#yLabelOffset"),
+        yLabelAnchor: inputValue("#yLabelAnchor"),
+        yLabel: inputValue("#yLabel"),
+        yPadding: numValue("#yPadding"),
+      });
+    }
   };
 }
 
@@ -343,20 +372,18 @@ function makeQuery(filter: string, year: string): string {
       WHERE ${filter}`;
 }
 
-function isChecked<E extends Element = Element>(
-  node: E,
-  selector: string
-): boolean {
+function isChecked(selector: string, node: Element): boolean {
   return (node.querySelector(selector) as HTMLInputElement).checked
     ? true
     : false;
 }
 
-function inputValue<E extends Element = Element>(
-  node: E,
-  selector: string
-): string {
+function inputValue(selector: string, node: Element = document.body): string {
   return (node.querySelector(selector) as HTMLInputElement).value;
+}
+
+function numValue(selector: string, node: Element = document.body): number {
+  return (node.querySelector(selector) as HTMLInputElement).valueAsNumber;
 }
 
 // getSeries Reads each series and turns its choices into a Series object for
@@ -367,10 +394,10 @@ async function getSerieses(
 ): Promise<Series[]> {
   return await Promise.all(
     Array.from(document.querySelectorAll(".series")).map(async (series) => {
-      const year = inputValue(series, ".yearChooser");
-      const useTeamColors = isChecked(series, ".useTeamColors");
-      const useLabels = isChecked(series, ".useLabels");
-      const filter = inputValue(series, ".filter");
+      const year = inputValue(".yearChooser", series);
+      const useTeamColors = isChecked(".useTeamColors", series);
+      const useLabels = isChecked(".useLabels", series);
+      const filter = inputValue(".filter", series);
 
       const data = await query(conn, makeQuery(filter, year));
       return {
@@ -420,7 +447,10 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
     <select id="yField">
       ${yfields}
     </select>
-    <div>Title: <input type="text" id="title" /></div>
+    <div>
+      Title: <input type="text" id="title" /><br />
+      Subtitle: <input type="text" id="subtitle" />
+    </div>
     <div>
       margin top:
       <input type="number" class="margin number" id="marginTop" value="40" />
@@ -470,6 +500,7 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
   // hook up each graph setting to redraw the graph
   [
     "#title",
+    "#subtitle",
     "#xField",
     "#yField",
     "#marginTop",
