@@ -77,14 +77,18 @@ def download_gamelogs():
         # only the more recent games
         elif file.is_file():
             old_games = pd.read_parquet(file)
+            # the date format for LeagueGameLog appears to be YYYY-MM-DD while
+            # the date formate for TeamGameLogs appears to be MM/DD/YYYY. I
+            # can't find any documentation for this, I did curl requests until
+            # something worked
             most_recent = (
                 pd.to_datetime(old_games["GAME_DATE"])
                 .max()
                 .to_pydatetime()
-                .strftime("%Y-%m-%d")
+                .strftime("%m/%d/%Y")
             )
 
-        print(f"Downloading {year} game logs")
+        print(f"Downloading {season} game logs from {most_recent}")
 
         # you can get the game logs with ortg and drtg as "advanced"
         # MeasureType at https://www.nba.com/stats/teams/boxscores-advanced
