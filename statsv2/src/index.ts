@@ -107,12 +107,6 @@ function makeMarks(series: Series, xfield: string, yfield: string): any[] {
   return marks;
 }
 
-function paddedDomain(extent: [any, any], padding: number): [number, number] {
-  const half = extent[1] - (extent[0] + extent[1] / 2);
-  const pad = half * (padding / 100);
-  return [extent[0] - pad, extent[1] + pad];
-}
-
 // Q: Does it make sense to allow series to carry their own x and y fields? In
 // that case we would want to facet on them?
 //   - for now I'm going to restrict the graph to have one xfield and yfield,
@@ -133,16 +127,6 @@ async function main(serieses: Series[], options: GraphOptions): Promise<void> {
     );
   }
 
-  // For each series, get its extent; then get the extent for all of these.
-  // This gives us the maximum extent, which we'll need for setting the proper
-  // domain of each axis
-  const extX = extent(
-    serieses.flatMap((s) => extent(s.data, (d: any) => d[options.xfield]))
-  );
-  const extY = extent(
-    serieses.flatMap((s) => extent(s.data, (d: any) => d[options.yfield]))
-  );
-
   const chart = Plot.plot({
     width: chartSize,
     height: chartSize,
@@ -160,7 +144,7 @@ async function main(serieses: Series[], options: GraphOptions): Promise<void> {
       labelAnchor: options.xLabelAnchor,
       ticks: options.xTicks,
       nice: true,
-      domain: paddedDomain(extX, options.xPadding),
+      inset: options.xPadding,
     },
     y: {
       label: options.yLabel.length > 0 ? options.yLabel : options.yfield,
@@ -168,7 +152,7 @@ async function main(serieses: Series[], options: GraphOptions): Promise<void> {
       labelAnchor: options.yLabelAnchor,
       ticks: options.yTicks,
       nice: true,
-      domain: paddedDomain(extY, options.yPadding),
+      inset: options.yPadding,
     },
     marks: marks.flat(),
   });
@@ -184,12 +168,13 @@ async function main(serieses: Series[], options: GraphOptions): Promise<void> {
 
   const plot = $("#plot") as HTMLElement;
   plot.innerHTML = "";
+  select(chart).classed("plot", true);
   plot.append(chart);
 }
 
 function download() {
   // testing
-  d3ToPng("#plot svg", "plot", {
+  d3ToPng("svg.plot", "plot", {
     scale: 1,
     quality: 0.92,
     download: true,
@@ -439,11 +424,11 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
       margin top:
       <input type="number" class="margin number" id="marginTop" value="40" />
       right:
-      <input type="number" class="margin number" id="marginRight" value="40" />
+      <input type="number" class="margin number" id="marginRight" value="50" />
       bottom:
-      <input type="number" class="margin number" id="marginBottom" value="30" />
+      <input type="number" class="margin number" id="marginBottom" value="40" />
       left:
-      <input type="number" class="margin number" id="marginLeft" value="40" />
+      <input type="number" class="margin number" id="marginLeft" value="60" />
     </div>
     <div>
       x ticks:
