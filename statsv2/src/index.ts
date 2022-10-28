@@ -1,6 +1,7 @@
 import * as duckdb from "@duckdb/duckdb-wasm";
 import * as Plot from "@observablehq/plot";
 import { select } from "d3-selection";
+import d3ToPng from "d3-svg-to-png";
 import { extent, maxIndex } from "d3-array";
 import { html } from "htl";
 
@@ -27,15 +28,14 @@ type Series = {
   year: string;
   useTeamColors: boolean;
   useLabels: boolean;
+  filter: string;
   data: any[];
 };
 
 type GraphOptions = {
   title: string;
   xfield: string;
-  xtitle: string;
   yfield: string;
-  ytitle: string;
   marginTop: number;
   marginRight: number;
   marginBottom: number;
@@ -44,11 +44,13 @@ type GraphOptions = {
   // "top"|"right"|"bottom"|"left"|"center"
   // but actually typing it was making me insane
   xLabelAnchor: string;
+  xLabel: string;
   xTicks: number;
   xPadding: number;
   yLabelOffset: number;
   yLabelAnchor: string;
   yTicks: number;
+  yLabel: string;
   yPadding: number;
 };
 
@@ -141,13 +143,6 @@ async function main(serieses: Series[], options: GraphOptions): Promise<void> {
     serieses.flatMap((s) => extent(s.data, (d: any) => d[options.yfield]))
   );
 
-  console.log(
-    "ext",
-    extY,
-    serieses[0].data[maxIndex(serieses[0].data, (d) => d[options.yfield])]
-  );
-  console.log("pad", options.yPadding, paddedDomain(extY, options.yPadding));
-  console.log("options: ", options);
   const chart = Plot.plot({
     width: chartSize,
     height: chartSize,
@@ -160,7 +155,7 @@ async function main(serieses: Series[], options: GraphOptions): Promise<void> {
       background: "#fff9eb",
     },
     x: {
-      label: options.xtitle,
+      label: options.xLabel.length > 0 ? options.xLabel : options.xfield,
       labelOffset: options.xLabelOffset,
       labelAnchor: options.xLabelAnchor,
       ticks: options.xTicks,
@@ -168,7 +163,7 @@ async function main(serieses: Series[], options: GraphOptions): Promise<void> {
       domain: paddedDomain(extX, options.xPadding),
     },
     y: {
-      label: options.ytitle,
+      label: options.yLabel.length > 0 ? options.yLabel : options.yfield,
       labelOffset: options.yLabelOffset,
       labelAnchor: options.yLabelAnchor,
       ticks: options.yTicks,
@@ -179,9 +174,29 @@ async function main(serieses: Series[], options: GraphOptions): Promise<void> {
   });
   select(chart).attr("overflow", "visible");
 
+  // serialize the options and store them in the URL
+  // TODO: serialize the series info as well
+  const url = new URL(window.location.toString());
+  const stateUrl = `${url.origin}${url.pathname}?options=${btoa(
+    JSON.stringify(options)
+  )}`;
+  window.history.replaceState(null, "", stateUrl);
+
   const plot = $("#plot") as HTMLElement;
   plot.innerHTML = "";
   plot.append(chart);
+}
+
+function download() {
+  // testing
+  d3ToPng("#plot svg", "plot", {
+    scale: 1,
+    quality: 0.92,
+    download: true,
+    // This is in the javascript but not in the type file. File a pull request
+    // if this library is useful.
+    // background: 'white'
+  });
 }
 
 async function initDuckDb(): Promise<duckdb.AsyncDuckDBConnection> {
@@ -231,9 +246,7 @@ function reGraph(
     await main(serieses, {
       title: ($("#title") as HTMLInputElement).value,
       xfield: xField,
-      xtitle: xField,
       yfield: yField,
-      ytitle: yField,
       marginTop: ($("#marginTop") as HTMLInputElement).valueAsNumber,
       marginRight: ($("#marginRight") as HTMLInputElement).valueAsNumber,
       marginBottom: ($("#marginBottom") as HTMLInputElement).valueAsNumber,
@@ -242,9 +255,11 @@ function reGraph(
       xLabelOffset: ($("#xLabelOffset") as HTMLInputElement).valueAsNumber,
       xPadding: ($("#xPadding") as HTMLInputElement).valueAsNumber,
       xLabelAnchor: ($("#xLabelAnchor") as HTMLInputElement).value,
+      xLabel: ($("#xLabel") as HTMLInputElement).value,
       yTicks: ($("#yTicks") as HTMLInputElement).valueAsNumber,
       yLabelOffset: ($("#yLabelOffset") as HTMLInputElement).valueAsNumber,
       yLabelAnchor: ($("#yLabelAnchor") as HTMLInputElement).value,
+      yLabel: ($("#yLabel") as HTMLInputElement).value,
       yPadding: ($("#yPadding") as HTMLInputElement).valueAsNumber,
     });
   };
@@ -274,6 +289,8 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
           <input type="checkbox" id="useTeamColors${n}" class="useTeamColors" checked></input>
         <label for="useLabels${n}">Use labels</label>
           <input type="checkbox" id="useLabels${n}" class="useLabels" checked></input>
+        <label for="filter{n}">Use labels</label>
+          <input id="filter${n}" class="filter" value="quantile(fga) > 30"></input>
       </div>`;
   $(".serieses")?.appendChild(seriesNode);
   seriesNode
@@ -285,6 +302,7 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   seriesNode
     .querySelector(".useLabels")
     .addEventListener("change", reGraph(conn));
+  seriesNode.querySelector(".filter").addEventListener("change", reGraph(conn));
 
   const serieses = await getSerieses(conn);
 
@@ -304,6 +322,57 @@ async function removeSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   reGraph(conn)(null);
 }
 
+const QUANTILE_RE = /quantile\((\w+)\)/;
+function parseQuantiles(filter: string): [string, string[]] {
+  const quantiles = [];
+  let res = null;
+  while ((res = QUANTILE_RE.exec(filter)) !== null) {
+    let [call, field] = res;
+    filter = filter.replace(call, `_${field}_ntile`);
+    quantiles.push(field);
+  }
+  return [filter, quantiles];
+}
+
+// TODO: allow year to vary (?)
+function makeQuery(filter: string, year: string): string {
+  const [cond, medians] = parseQuantiles(filter);
+  if (medians.length > 0) {
+    const median_stmts = medians
+      .map((x) => `ntile(100) OVER (ORDER BY ${x}) AS _${x}_ntile`)
+      .join(", ");
+    return `
+        WITH player_stats AS (
+          select *, ${median_stmts}
+          FROM players
+          WHERE year='${year}'
+        )
+        SELECT *
+        FROM player_stats
+        WHERE year=${year} and ${cond}`;
+  }
+  return `
+      SELECT *
+      FROM players
+      WHERE ${filter}`;
+}
+
+function isChecked<E extends Element = Element>(
+  node: E,
+  selector: string
+): boolean {
+  return (node.querySelector(selector) as HTMLInputElement).checked
+    ? true
+    : false;
+}
+
+function inputValue<E extends Element = Element>(
+  node: E,
+  selector: string
+): string {
+  return (node.querySelector(selector) as HTMLInputElement).value;
+}
+
 // getSeries Reads each series and turns its choices into a Series object for
 // graphing. No other function should be reaching into a series to check its
 // values.
@@ -312,29 +381,17 @@ async function getSerieses(
 ): Promise<Series[]> {
   return await Promise.all(
     Array.from(document.querySelectorAll(".series")).map(async (series) => {
-      const year = (series.querySelector(".yearChooser") as HTMLInputElement)
-        .value;
-      const useTeamColors = (
-        series.querySelector(".useTeamColors") as HTMLInputElement
-      ).checked;
-      const useLabels = (series.querySelector(".useLabels") as HTMLInputElement)
-        .checked;
-      const data = await query(
-        conn,
-        `
-      WITH player_stats AS (
-        select *, ntile(100) over (order by fga) as fga_pctile
-        FROM players
-        WHERE year='${year}'
-      )
-      SELECT *
-      FROM player_stats
-      WHERE fga_pctile > 30`
-      );
+      const year = inputValue(series, ".yearChooser");
+      const useTeamColors = isChecked(series, ".useTeamColors");
+      const useLabels = isChecked(series, ".useLabels");
+      const filter = inputValue(series, ".filter");
+
+      const data = await query(conn, makeQuery(filter, year));
       return {
         year: year,
         useTeamColors: useTeamColors,
         useLabels: useLabels,
+        filter: filter,
         data: data,
       };
     })
@@ -392,7 +449,7 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
       x ticks:
       <input type="number" class="axis number" id="xTicks" value="5" /> x label
       offset:
-      <input type="number" class="axis number" id="xLabelOffset" value="0" /> x
+      <input type="number" class="axis number" id="xLabelOffset" value="30" /> x
       padding:
       <input type="number" class="axis number" id="xPadding" value="5" /> x
       label anchor:
@@ -401,12 +458,13 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
         <option value="left">left</option>
         <option value="center">center</option>
       </select>
+      label: <input type="text" id="xLabel" />
     </div>
     <div>
       y ticks:
       <input type="number" class="axis number" id="yTicks" value="5" /> y label
       offset:
-      <input type="number" class="axis number" id="yLabelOffset" value="0" /> y
+      <input type="number" class="axis number" id="yLabelOffset" value="40" /> y
       padding:
       <input type="number" class="axis number" id="yPadding" value="5" /> y
       label anchor:
@@ -415,6 +473,10 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
         <option value="bottom">bottom</option>
         <option value="center">center</option>
       </select>
+      label: <input type="text" id="yLabel" />
+    </div>
+    <div>
+      <button id="download">download</button>
     </div>
   `;
   $(".graph-options")?.appendChild(graphOptions);
@@ -431,15 +493,19 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
     "#xTicks",
     "#xLabelOffset",
     "#xLabelAnchor",
+    "#xLabel",
     "#xPadding",
     "#yTicks",
     "#yLabelOffset",
     "#yLabelAnchor",
+    "#yLabel",
     "#yPadding",
   ].forEach((cls) => {
     graphOptions.querySelector(cls).addEventListener("change", reGraph(conn));
     graphOptions.querySelector(cls).addEventListener("input", reGraph(conn));
   });
+
+  graphOptions.querySelector("#download").addEventListener("click", download);
 }
 
 window.addEventListener("DOMContentLoaded", async (_evt) => {

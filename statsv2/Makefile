@@ -1,11 +1,11 @@
 all: dist/index.js
 
-dist/index.js: index.ts
-	tsc --noEmit --skipLibCheck && \
+dist/index.js: src/index.ts
+	node_modules/.bin/tsc --noEmit --skipLibCheck && \
 		DATA_URL=https://cdn.billmill.org/nbastats node esbuild.config.mjs production
 
 dev:
-	tsc --noEmit --skipLibCheck && \
+	node_modules/.bin/tsc --noEmit --skipLibCheck && \
 		DATA_URL=https://devd.io:8000/data2 node esbuild.config.mjs
 
 # serve index.html and also automatically rebuild index.ts when it starts. Is

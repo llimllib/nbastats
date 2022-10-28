@@ -9,6 +9,7 @@
     "@apache-arrow/esnext-esm": "^9.0.0",
     "@duckdb/duckdb-wasm": "^1.11.0",
     "@observablehq/plot": "^0.6.0",
+    "d3-svg-to-png": "^0.2.0",
     "htl": "^0.3.1"
   },
   "devDependencies": {
