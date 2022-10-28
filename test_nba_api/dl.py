@@ -11,6 +11,7 @@ import pandas as pd
 
 FIRST_SEASON = 2010
 CURRENT_SEASON = 2023
+DIR = Path("data")
 
 
 def fresh(fname: Path) -> bool:
@@ -58,7 +59,7 @@ def tryrm(path: str | Path):
 def download_gamelogs():
     seasons = []
     for year in range(FIRST_SEASON, CURRENT_SEASON + 1):
-        file = Path(f"gamelog_{year}.parquet")
+        file = DIR / f"gamelog_{year}.parquet"
         season = f"{year-1}-{str(year)[2:]}"
         most_recent = ""
         old_games = None
@@ -124,8 +125,8 @@ def download_gamelogs():
 
     # delete the old file and overwrite with the new. pandas parquet writing
     # does not have any option to overwrite.
-    tryrm("gamelogs.parquet")
-    allseasons.to_parquet("gamelogs.parquet")
+    tryrm(DIR / "gamelogs.parquet")
+    allseasons.to_parquet(DIR / "gamelogs.parquet")
 
 
 columns_to_suffix = [
@@ -155,7 +156,7 @@ columns_to_suffix = [
 def download_player_stats():
     playerstats = []
     for year in range(FIRST_SEASON, CURRENT_SEASON + 1):
-        file = f"players_{year}.parquet"
+        file = DIR / f"players_{year}.parquet"
         season = f"{year-1}-{str(year)[2:]}"
 
         # we don't need to redownload old years, (presumably?) nothing has changed
@@ -211,8 +212,8 @@ def download_player_stats():
     allstats.reset_index(drop=True, inplace=True)
 
     # delete the old playerstats.parquet and overwrite the new.
-    tryrm("playerstats.parquet")
-    allstats.to_parquet("playerstats.parquet")
+    tryrm(DIR / "playerstats.parquet")
+    allstats.to_parquet(DIR / "playerstats.parquet")
 
 
 if __name__ == "__main__":
