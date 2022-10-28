@@ -123,6 +123,7 @@ async function main(serieses: Series[], options: GraphOptions): Promise<void> {
         fontSize: 25,
         fontVariant: "bold",
         fontFamily: "serif",
+        dy: -30,
       })
     );
   }
