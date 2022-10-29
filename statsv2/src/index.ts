@@ -347,7 +347,7 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   const n = Array.from(document.querySelectorAll(".series")).length + 1;
 
   const seriesNode = html`<div class="series" id="series${n}">
-        Year: <select class="yearChooser">
+        Year: <select class="yearChooser" id="year${n}">
           <option value="2023" selected>2023</option>
           <option value="2022">2022</option>
           <option value="2021">2021</option>
@@ -382,12 +382,22 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
     .addEventListener("change", rePlot(conn));
   seriesNode.querySelector(".filter").addEventListener("change", rePlot(conn));
 
-  const serieses = await getSerieses(conn);
+  // TODO XXX CURRENT STATUS
+  // How do we wait on the appendChild to succeed before we run `rePlot`?
+  // TODO XXX DELETEME
+  const observer = new MutationObserver(async () => {
+    console.log("observer");
+    const serieses = await getSerieses(conn);
 
-  // disable the remove series button if there's only one element
-  ($(".remove-series") as HTMLInputElement).disabled = serieses.length == 1;
+    // disable the remove series button if there's only one element
+    ($(".remove-series") as HTMLInputElement).disabled = serieses.length == 1;
 
-  rePlot(conn)(null);
+    rePlot(conn)(null);
+  });
+  observer.observe($(".serieses") as Element, {
+    subtree: true,
+    childList: true,
+  });
 }
 
 async function removeSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
@@ -464,11 +474,12 @@ async function getSerieses(
   conn: duckdb.AsyncDuckDBConnection
 ): Promise<Series[]> {
   return await Promise.all(
-    Array.from(document.querySelectorAll(".series")).map(async (series) => {
-      const year = inputValue(".yearChooser", series);
-      const useTeamColors = isChecked(".useTeamColors", series);
-      const useLabels = isChecked(".useLabels", series);
-      const filter = inputValue(".filter", series);
+    Array.from(document.querySelectorAll(".series")).map(async (series, i) => {
+      const n = i + 1;
+      const year = inputValue(`#year${n}`, series);
+      const useTeamColors = isChecked(`#useTeamColors${n}`, series);
+      const useLabels = isChecked(`#useLabels${n}`, series);
+      const filter = inputValue(`#filter${n}`, series);
 
       const data = await query(conn, makeQuery(filter, year));
       return {
