@@ -15,7 +15,10 @@ const $ = (s: string) => document.querySelector(s);
 //       the year (I think?). Is that the best we can do?
 // TODO: allow re-ordering of series
 // TODO: get nice names for all stats
-// TODO: add stat values to labels
+// TODO: add stat values to tooltips
+// TODO: allow year to vary in makeQuery (?)
+//       - idea is a chart like: steph curry ts% every year
+// TODO: custom annotations (mvp: text with x/y coords)
 
 // https://observablehq.com/@fil/experimental-plot-tooltip-01#addTooltip
 const Tooltip = tooltip(Plot);
@@ -27,6 +30,7 @@ type Series = {
   year: string;
   useTeamColors: boolean;
   useLabels: boolean;
+  opacity: number;
   filter: string;
   data: any[];
 };
@@ -91,17 +95,25 @@ function makeMarks(series: Series, xfield: string, yfield: string): any[] {
           }
           return teams.get(d["TEAM_ABBREVIATION"])?.colors[0];
         },
+        fillOpacity: series.opacity / 100,
       }),
       Plot.dot(series.data, {
         x: xfield,
         y: yfield,
         r: 4,
         fill: (d: any) => teams.get(d["TEAM_ABBREVIATION"])?.colors[1],
+        fillOpacity: series.opacity / 100,
       }),
     ];
   } else {
     marks.push(
-      Plot.dot(series.data, { x: xfield, y: yfield, r: 4, fill: "#888888" })
+      Plot.dot(series.data, {
+        x: xfield,
+        y: yfield,
+        r: 4,
+        fill: "#888888",
+        fillOpacity: series.opacity / 100,
+      })
     );
   }
 
@@ -174,7 +186,6 @@ async function main(options: GraphOptions): Promise<void> {
   select(chart).attr("overflow", "visible");
 
   // serialize the options and store them in the URL
-  // TODO: serialize the series info as well
   const url = new URL(window.location.toString());
 
   const jsonOptions = JSON.stringify(options, (key: string, val: any) =>
@@ -283,6 +294,7 @@ async function plotURLOptions(
           setValue(`#series${i + 1} .year`, series.year);
           setValue(`#series${i + 1} .useTeamColors`, series.useTeamColors);
           setValue(`#series${i + 1} .useLabels`, series.useLabels);
+          setValue(`#series${i + 1} .opacity`, series.opacity);
           setValue(`#series${i + 1} .filter`, series.filter);
 
           obs.disconnect();
@@ -298,6 +310,7 @@ async function plotURLOptions(
       setValue(`#series${i + 1} .year`, series.year);
       setValue(`#series${i + 1} .useTeamColors`, series.useTeamColors);
       setValue(`#series${i + 1} .useLabels`, series.useLabels);
+      setValue(`#series${i + 1} .opacity`, series.opacity);
       setValue(`#series${i + 1} .filter`, series.filter);
     }
   });
@@ -389,6 +402,8 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
           <input type="checkbox" id="useTeamColors${n}" class="useTeamColors" checked></input>
         <label for="useLabels${n}">Use labels</label>
           <input type="checkbox" id="useLabels${n}" class="useLabels" checked></input>
+        <label for="opacity{n}">Opacity</label>
+          <input type="number" id="opacity${n}" class="opacity number" value="100"></input>
         <label for="filter{n}">Use labels</label>
           <input id="filter${n}" class="filter" value="quantile(fga) > 30"></input>
       </div>`;
@@ -399,8 +414,8 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
     if (series) {
       rePlot(conn)(null);
 
-      [".year", ".useTeamColors", ".useLabels", ".filter"].forEach((s) =>
-        series.querySelector(s)?.addEventListener("change", rePlot(conn))
+      [".year", ".useTeamColors", ".useLabels", ".opacity", ".filter"].forEach(
+        (s) => series.querySelector(s)?.addEventListener("change", rePlot(conn))
       );
 
       obs.disconnect();
@@ -437,7 +452,6 @@ function parseQuantiles(filter: string): [string, string[]] {
   return [filter, quantiles];
 }
 
-// TODO: allow year to vary (?)
 function makeQuery(filter: string, year: string): string {
   const [cond, medians] = parseQuantiles(filter);
   if (medians.length > 0) {
@@ -494,6 +508,7 @@ async function getSerieses(
       const year = inputValue(`#year${n}`, series);
       const useTeamColors = isChecked(`#useTeamColors${n}`, series);
       const useLabels = isChecked(`#useLabels${n}`, series);
+      const opacity = numValue(`#opacity${n}`, series);
       const filter = inputValue(`#filter${n}`, series);
 
       const data = await query(conn, makeQuery(filter, year));
@@ -501,6 +516,7 @@ async function getSerieses(
         year: year,
         useTeamColors: useTeamColors,
         useLabels: useLabels,
+        opacity: opacity,
         filter: filter,
         data: data,
       };
@@ -544,6 +560,7 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
     <select id="yField">
       ${yfields}
     </select>
+    <button id="swapAxes">🔄</button>
     <div>
       Title: <input type="text" id="title" /><br />
       Subtitle: <input type="text" id="subtitle" />
@@ -620,6 +637,13 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
   });
 
   graphOptions.querySelector("#download").addEventListener("click", download);
+
+  graphOptions.querySelector("#swapAxes").addEventListener("click", () => {
+    const a = inputValue("#xField");
+    setValue("#xField", inputValue("#yField"));
+    setValue("#yField", a);
+    rePlot(conn)(null);
+  });
 }
 
 window.addEventListener("DOMContentLoaded", async (_evt) => {
