@@ -52,6 +52,7 @@ type GraphOptions = {
   yTicks: number;
   yLabel: string;
   yPadding: number;
+  serieses: Series[];
 };
 
 function makeMarks(series: Series, xfield: string, yfield: string): any[] {
@@ -111,9 +112,9 @@ function makeMarks(series: Series, xfield: string, yfield: string): any[] {
 // that case we would want to facet on them?
 //   - for now I'm going to restrict the graph to have one xfield and yfield,
 //     but this is an area for research
-async function main(serieses: Series[], options: GraphOptions): Promise<void> {
+async function main(options: GraphOptions): Promise<void> {
   const chartSize = 800;
-  const marks = serieses.map((series) =>
+  const marks = options.serieses.map((series) =>
     makeMarks(series, options.xfield, options.yfield)
   );
   if (options.title != "") {
@@ -138,6 +139,8 @@ async function main(serieses: Series[], options: GraphOptions): Promise<void> {
       })
     );
   }
+
+  console.log(options);
 
   const chart = Plot.plot({
     width: chartSize,
@@ -173,9 +176,18 @@ async function main(serieses: Series[], options: GraphOptions): Promise<void> {
   // serialize the options and store them in the URL
   // TODO: serialize the series info as well
   const url = new URL(window.location.toString());
-  const stateUrl = `${url.origin}${url.pathname}?options=${btoa(
-    JSON.stringify(options)
-  )}`;
+
+  // convert the options object into a json object, and exclude any fields
+  // named "data"
+  let deleteme = JSON.stringify(options, (key: string, val: any) =>
+    key == "data" ? undefined : val
+  );
+
+  const jsonOptions = JSON.stringify(options, (key: string, val: any) =>
+    key == "data" ? undefined : val
+  );
+  const encodedOptions = encodeURIComponent(btoa(jsonOptions));
+  const stateUrl = `${url.origin}${url.pathname}?options=${encodedOptions}`;
   window.history.replaceState(null, "", stateUrl);
 
   const plot = $("#plot") as HTMLElement;
@@ -190,8 +202,8 @@ function download() {
     scale: 1,
     quality: 0.92,
     download: true,
-    // This is in the javascript but not in the type file. File a pull request
-    // if this library is useful.
+    // This is in the javascript but not in the type file.
+    // https://github.com/JuanIrache/d3-svg-to-png/pull/17
     // background: 'white'
   });
 }
@@ -233,49 +245,108 @@ async function query(
   return data.toArray().map((x) => x.toJSON());
 }
 
+async function plotURLOptions(
+  conn: duckdb.AsyncDuckDBConnection
+): Promise<void> {
+  console.log(new URL(window.location.toString()).searchParams.get("options"));
+  const options = JSON.parse(
+    atob(
+      decodeURIComponent(
+        new URL(window.location.toString()).searchParams.get(
+          "options"
+        ) as string
+      )
+    )
+  ) as GraphOptions;
+
+  setValue("#xField", options.xfield);
+  setValue("#yField", options.yfield);
+  setValue("#title", options.title);
+  setValue("#subtitle", options.subtitle);
+  setValue("#marginTop", options.marginTop);
+  setValue("#marginRight", options.marginRight);
+  setValue("#marginBottom", options.marginBottom);
+  setValue("#marginLeft", options.marginLeft);
+  setValue("#xTicks", options.xTicks);
+  setValue("#xLabelOffset", options.xLabelOffset);
+  setValue("#xPadding", options.xPadding);
+  setValue("#xLabelAnchor", options.xLabelAnchor);
+  setValue("#xLabel", options.xLabel);
+  setValue("#yTicks", options.yTicks);
+  setValue("#yLabelOffset", options.yLabelOffset);
+  setValue("#yPadding", options.yPadding);
+  setValue("#yLabelAnchor", options.yLabelAnchor);
+  setValue("#yLabel", options.yLabel);
+
+  options.serieses.forEach(async (series: Series, i: number) => {
+    // Try to find the series to fill in; if we don't find it, add one to the
+    // page
+    if (!document.querySelector(`#series${i + 1}`)) {
+      await addSeries(conn);
+    }
+
+    setValue(`#series${i + 1} .yearChooser`, series.year);
+    setValue(`#series${i + 1} .useTeamColors`, series.useTeamColors);
+    setValue(`#series${i + 1} .useLabels`, series.useLabels);
+    setValue(`#series${i + 1} .filter`, series.filter);
+  });
+
+  options.serieses = await getSerieses(conn);
+
+  await main(options);
+}
+
+async function plotFields(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
+  await main({
+    title: inputValue("#title"),
+    subtitle: inputValue("#subtitle"),
+    xfield: inputValue("#xField"),
+    yfield: inputValue("#yField"),
+    marginTop: numValue("#marginTop"),
+    marginRight: numValue("#marginRight"),
+    marginBottom: numValue("#marginBottom"),
+    marginLeft: numValue("#marginLeft"),
+    xTicks: numValue("#xTicks"),
+    xLabelOffset: numValue("#xLabelOffset"),
+    xPadding: numValue("#xPadding"),
+    xLabelAnchor: inputValue("#xLabelAnchor"),
+    xLabel: inputValue("#xLabel"),
+    yTicks: numValue("#yTicks"),
+    yLabelOffset: numValue("#yLabelOffset"),
+    yPadding: numValue("#yPadding"),
+    yLabelAnchor: inputValue("#yLabelAnchor"),
+    yLabel: inputValue("#yLabel"),
+    serieses: await getSerieses(conn),
+  });
+}
+
 // this sucks, what's a better way to figure out if we're on the first run?
 let firstRun = true;
 
-function reGraph(
+function rePlot(
   conn: duckdb.AsyncDuckDBConnection
 ): (event: any) => Promise<void> {
   return async (_: Event) => {
-    const serieses = await getSerieses(conn);
-    if (firstRun) {
+    // if it's the page's first run, and there is an options object in the URL,
+    // get the options object from the URL and use it to set the options fields
+    // and draw the graph.
+    //
+    // Otherwise, or if that fails for any reason (like, say there's an invalid
+    // options object or the options have changed), draw the graph from the
+    // settings on the page.
+    if (
+      firstRun &&
+      new URL(window.location.toString()).searchParams.get("options")
+    ) {
       firstRun = false;
-      const options = JSON.parse(
-        atob(
-          new URL(window.location.toString()).searchParams.get(
-            "options"
-          ) as string
-        )
-      );
-      // TODO: now set the options HTML elements to the value from the options
-      //       object
-      await main(serieses, options);
+      try {
+        await plotURLOptions(conn);
+      } catch (e) {
+        console.error(e);
+        await plotFields(conn);
+      }
     } else {
-      const xField = ($("#xField") as HTMLInputElement).value;
-      const yField = ($("#yField") as HTMLInputElement).value;
-      await main(serieses, {
-        title: inputValue("#title"),
-        subtitle: inputValue("#subtitle"),
-        xfield: xField,
-        yfield: yField,
-        marginTop: numValue("#marginTop"),
-        marginRight: numValue("#marginRight"),
-        marginBottom: numValue("#marginBottom"),
-        marginLeft: numValue("#marginLeft"),
-        xTicks: numValue("#xTicks"),
-        xLabelOffset: numValue("#xLabelOffset"),
-        xPadding: numValue("#xPadding"),
-        xLabelAnchor: inputValue("#xLabelAnchor"),
-        xLabel: inputValue("#xLabel"),
-        yTicks: numValue("#yTicks"),
-        yLabelOffset: numValue("#yLabelOffset"),
-        yLabelAnchor: inputValue("#yLabelAnchor"),
-        yLabel: inputValue("#yLabel"),
-        yPadding: numValue("#yPadding"),
-      });
+      plotFields(conn);
     }
   };
 }
@@ -283,7 +354,7 @@ function reGraph(
 async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   const n = Array.from(document.querySelectorAll(".series")).length + 1;
 
-  const seriesNode = html`<div class="series">
+  const seriesNode = html`<div class="series" id="series${n}">
         Year: <select class="yearChooser">
           <option value="2023" selected>2023</option>
           <option value="2022">2022</option>
@@ -310,21 +381,21 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   $(".serieses")?.appendChild(seriesNode);
   seriesNode
     .querySelector(".yearChooser")
-    .addEventListener("change", reGraph(conn));
+    .addEventListener("change", rePlot(conn));
   seriesNode
     .querySelector(".useTeamColors")
-    .addEventListener("change", reGraph(conn));
+    .addEventListener("change", rePlot(conn));
   seriesNode
     .querySelector(".useLabels")
-    .addEventListener("change", reGraph(conn));
-  seriesNode.querySelector(".filter").addEventListener("change", reGraph(conn));
+    .addEventListener("change", rePlot(conn));
+  seriesNode.querySelector(".filter").addEventListener("change", rePlot(conn));
 
   const serieses = await getSerieses(conn);
 
   // disable the remove series button if there's only one element
   ($(".remove-series") as HTMLInputElement).disabled = serieses.length == 1;
 
-  reGraph(conn)(null);
+  rePlot(conn)(null);
 }
 
 async function removeSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
@@ -334,7 +405,7 @@ async function removeSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   }
   serieses[serieses.length - 1].remove();
 
-  reGraph(conn)(null);
+  rePlot(conn)(null);
 }
 
 const QUANTILE_RE = /quantile\((\w+)\)/;
@@ -380,6 +451,14 @@ function isChecked(selector: string, node: Element): boolean {
 
 function inputValue(selector: string, node: Element = document.body): string {
   return (node.querySelector(selector) as HTMLInputElement).value;
+}
+
+function setValue(selector: string, value: any): void {
+  if (typeof value == "boolean") {
+    (document.querySelector(selector) as HTMLInputElement).checked = value;
+  } else {
+    (document.querySelector(selector) as HTMLInputElement).value = value;
+  }
 }
 
 function numValue(selector: string, node: Element = document.body): number {
@@ -518,8 +597,8 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
     "#yLabel",
     "#yPadding",
   ].forEach((cls) => {
-    graphOptions.querySelector(cls).addEventListener("change", reGraph(conn));
-    graphOptions.querySelector(cls).addEventListener("input", reGraph(conn));
+    graphOptions.querySelector(cls).addEventListener("change", rePlot(conn));
+    graphOptions.querySelector(cls).addEventListener("input", rePlot(conn));
   });
 
   graphOptions.querySelector("#download").addEventListener("click", download);
