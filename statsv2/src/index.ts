@@ -177,16 +177,10 @@ async function main(options: GraphOptions): Promise<void> {
   // TODO: serialize the series info as well
   const url = new URL(window.location.toString());
 
-  // convert the options object into a json object, and exclude any fields
-  // named "data"
-  let deleteme = JSON.stringify(options, (key: string, val: any) =>
-    key == "data" ? undefined : val
-  );
-
   const jsonOptions = JSON.stringify(options, (key: string, val: any) =>
     key == "data" ? undefined : val
   );
-  const encodedOptions = encodeURIComponent(btoa(jsonOptions));
+  const encodedOptions = encodeURIComponent(window.btoa(jsonOptions));
   const stateUrl = `${url.origin}${url.pathname}?options=${encodedOptions}`;
   window.history.replaceState(null, "", stateUrl);
 
@@ -250,7 +244,7 @@ async function plotURLOptions(
 ): Promise<void> {
   console.log(new URL(window.location.toString()).searchParams.get("options"));
   const options = JSON.parse(
-    atob(
+    window.atob(
       decodeURIComponent(
         new URL(window.location.toString()).searchParams.get(
           "options"
