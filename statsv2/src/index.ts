@@ -271,16 +271,35 @@ async function plotURLOptions(
   setValue("#yLabel", options.yLabel);
 
   options.serieses.forEach(async (series: Series, i: number) => {
-    // Try to find the series to fill in; if we don't find it, add one to the
-    // page
-    if (!document.querySelector(`#series${i + 1}`)) {
-      await addSeries(conn);
-    }
+    const n = i + 1;
 
-    setValue(`#series${i + 1} .yearChooser`, series.year);
-    setValue(`#series${i + 1} .useTeamColors`, series.useTeamColors);
-    setValue(`#series${i + 1} .useLabels`, series.useLabels);
-    setValue(`#series${i + 1} .filter`, series.filter);
+    // Try to find the series to fill in; if we don't find it, add one to the
+    // page. If it does exist, just fill it in
+    if (!document.querySelector(`#series${n}`)) {
+      // wait for the new series to hit the dom before setting values
+      const observer = new MutationObserver(async (_, obs) => {
+        const seriesElt = document.getElementById(`series${n}`);
+        if (seriesElt) {
+          setValue(`#series${i + 1} .year`, series.year);
+          setValue(`#series${i + 1} .useTeamColors`, series.useTeamColors);
+          setValue(`#series${i + 1} .useLabels`, series.useLabels);
+          setValue(`#series${i + 1} .filter`, series.filter);
+
+          obs.disconnect();
+          return;
+        }
+      });
+      observer.observe(document, {
+        childList: true,
+        subtree: true,
+      });
+      await addSeries(conn);
+    } else {
+      setValue(`#series${i + 1} .year`, series.year);
+      setValue(`#series${i + 1} .useTeamColors`, series.useTeamColors);
+      setValue(`#series${i + 1} .useLabels`, series.useLabels);
+      setValue(`#series${i + 1} .filter`, series.filter);
+    }
   });
 
   options.serieses = await getSerieses(conn);
@@ -346,8 +365,11 @@ function rePlot(
 async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   const n = Array.from(document.querySelectorAll(".series")).length + 1;
 
+  // disable the remove series button if there's only one element
+  ($(".remove-series") as HTMLInputElement).disabled = n == 1;
+
   const seriesNode = html`<div class="series" id="series${n}">
-        Year: <select class="yearChooser" id="year${n}">
+        Year: <select class="year" id="year${n}">
           <option value="2023" selected>2023</option>
           <option value="2022">2022</option>
           <option value="2021">2021</option>
@@ -370,34 +392,27 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
         <label for="filter{n}">Use labels</label>
           <input id="filter${n}" class="filter" value="quantile(fga) > 30"></input>
       </div>`;
-  $(".serieses")?.appendChild(seriesNode);
-  seriesNode
-    .querySelector(".yearChooser")
-    .addEventListener("change", rePlot(conn));
-  seriesNode
-    .querySelector(".useTeamColors")
-    .addEventListener("change", rePlot(conn));
-  seriesNode
-    .querySelector(".useLabels")
-    .addEventListener("change", rePlot(conn));
-  seriesNode.querySelector(".filter").addEventListener("change", rePlot(conn));
 
-  // TODO XXX CURRENT STATUS
-  // How do we wait on the appendChild to succeed before we run `rePlot`?
-  // TODO XXX DELETEME
-  const observer = new MutationObserver(async () => {
-    console.log("observer");
-    const serieses = await getSerieses(conn);
+  // wait for the element to hit the dom before re-plotting
+  const observer = new MutationObserver(async (_, obs) => {
+    const series = document.getElementById(`series${n}`);
+    if (series) {
+      rePlot(conn)(null);
 
-    // disable the remove series button if there's only one element
-    ($(".remove-series") as HTMLInputElement).disabled = serieses.length == 1;
+      [".year", ".useTeamColors", ".useLabels", ".filter"].forEach((s) =>
+        series.querySelector(s)?.addEventListener("change", rePlot(conn))
+      );
 
-    rePlot(conn)(null);
+      obs.disconnect();
+      return;
+    }
   });
-  observer.observe($(".serieses") as Element, {
-    subtree: true,
+  observer.observe(document, {
     childList: true,
+    subtree: true,
   });
+
+  $(".serieses")?.appendChild(seriesNode);
 }
 
 async function removeSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
