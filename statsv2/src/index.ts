@@ -140,7 +140,7 @@ async function main(options: GraphOptions): Promise<void> {
     );
   }
 
-  console.log(options);
+  console.log("making chart with options:", options);
 
   const chart = Plot.plot({
     width: chartSize,
@@ -191,7 +191,6 @@ async function main(options: GraphOptions): Promise<void> {
 }
 
 function download() {
-  // testing
   d3ToPng("svg.plot", "plot", {
     scale: 1,
     quality: 0.92,
@@ -242,7 +241,6 @@ async function query(
 async function plotURLOptions(
   conn: duckdb.AsyncDuckDBConnection
 ): Promise<void> {
-  console.log(new URL(window.location.toString()).searchParams.get("options"));
   const options = JSON.parse(
     window.atob(
       decodeURIComponent(
