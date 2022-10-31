@@ -4,7 +4,7 @@ import { select } from "d3-selection";
 import d3ToPng from "d3-svg-to-png";
 import { html } from "htl";
 
-import { tooltip } from "./tooltip2";
+import { tooltip } from "./tooltip";
 import { label } from "./labels";
 import { teams } from "./teams";
 import { Fields } from "./stats_meta";
