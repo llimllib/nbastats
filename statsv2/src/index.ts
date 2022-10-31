@@ -1,5 +1,6 @@
 import * as duckdb from "@duckdb/duckdb-wasm";
 import * as Plot from "@observablehq/plot";
+import { base64encode, base64decode } from "byte-base64";
 import { select } from "d3-selection";
 import d3ToPng from "d3-svg-to-png";
 import { html } from "htl";
@@ -41,10 +42,12 @@ type Series = {
 };
 
 type GraphOptions = {
-  title: string;
-  subtitle: string;
   xfield: string;
   yfield: string;
+  title: string;
+  subtitle: string;
+  width: number;
+  height: number;
   marginTop: number;
   marginRight: number;
   marginBottom: number;
@@ -133,7 +136,6 @@ function makeMarks(series: Series, xfield: string, yfield: string): any[] {
 //   - for now I'm going to restrict the graph to have one xfield and yfield,
 //     but this is an area for research
 async function main(options: GraphOptions): Promise<void> {
-  const chartSize = 800;
   const marks = options.serieses.map((series) =>
     makeMarks(series, options.xfield, options.yfield)
   );
@@ -174,8 +176,8 @@ ${options.yLabel}: ${d[options.yfield]}`)
   );
 
   const chart = Plot.plot({
-    width: chartSize,
-    height: chartSize,
+    width: options.width,
+    height: options.height,
     marginTop: options.marginTop,
     marginRight: options.marginRight,
     marginBottom: options.marginBottom,
@@ -214,13 +216,13 @@ ${options.yLabel}: ${d[options.yfield]}`)
   select(chart).attr("overflow", "visible");
 
   // serialize the options and store them in the URL
-  const url = new URL(window.location.toString());
-
   const jsonOptions = JSON.stringify(options, (key: string, val: any) =>
     key == "data" ? undefined : val
   );
-  const encodedOptions = encodeURIComponent(window.btoa(jsonOptions));
-  const stateUrl = `${url.origin}${url.pathname}?options=${encodedOptions}`;
+  const url = new URL(window.location.toString());
+  const stateUrl = `${url.origin}${url.pathname}?options=${encodeURIComponent(
+    base64encode(jsonOptions)
+  )}`;
   window.history.replaceState(null, "", stateUrl);
 
   const plot = $("#plot") as HTMLElement;
@@ -282,7 +284,7 @@ async function plotURLOptions(
   conn: duckdb.AsyncDuckDBConnection
 ): Promise<void> {
   const options = JSON.parse(
-    window.atob(
+    base64decode(
       decodeURIComponent(
         new URL(window.location.toString()).searchParams.get(
           "options"
@@ -295,6 +297,8 @@ async function plotURLOptions(
   setValue("#yField", options.yfield);
   setValue("#title", options.title);
   setValue("#subtitle", options.subtitle);
+  setValue("#width", options.width);
+  setValue("height", options.height);
   setValue("#marginTop", options.marginTop);
   setValue("#marginRight", options.marginRight);
   setValue("#marginBottom", options.marginBottom);
@@ -351,10 +355,12 @@ async function plotURLOptions(
 
 async function plotFields(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   await main({
-    title: inputValue("#title"),
-    subtitle: inputValue("#subtitle"),
     xfield: inputValue("#xField"),
     yfield: inputValue("#yField"),
+    title: inputValue("#title"),
+    subtitle: inputValue("#subtitle"),
+    width: numValue("#width"),
+    height: numValue("#height"),
     marginTop: numValue("#marginTop"),
     marginRight: numValue("#marginRight"),
     marginBottom: numValue("#marginBottom"),
@@ -591,6 +597,12 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
     </select>
     <button id="swapAxes">🔄</button>
     <div>
+      Width:
+      <input type="number" class="number2" id="width" value="800" />
+      Height:
+      <input type="number" class="number2" id="height" value="800" />
+    </div>
+    <div>
       Title: <input type="text" id="title" /><br />
       Subtitle: <input type="text" id="subtitle" />
     </div>
@@ -642,10 +654,12 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
 
   // hook up each graph setting to redraw the graph
   [
-    "#title",
-    "#subtitle",
     "#xField",
     "#yField",
+    "#width",
+    "#height",
+    "#title",
+    "#subtitle",
     "#marginTop",
     "#marginRight",
     "#marginLeft",
