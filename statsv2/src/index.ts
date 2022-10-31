@@ -4,7 +4,7 @@ import { select } from "d3-selection";
 import d3ToPng from "d3-svg-to-png";
 import { html } from "htl";
 
-import { tooltip } from "./tooltip-mark";
+import { tooltip } from "./tooltip2";
 import { label } from "./labels";
 import { teams } from "./teams";
 import { Fields } from "./stats_meta";
@@ -19,6 +19,11 @@ const $ = (s: string) => document.querySelector(s);
 // TODO: allow year to vary in makeQuery (?)
 //       - idea is a chart like: steph curry ts% every year
 // TODO: custom annotations (mvp: text with x/y coords)
+// TODO: fix tooltip scrollbar bug
+// TODO: tooltips only work on the top-most labelled layer, fix them
+// TODO: delay rendering on page load until all filters and series have been
+//       setup
+//         URL for testing: https://devd.io:8000/statsv2/?options=eyJ0aXRsZSI6IjMtcG9pbnQgc2hvb3RpbmciLCJzdWJ0aXRsZSI6InRocm91Z2ggMjkgb2N0b2JlciIsInhmaWVsZCI6IkZHM0FfUGVyMzYiLCJ5ZmllbGQiOiJGRzNNX1BlcjM2IiwibWFyZ2luVG9wIjo0MCwibWFyZ2luUmlnaHQiOjUwLCJtYXJnaW5Cb3R0b20iOjQwLCJtYXJnaW5MZWZ0Ijo2MCwieFRpY2tzIjo1LCJ4TGFiZWxPZmZzZXQiOjMwLCJ4UGFkZGluZyI6MTcsInhMYWJlbEFuY2hvciI6ImNlbnRlciIsInhMYWJlbCI6IjMtcG9pbnQgRmllbGQgZ29hbHMgYXR0ZW1wdGVkIHBlciAzNiBtaW50dWVzIiwieVRpY2tzIjo1LCJ5TGFiZWxPZmZzZXQiOjQwLCJ5UGFkZGluZyI6MjIsInlMYWJlbEFuY2hvciI6ImNlbnRlciIsInlMYWJlbCI6IjMtcG9pbnQgZmllbGQgZ29hbHMgbWFkZSBwZXIgMzYiLCJzZXJpZXNlcyI6W3sieWVhciI6IjIwMjMiLCJ1c2VUZWFtQ29sb3JzIjpmYWxzZSwidXNlTGFiZWxzIjpmYWxzZSwib3BhY2l0eSI6MTAwLCJmaWx0ZXIiOiJxdWFudGlsZShmZ2EpID4gMzAgYW5kIGZnM2FfcGVyZ2FtZSA%2BIDIifSx7InllYXIiOiIyMDIzIiwidXNlVGVhbUNvbG9ycyI6dHJ1ZSwidXNlTGFiZWxzIjp0cnVlLCJvcGFjaXR5IjoxMDAsImZpbHRlciI6InF1YW50aWxlKGZnYSkgPiAzMCBhbmQgZmczYV9wZXJnYW1lID4gMiBhbmQgZmczYV9wZXIzNiAvIGZnM21fcGVyMzYgPCAyIn0seyJ5ZWFyIjoiMjAyMyIsInVzZVRlYW1Db2xvcnMiOnRydWUsInVzZUxhYmVscyI6dHJ1ZSwib3BhY2l0eSI6MTAwLCJmaWx0ZXIiOiJxdWFudGlsZShmZ2EpID4gMzAgYW5kIGZnM2FfcGVyZ2FtZSA%2BIDIgYW5kIGZnM2FfcGVyMzYgLyBmZzNtX3BlcjM2ID4gNC4yIn1dfQ%3D%3D
 
 // https://observablehq.com/@fil/experimental-plot-tooltip-01#addTooltip
 const Tooltip = tooltip(Plot);
@@ -59,6 +64,10 @@ type GraphOptions = {
   serieses: Series[];
 };
 
+function sanitize(s: string): string {
+  return s.replace(/[^a-z0-9]/gi, "_").toLowerCase();
+}
+
 function makeMarks(series: Series, xfield: string, yfield: string): any[] {
   let marks: any[] = [];
 
@@ -71,7 +80,6 @@ function makeMarks(series: Series, xfield: string, yfield: string): any[] {
   if (series.useLabels) {
     marks = [
       ...marks,
-      Tooltip(series.data, { x: xfield, y: yfield, content: "PLAYER_NAME" }),
       Label(series.data, {
         x: xfield,
         y: yfield,
@@ -154,6 +162,17 @@ async function main(options: GraphOptions): Promise<void> {
 
   console.log("making chart with options:", options);
 
+  const alldata = Array.from(
+    new Set(options.serieses.reduce((dat, obj) => [...dat, ...obj.data], []))
+  );
+  alldata.forEach(
+    (d) =>
+      (d.tooltip = `${d.PLAYER_NAME}
+${d.TEAM_ABBREVIATION}
+${options.xLabel}: ${d[options.xfield]}
+${options.yLabel}: ${d[options.yfield]}`)
+  );
+
   const chart = Plot.plot({
     width: chartSize,
     height: chartSize,
@@ -181,7 +200,16 @@ async function main(options: GraphOptions): Promise<void> {
       nice: true,
       inset: options.yPadding,
     },
-    marks: marks.flat(),
+    // We can only have one `Tooltip` mark. Give it the sum of all the data in
+    // all the serieses
+    marks: [
+      ...marks,
+      Tooltip(alldata, {
+        x: options.xfield,
+        y: options.yfield,
+        content: "tooltip",
+      }),
+    ].flat(),
   });
   select(chart).attr("overflow", "visible");
 
@@ -202,7 +230,8 @@ async function main(options: GraphOptions): Promise<void> {
 }
 
 function download() {
-  d3ToPng("svg.plot", "plot", {
+  const title = inputValue("#title");
+  d3ToPng("svg.plot", title.length > 0 ? sanitize(title) : "plot", {
     scale: 1,
     quality: 0.92,
     download: true,
@@ -404,7 +433,7 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
           <input type="checkbox" id="useLabels${n}" class="useLabels" checked></input>
         <label for="opacity{n}">Opacity</label>
           <input type="number" id="opacity${n}" class="opacity number" value="100"></input>
-        <label for="filter{n}">Use labels</label>
+        <label for="filter{n}">filter:</label>
           <input id="filter${n}" class="filter" value="quantile(fga) > 30"></input>
       </div>`;
 

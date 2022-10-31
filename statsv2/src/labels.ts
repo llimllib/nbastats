@@ -45,7 +45,7 @@ type Cell = [[number, number], any[], any];
 // export function label(Plot: any): (data: any[], options: LabelOptions) => any {
 export function label(Plot: any): any {
   class Label extends Plot.Mark {
-    constructor(data: Array<any>, options: LabelOptions) {
+    constructor(data: any[], options: LabelOptions) {
       super(
         data,
         [
