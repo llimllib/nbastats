@@ -6,12 +6,23 @@ import os
 from pathlib import Path
 from typing import List
 
-from nba_api.stats.endpoints import LeagueDashPlayerStats, TeamGameLogs
+from nba_api.stats.endpoints import (
+    LeagueDashPlayerStats,
+    LeagueDashPlayerBioStats,
+    TeamGameLogs,
+)
 import pandas as pd
 
 FIRST_SEASON = 2010
 CURRENT_SEASON = 2023
 DIR = Path("data")
+
+# TODO: refactor this to create a duckdb database; Here is a javascript code
+# example of how to connect to a database file stored at a URL:
+# https://github.com/isalazar14/PoGoKeepTossTrade/blob/11d6f949fafc23581bdba8938456dfc312489ec0/client/src/util/duckdb_wasm_dbLoader.js#L29
+#
+# (or just load a few parquet files? who knows. Their docs are
+# incomprehensible)
 
 
 def fresh(fname: Path) -> bool:
@@ -41,7 +52,7 @@ def convert_i64_to_i32(df: pd.DataFrame) -> None:
 
 def join(frames: List[pd.DataFrame]) -> pd.DataFrame:
     """
-    join the resulting dataframes, adding a _DROP suffix for repeated
+    join a list of dataframes, adding a _DROP suffix for repeated
     columns, which we can then filter out
     """
     return reduce(lambda x, y: x.join(y, rsuffix="_DROP"), frames).filter(
@@ -205,6 +216,8 @@ def download_player_stats():
                 per_mode_detailed="Totals",
             ).get_data_frames()[0]
         )
+
+        stats.append(LeagueDashPlayerBioStats(season=season).get_data_frames()[0])
 
         allstats = join(stats)
         convert_i64_to_i32(allstats)
