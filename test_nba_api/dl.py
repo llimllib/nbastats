@@ -165,6 +165,12 @@ columns_to_suffix = [
     "PTS",
     "PLUS_MINUS",
     "NBA_FANTASY_PTS",
+    "DEF_WS",
+    "OPP_PTS_OFF_TOV",
+    "OPP_PTS_2ND_CHANCE",
+    "OPP_PTS_FB",  # FB = fast break
+    "OPP_PTS_PAINT",
+    "DEF_WS",
 ]
 
 
@@ -189,23 +195,24 @@ def download_player_stats():
         # https://www.nba.com/stats/players/traditional and inspect to see the options
         stats = []
         for per in ["Totals", "PerGame", "Per36", "Per100Possessions"]:
-            df = LeagueDashPlayerStats(
-                season=season,
-                measure_type_detailed_defense="Base",
-                per_mode_detailed=per,
-            ).get_data_frames()[0]
-            df["year"] = year
+            for measure in ["Base", "Defense"]:
+                df = LeagueDashPlayerStats(
+                    season=season,
+                    measure_type_detailed_defense=measure,
+                    per_mode_detailed=per,
+                ).get_data_frames()[0]
+                df["year"] = year
 
-            # we want the PTS column (for exmample) to contain the total # of
-            # points, not PTS_Totals, so only suffix the columns of the other
-            # `per` values
-            if per != "Totals":
-                df.rename(
-                    columns={col: f"{col}_{per}" for col in columns_to_suffix},
-                    inplace=True,
-                )
+                # we want the PTS column (for exmample) to contain the total # of
+                # points, not PTS_Totals, so only suffix the columns of the other
+                # `per` values
+                if per != "Totals":
+                    df.rename(
+                        columns={col: f"{col}_{per}" for col in columns_to_suffix},
+                        inplace=True,
+                    )
 
-            stats.append(df)
+                stats.append(df)
 
         # the advanced stats don't have any differences between totals,
         # pergame, &c, so only download them once
@@ -217,6 +224,7 @@ def download_player_stats():
             ).get_data_frames()[0]
         )
 
+        # get bio stats: height, place of origin, etc
         stats.append(LeagueDashPlayerBioStats(season=season).get_data_frames()[0])
 
         allstats = join(stats)
