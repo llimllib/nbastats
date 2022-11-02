@@ -12,6 +12,7 @@ export enum FieldType {
   String,
   Int,
   Float,
+  Year,
 }
 
 export const Fields: StatDict = {
@@ -83,7 +84,7 @@ export const Fields: StatDict = {
   WNBA_FANTASY_PTS_RANK: { name: "WNBA_FANTASY_PTS_RANK", type: FieldType.Int },
   CFID: { name: "CFID", type: FieldType.Int },
   CFPARAMS: { name: "CFPARAMS", type: FieldType.String },
-  year: { name: "year", type: FieldType.Int },
+  year: { name: "year", type: FieldType.Year },
   MIN_PerGame: { name: "MIN_PerGame", type: FieldType.Float },
   FGM_PerGame: { name: "FGM_PerGame", type: FieldType.Float },
   FGA_PerGame: { name: "FGA_PerGame", type: FieldType.Float },
@@ -272,4 +273,14 @@ export const Fields: StatDict = {
   PIE_RANK: { name: "PIE_RANK", type: FieldType.Int },
   FGM_PG_RANK: { name: "FGM_PG_RANK", type: FieldType.Int },
   FGA_PG_RANK: { name: "FGA_PG_RANK", type: FieldType.Int },
+  DEF_WS: { name: "Defensive Win Shares", type: FieldType.Float },
+  DEF_WS_PerGame: {
+    name: "Defensive Win Shares per game",
+    type: FieldType.Float,
+  },
+  DEF_WS_Per36: { name: "Defensive Win Shares per 36", type: FieldType.Float },
+  DEF_WS_Per100Possessions: {
+    name: "Defensive Win Shares per 100 posessions",
+    type: FieldType.Float,
+  },
 };

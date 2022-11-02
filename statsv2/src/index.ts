@@ -8,7 +8,7 @@ import { html } from "htl";
 import { tooltip } from "./tooltip";
 import { label } from "./labels";
 import { teams } from "./teams";
-import { Fields } from "./stats_meta";
+import { Fields, FieldType } from "./stats_meta";
 
 const $ = (s: string) => document.querySelector(s);
 
@@ -37,13 +37,17 @@ type Series = {
   useTeamColors: boolean;
   useLabels: boolean;
   opacity: number;
+  useCustomColor: boolean;
+  customColor: string;
   filter: string;
   data: any[];
 };
 
 type GraphOptions = {
   xfield: string;
+  xfieldType: FieldType;
   yfield: string;
+  yfieldType: FieldType;
   title: string;
   subtitle: string;
   width: number;
@@ -116,6 +120,16 @@ function makeMarks(series: Series, xfield: string, yfield: string): any[] {
         fillOpacity: series.opacity / 100,
       }),
     ];
+  } else if (series.useCustomColor) {
+    marks.push(
+      Plot.dot(series.data, {
+        x: xfield,
+        y: yfield,
+        r: 4,
+        fill: series.customColor,
+        fillOpacity: series.opacity / 100,
+      })
+    );
   } else {
     marks.push(
       Plot.dot(series.data, {
@@ -167,13 +181,14 @@ async function main(options: GraphOptions): Promise<void> {
   const alldata = Array.from(
     new Set(options.serieses.reduce((dat, obj) => [...dat, ...obj.data], []))
   );
-  alldata.forEach(
-    (d) =>
-      (d.tooltip = `${d.PLAYER_NAME}
+  alldata.forEach((d) => {
+    const xlabel = options.xLabel == "" ? options.xfield : options.xLabel;
+    const ylabel = options.yLabel == "" ? options.yfield : options.yLabel;
+    d.tooltip = `${d.PLAYER_NAME}
 ${d.TEAM_ABBREVIATION}
-${options.xLabel}: ${d[options.xfield]}
-${options.yLabel}: ${d[options.yfield]}`)
-  );
+${xlabel}: ${d[options.xfield]}
+${ylabel}: ${d[options.yfield]}`;
+  });
 
   const chart = Plot.plot({
     width: options.width,
@@ -193,6 +208,7 @@ ${options.yLabel}: ${d[options.yfield]}`)
       ticks: options.xTicks,
       nice: true,
       inset: options.xPadding,
+      tickFormat: options.xfieldType == FieldType.Year ? "c" : undefined,
     },
     y: {
       label: options.yLabel.length > 0 ? options.yLabel : options.yfield,
@@ -201,6 +217,7 @@ ${options.yLabel}: ${d[options.yfield]}`)
       ticks: options.yTicks,
       nice: true,
       inset: options.yPadding,
+      tickFormat: options.yfieldType == FieldType.Year ? "c" : undefined,
     },
     // We can only have one `Tooltip` mark. Give it the sum of all the data in
     // all the serieses
@@ -298,7 +315,7 @@ async function plotURLOptions(
   setValue("#title", options.title);
   setValue("#subtitle", options.subtitle);
   setValue("#width", options.width);
-  setValue("height", options.height);
+  setValue("#height", options.height);
   setValue("#marginTop", options.marginTop);
   setValue("#marginRight", options.marginRight);
   setValue("#marginBottom", options.marginBottom);
@@ -354,9 +371,13 @@ async function plotURLOptions(
 }
 
 async function plotFields(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
+  const xfield = inputValue("#xField");
+  const yfield = inputValue("#yField");
   await main({
-    xfield: inputValue("#xField"),
+    xfield: xfield,
+    xfieldType: Fields[xfield].type,
     yfield: inputValue("#yField"),
+    yfieldType: Fields[yfield].type,
     title: inputValue("#title"),
     subtitle: inputValue("#subtitle"),
     width: numValue("#width"),
@@ -432,14 +453,20 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
           <option value="2012">2012</option>
           <option value="2011">2011</option>
           <option value="2010">2010</option>
+          <option value="any">any</option>
           </select>
         <label for="useTeamColors${n}">Use Team Colors</label>
           <input type="checkbox" id="useTeamColors${n}" class="useTeamColors" checked></input>
         <label for="useLabels${n}">Use labels</label>
           <input type="checkbox" id="useLabels${n}" class="useLabels" checked></input>
-        <label for="opacity{n}">Opacity</label>
+        <label for="opacity${n}">Opacity</label>
           <input type="number" id="opacity${n}" class="opacity number" value="100"></input>
-        <label for="filter{n}">filter:</label>
+        <label for="customColor${n}">Custom color</label>
+          <input type="checkbox" id="customColor${n}" class="customColor"></input>
+        <label for="color${n}">choose color:</label>
+          <input type="color" id="color${n}" class="color" value="#000000" />
+        <br />
+        <label for="filter${n}">filter:</label>
           <input id="filter${n}" class="filter" value="quantile(fga) > 30"></input>
       </div>`;
 
@@ -449,8 +476,16 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
     if (series) {
       rePlot(conn)(null);
 
-      [".year", ".useTeamColors", ".useLabels", ".opacity", ".filter"].forEach(
-        (s) => series.querySelector(s)?.addEventListener("change", rePlot(conn))
+      [
+        ".year",
+        ".useTeamColors",
+        ".useLabels",
+        ".opacity",
+        ".customColor",
+        ".color",
+        ".filter",
+      ].forEach((s) =>
+        series.querySelector(s)?.addEventListener("change", rePlot(conn))
       );
 
       obs.disconnect();
@@ -489,24 +524,45 @@ function parseQuantiles(filter: string): [string, string[]] {
 
 function makeQuery(filter: string, year: string): string {
   const [cond, medians] = parseQuantiles(filter);
-  if (medians.length > 0) {
-    const median_stmts = medians
-      .map((x) => `ntile(100) OVER (ORDER BY ${x}) AS _${x}_ntile`)
-      .join(", ");
+  if (year != "any") {
+    if (medians.length > 0) {
+      const median_stmts = medians
+        .map((x) => `ntile(100) OVER (ORDER BY ${x}) AS _${x}_ntile`)
+        .join(", ");
+      return `
+          WITH player_stats AS (
+            select *, ${median_stmts}
+            FROM players
+            WHERE year='${year}'
+          )
+          SELECT *
+          FROM player_stats
+          WHERE year=${year} and ${cond}`;
+    }
     return `
-        WITH player_stats AS (
-          select *, ${median_stmts}
-          FROM players
-          WHERE year='${year}'
-        )
         SELECT *
-        FROM player_stats
-        WHERE year=${year} and ${cond}`;
+        FROM players
+        WHERE year=${year} and ${filter}`;
+  } else {
+    if (medians.length > 0) {
+      const median_stmts = medians
+        .map((x) => `ntile(100) OVER (ORDER BY ${x}) AS _${x}_ntile`)
+        .join(", ");
+      return `
+          WITH player_stats AS (
+            select *, ${median_stmts}
+            FROM players
+            WHERE year='${year}'
+          )
+          SELECT *
+          FROM player_stats
+          WHERE ${cond}`;
+    }
+    return `
+        SELECT *
+        FROM players
+        WHERE ${filter}`;
   }
-  return `
-      SELECT *
-      FROM players
-      WHERE ${filter}`;
 }
 
 function isChecked(selector: string, node: Element): boolean {
@@ -544,6 +600,8 @@ async function getSerieses(
       const useTeamColors = isChecked(`#useTeamColors${n}`, series);
       const useLabels = isChecked(`#useLabels${n}`, series);
       const opacity = numValue(`#opacity${n}`, series);
+      const useCustomColor = isChecked(`#customColor${n}`, series);
+      const customColor = inputValue(`#color${n}`, series);
       const filter = inputValue(`#filter${n}`, series);
 
       const data = await query(conn, makeQuery(filter, year));
@@ -552,6 +610,8 @@ async function getSerieses(
         useTeamColors: useTeamColors,
         useLabels: useLabels,
         opacity: opacity,
+        useCustomColor: useCustomColor,
+        customColor: customColor,
         filter: filter,
         data: data,
       };
@@ -586,16 +646,78 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
       }
     });
 
+  const rDefault = "Constant";
+  const rfields = Object.keys(Fields)
+    .sort()
+    .map((key: string) => {
+      if (key == rDefault) {
+        return html.fragment`<option value="${key}" selected>${Fields[key].name}</option>`;
+      } else {
+        return html.fragment`<option value="${key}">${Fields[key].name}</option>`;
+      }
+    });
+
   const graphOptions = html`
-    X:
-    <select id="xField">
-      ${xfields}
-    </select>
-    Y:
-    <select id="yField">
-      ${yfields}
-    </select>
+    <div class="flex">
+      <h3>X axis</h3>
+      <select id="xField">
+        ${xfields}
+      </select>
+      <br />
+      ticks:
+      <input type="number" class="axis number" id="xTicks" value="5" /> x label
+      offset:
+      <input type="number" class="axis number" id="xLabelOffset" value="30" /> x
+      padding:
+      <input type="number" class="axis number" id="xPadding" value="5" /> x
+      label anchor:
+      <select id="xLabelAnchor">
+        <option value="right" selected>right</option>
+        <option value="left">left</option>
+        <option value="center">center</option>
+      </select>
+      <br />
+      label: <input type="text" id="xLabel" />
+    </div>
+    <div>
+      Y:
+      <select id="yField">
+        ${yfields}
+      </select>
+      y ticks:
+      <input type="number" class="axis number" id="yTicks" value="5" /> y label
+      offset:
+      <input type="number" class="axis number" id="yLabelOffset" value="40" /> y
+      padding:
+      <input type="number" class="axis number" id="yPadding" value="5" /> y
+      label anchor:
+      <select id="yLabelAnchor">
+        <option value="top" selected>top</option>
+        <option value="bottom">bottom</option>
+        <option value="center">center</option>
+      </select>
+      label: <input type="text" id="yLabel" />
+    </div>
     <button id="swapAxes">🔄</button>
+    <div>
+      R:
+      <select id="rField">
+        ${rfields}
+      </select>
+      y ticks:
+      <input type="number" class="axis number" id="yTicks" value="5" /> y label
+      offset:
+      <input type="number" class="axis number" id="yLabelOffset" value="40" /> y
+      padding:
+      <input type="number" class="axis number" id="yPadding" value="5" /> y
+      label anchor:
+      <select id="yLabelAnchor">
+        <option value="top" selected>top</option>
+        <option value="bottom">bottom</option>
+        <option value="center">center</option>
+      </select>
+      label: <input type="text" id="yLabel" />
+    </div>
     <div>
       Width:
       <input type="number" class="number2" id="width" value="800" />
@@ -616,36 +738,8 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
       left:
       <input type="number" class="margin number" id="marginLeft" value="60" />
     </div>
-    <div>
-      x ticks:
-      <input type="number" class="axis number" id="xTicks" value="5" /> x label
-      offset:
-      <input type="number" class="axis number" id="xLabelOffset" value="30" /> x
-      padding:
-      <input type="number" class="axis number" id="xPadding" value="5" /> x
-      label anchor:
-      <select id="xLabelAnchor">
-        <option value="right" selected>right</option>
-        <option value="left">left</option>
-        <option value="center">center</option>
-      </select>
-      label: <input type="text" id="xLabel" />
-    </div>
-    <div>
-      y ticks:
-      <input type="number" class="axis number" id="yTicks" value="5" /> y label
-      offset:
-      <input type="number" class="axis number" id="yLabelOffset" value="40" /> y
-      padding:
-      <input type="number" class="axis number" id="yPadding" value="5" /> y
-      label anchor:
-      <select id="yLabelAnchor">
-        <option value="top" selected>top</option>
-        <option value="bottom">bottom</option>
-        <option value="center">center</option>
-      </select>
-      label: <input type="text" id="yLabel" />
-    </div>
+    <div></div>
+    <div></div>
     <div>
       <button id="download">download</button>
     </div>
