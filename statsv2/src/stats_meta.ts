@@ -2,6 +2,7 @@ export type StatMeta = {
   name: string;
   type: FieldType;
   comment?: string;
+  value?: number;
 };
 
 export type StatDict = {
@@ -13,6 +14,7 @@ export enum FieldType {
   Int,
   Float,
   Year,
+  Constant,
 }
 
 export const Fields: StatDict = {
@@ -283,4 +285,6 @@ export const Fields: StatDict = {
     name: "Defensive Win Shares per 100 posessions",
     type: FieldType.Float,
   },
+  zzconst8: { name: "Constant: 8", type: FieldType.Constant, value: 8 },
+  zzconst4: { name: "Constant: 4", type: FieldType.Constant, value: 4 },
 };

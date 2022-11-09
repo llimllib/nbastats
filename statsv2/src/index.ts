@@ -1,6 +1,7 @@
 import * as duckdb from "@duckdb/duckdb-wasm";
 import * as Plot from "@observablehq/plot";
 import { base64encode, base64decode } from "byte-base64";
+import { extent } from "d3-array";
 import { select } from "d3-selection";
 import d3ToPng from "d3-svg-to-png";
 import { html } from "htl";
@@ -24,7 +25,6 @@ const $ = (s: string) => document.querySelector(s);
 // TODO: tooltips only work on the top-most labelled layer, fix them
 // TODO: delay rendering on page load until all filters and series have been
 //       setup
-//         URL for testing: https://devd.io:8000/statsv2/?options=eyJ0aXRsZSI6IjMtcG9pbnQgc2hvb3RpbmciLCJzdWJ0aXRsZSI6InRocm91Z2ggMjkgb2N0b2JlciIsInhmaWVsZCI6IkZHM0FfUGVyMzYiLCJ5ZmllbGQiOiJGRzNNX1BlcjM2IiwibWFyZ2luVG9wIjo0MCwibWFyZ2luUmlnaHQiOjUwLCJtYXJnaW5Cb3R0b20iOjQwLCJtYXJnaW5MZWZ0Ijo2MCwieFRpY2tzIjo1LCJ4TGFiZWxPZmZzZXQiOjMwLCJ4UGFkZGluZyI6MTcsInhMYWJlbEFuY2hvciI6ImNlbnRlciIsInhMYWJlbCI6IjMtcG9pbnQgRmllbGQgZ29hbHMgYXR0ZW1wdGVkIHBlciAzNiBtaW50dWVzIiwieVRpY2tzIjo1LCJ5TGFiZWxPZmZzZXQiOjQwLCJ5UGFkZGluZyI6MjIsInlMYWJlbEFuY2hvciI6ImNlbnRlciIsInlMYWJlbCI6IjMtcG9pbnQgZmllbGQgZ29hbHMgbWFkZSBwZXIgMzYiLCJzZXJpZXNlcyI6W3sieWVhciI6IjIwMjMiLCJ1c2VUZWFtQ29sb3JzIjpmYWxzZSwidXNlTGFiZWxzIjpmYWxzZSwib3BhY2l0eSI6MTAwLCJmaWx0ZXIiOiJxdWFudGlsZShmZ2EpID4gMzAgYW5kIGZnM2FfcGVyZ2FtZSA%2BIDIifSx7InllYXIiOiIyMDIzIiwidXNlVGVhbUNvbG9ycyI6dHJ1ZSwidXNlTGFiZWxzIjp0cnVlLCJvcGFjaXR5IjoxMDAsImZpbHRlciI6InF1YW50aWxlKGZnYSkgPiAzMCBhbmQgZmczYV9wZXJnYW1lID4gMiBhbmQgZmczYV9wZXIzNiAvIGZnM21fcGVyMzYgPCAyIn0seyJ5ZWFyIjoiMjAyMyIsInVzZVRlYW1Db2xvcnMiOnRydWUsInVzZUxhYmVscyI6dHJ1ZSwib3BhY2l0eSI6MTAwLCJmaWx0ZXIiOiJxdWFudGlsZShmZ2EpID4gMzAgYW5kIGZnM2FfcGVyZ2FtZSA%2BIDIgYW5kIGZnM2FfcGVyMzYgLyBmZzNtX3BlcjM2ID4gNC4yIn1dfQ%3D%3D
 
 // https://observablehq.com/@fil/experimental-plot-tooltip-01#addTooltip
 const Tooltip = tooltip(Plot);
@@ -68,6 +68,9 @@ type GraphOptions = {
   yTicks: number;
   yLabel: string;
   yPadding: number;
+  rField: string;
+  rMin: number;
+  rMax: number;
   serieses: Series[];
 };
 
@@ -75,7 +78,7 @@ function sanitize(s: string): string {
   return s.replace(/[^a-z0-9]/gi, "_").toLowerCase();
 }
 
-function makeMarks(series: Series, xfield: string, yfield: string): any[] {
+function makeMarks(series: Series, options: GraphOptions): any[] {
   let marks: any[] = [];
 
   // For now, we're going to tie tooltips and labels together - it doesn't make
@@ -88,8 +91,8 @@ function makeMarks(series: Series, xfield: string, yfield: string): any[] {
     marks = [
       ...marks,
       Label(series.data, {
-        x: xfield,
-        y: yfield,
+        x: options.xfield,
+        y: options.yfield,
         label: "PLAYER_NAME",
         padding: 10,
         minCellSize: 3000,
@@ -97,13 +100,20 @@ function makeMarks(series: Series, xfield: string, yfield: string): any[] {
     ];
   }
 
+  const rFunc =
+    Fields[options.rField].type == FieldType.Constant
+      ? (_: any) => Fields[options.rField].value
+      : (d: any) => d[options.rField];
+
+  console.log("rfunc", rFunc);
+
   if (series.useTeamColors) {
     marks = [
       ...marks,
       Plot.dot(series.data, {
-        x: xfield,
-        y: yfield,
-        r: 8,
+        x: options.xfield,
+        y: options.yfield,
+        r: rFunc,
         fill: (d: any) => {
           if (!teams.get(d["TEAM_ABBREVIATION"])) {
             console.log("missing:", d);
@@ -113,9 +123,9 @@ function makeMarks(series: Series, xfield: string, yfield: string): any[] {
         fillOpacity: series.opacity / 100,
       }),
       Plot.dot(series.data, {
-        x: xfield,
-        y: yfield,
-        r: 4,
+        x: options.xfield,
+        y: options.yfield,
+        r: (d: any) => (rFunc(d) as number) / 2,
         fill: (d: any) => teams.get(d["TEAM_ABBREVIATION"])?.colors[1],
         fillOpacity: series.opacity / 100,
       }),
@@ -123,9 +133,9 @@ function makeMarks(series: Series, xfield: string, yfield: string): any[] {
   } else if (series.useCustomColor) {
     marks.push(
       Plot.dot(series.data, {
-        x: xfield,
-        y: yfield,
-        r: 4,
+        x: options.xfield,
+        y: options.yfield,
+        r: rFunc,
         fill: series.customColor,
         fillOpacity: series.opacity / 100,
       })
@@ -133,9 +143,9 @@ function makeMarks(series: Series, xfield: string, yfield: string): any[] {
   } else {
     marks.push(
       Plot.dot(series.data, {
-        x: xfield,
-        y: yfield,
-        r: 4,
+        x: options.xfield,
+        y: options.yfield,
+        r: rFunc,
         fill: "#888888",
         fillOpacity: series.opacity / 100,
       })
@@ -150,9 +160,7 @@ function makeMarks(series: Series, xfield: string, yfield: string): any[] {
 //   - for now I'm going to restrict the graph to have one xfield and yfield,
 //     but this is an area for research
 async function main(options: GraphOptions): Promise<void> {
-  const marks = options.serieses.map((series) =>
-    makeMarks(series, options.xfield, options.yfield)
-  );
+  const marks = options.serieses.map((series) => makeMarks(series, options));
   if (options.title != "") {
     marks.push(
       Plot.text([options.title], {
@@ -190,6 +198,24 @@ ${xlabel}: ${d[options.xfield]}
 ${ylabel}: ${d[options.yfield]}`;
   });
 
+  const rDomain =
+    Fields[options.rField].type == FieldType.Constant
+      ? [
+          (Fields[options.rField].value as number) / 2,
+          Fields[options.rField].value as number,
+        ]
+      : extent(alldata, (d) => d[options.rField]);
+
+  const rRange =
+    Fields[options.rField].type == FieldType.Constant
+      ? [
+          (Fields[options.rField].value as number) / 2,
+          Fields[options.rField].value,
+        ]
+      : [options.rMin, options.rMax];
+
+  console.log("rDomain", rDomain, "rRange", rRange);
+
   const chart = Plot.plot({
     width: options.width,
     height: options.height,
@@ -218,6 +244,10 @@ ${ylabel}: ${d[options.yfield]}`;
       nice: true,
       inset: options.yPadding,
       tickFormat: options.yfieldType == FieldType.Year ? "c" : undefined,
+    },
+    r: {
+      domain: rDomain,
+      range: rRange,
     },
     // We can only have one `Tooltip` mark. Give it the sum of all the data in
     // all the serieses
@@ -330,6 +360,9 @@ async function plotURLOptions(
   setValue("#yPadding", options.yPadding);
   setValue("#yLabelAnchor", options.yLabelAnchor);
   setValue("#yLabel", options.yLabel);
+  setValue("#rField", options.rField);
+  setValue("#rMin", options.rMin);
+  setValue("#rMax", options.rMax);
 
   options.serieses.forEach(async (series: Series, i: number) => {
     const n = i + 1;
@@ -396,6 +429,9 @@ async function plotFields(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
     yPadding: numValue("#yPadding"),
     yLabelAnchor: inputValue("#yLabelAnchor"),
     yLabel: inputValue("#yLabel"),
+    rField: inputValue("#rField"),
+    rMin: numValue("#rMin"),
+    rMax: numValue("#rMax"),
     serieses: await getSerieses(conn),
   });
 }
@@ -646,7 +682,7 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
       }
     });
 
-  const rDefault = "Constant";
+  const rDefault = "zzconst8";
   const rfields = Object.keys(Fields)
     .sort()
     .map((key: string) => {
@@ -665,11 +701,11 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
       </select>
       <br />
       ticks:
-      <input type="number" class="axis number" id="xTicks" value="5" /> x label
+      <input type="number" class="axis number" id="xTicks" value="5" /> label
       offset:
-      <input type="number" class="axis number" id="xLabelOffset" value="30" /> x
+      <input type="number" class="axis number" id="xLabelOffset" value="30" />
       padding:
-      <input type="number" class="axis number" id="xPadding" value="5" /> x
+      <input type="number" class="axis number" id="xPadding" value="5" />
       label anchor:
       <select id="xLabelAnchor">
         <option value="right" selected>right</option>
@@ -679,46 +715,39 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
       <br />
       label: <input type="text" id="xLabel" />
     </div>
+    <button id="swapAxes">🔄 swap x and y</button>
     <div>
-      Y:
+      <h3>Y axis</h3>
       <select id="yField">
         ${yfields}
       </select>
-      y ticks:
-      <input type="number" class="axis number" id="yTicks" value="5" /> y label
+      <br />
+      ticks:
+      <input type="number" class="axis number" id="yTicks" value="5" /> label
       offset:
-      <input type="number" class="axis number" id="yLabelOffset" value="40" /> y
+      <input type="number" class="axis number" id="yLabelOffset" value="40" />
       padding:
-      <input type="number" class="axis number" id="yPadding" value="5" /> y
+      <input type="number" class="axis number" id="yPadding" value="5" />
       label anchor:
       <select id="yLabelAnchor">
         <option value="top" selected>top</option>
         <option value="bottom">bottom</option>
         <option value="center">center</option>
       </select>
+      <br />
       label: <input type="text" id="yLabel" />
     </div>
-    <button id="swapAxes">🔄</button>
     <div>
-      R:
+      <h3>R axis</h3>
       <select id="rField">
         ${rfields}
       </select>
-      y ticks:
-      <input type="number" class="axis number" id="yTicks" value="5" /> y label
-      offset:
-      <input type="number" class="axis number" id="yLabelOffset" value="40" /> y
-      padding:
-      <input type="number" class="axis number" id="yPadding" value="5" /> y
-      label anchor:
-      <select id="yLabelAnchor">
-        <option value="top" selected>top</option>
-        <option value="bottom">bottom</option>
-        <option value="center">center</option>
-      </select>
-      label: <input type="text" id="yLabel" />
+      min size:
+      <input type="number" class="axis number" id="rMin" value="4" /> max size:
+      <input type="number" class="axis number" id="rMax" value="8" />
     </div>
     <div>
+      <h3>Graph Options</h3>
       Width:
       <input type="number" class="number2" id="width" value="800" />
       Height:
@@ -768,6 +797,9 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
     "#yLabelAnchor",
     "#yLabel",
     "#yPadding",
+    "#rField",
+    "#rMin",
+    "#rMax",
   ].forEach((cls) => {
     graphOptions.querySelector(cls).addEventListener("change", rePlot(conn));
     graphOptions.querySelector(cls).addEventListener("input", rePlot(conn));
