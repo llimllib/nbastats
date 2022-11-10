@@ -71,6 +71,7 @@ type GraphOptions = {
   rField: string;
   rMin: number;
   rMax: number;
+  rLabel: string;
   serieses: Series[];
 };
 
@@ -198,23 +199,20 @@ ${xlabel}: ${d[options.xfield]}
 ${ylabel}: ${d[options.yfield]}`;
   });
 
-  const rDomain =
-    Fields[options.rField].type == FieldType.Constant
-      ? [
-          (Fields[options.rField].value as number) / 2,
-          Fields[options.rField].value as number,
-        ]
-      : extent(alldata, (d) => d[options.rField]);
+  const constantR = Fields[options.rField].type == FieldType.Constant;
+  const rDomain = constantR
+    ? [
+        (Fields[options.rField].value as number) / 2,
+        Fields[options.rField].value as number,
+      ]
+    : extent(alldata, (d) => d[options.rField]);
 
-  const rRange =
-    Fields[options.rField].type == FieldType.Constant
-      ? [
-          (Fields[options.rField].value as number) / 2,
-          Fields[options.rField].value,
-        ]
-      : [options.rMin, options.rMax];
-
-  console.log("rDomain", rDomain, "rRange", rRange);
+  const rRange = constantR
+    ? [
+        (Fields[options.rField].value as number) / 2,
+        Fields[options.rField].value,
+      ]
+    : [options.rMin, options.rMax];
 
   const chart = Plot.plot({
     width: options.width,
@@ -260,7 +258,26 @@ ${ylabel}: ${d[options.yfield]}`;
       }),
     ].flat(),
   });
-  select(chart).attr("overflow", "visible");
+
+  const svg = select(chart);
+  svg.attr("overflow", "visible");
+
+  // TODO: radius scale legend
+  // if (!constantR) {
+  //   svg
+  //     .append("circle")
+  //     .attr("cx", 20)
+  //     .attr("cy", 20)
+  //     .attr("r", 6)
+  //     .style("fill", "black");
+  //   svg
+  //     .append("text")
+  //     .attr("x", 30)
+  //     .attr("y", 20)
+  //     .text(options.rLabel)
+  //     .style("font-size", "15px")
+  //     .attr("alignment-baseline", "middle");
+  // }
 
   // serialize the options and store them in the URL
   const jsonOptions = JSON.stringify(options, (key: string, val: any) =>
@@ -363,6 +380,7 @@ async function plotURLOptions(
   setValue("#rField", options.rField);
   setValue("#rMin", options.rMin);
   setValue("#rMax", options.rMax);
+  setValue("#rLabel", options.rLabel);
 
   options.serieses.forEach(async (series: Series, i: number) => {
     const n = i + 1;
@@ -432,6 +450,7 @@ async function plotFields(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
     rField: inputValue("#rField"),
     rMin: numValue("#rMin"),
     rMax: numValue("#rMax"),
+    rLabel: inputValue("#rLabel"),
     serieses: await getSerieses(conn),
   });
 }
@@ -745,6 +764,7 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
       min size:
       <input type="number" class="axis number" id="rMin" value="4" /> max size:
       <input type="number" class="axis number" id="rMax" value="8" />
+      label: <input type="text" id="rLabel" />
     </div>
     <div>
       <h3>Graph Options</h3>
@@ -800,6 +820,7 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
     "#rField",
     "#rMin",
     "#rMax",
+    "#rLabel",
   ].forEach((cls) => {
     graphOptions.querySelector(cls).addEventListener("change", rePlot(conn));
     graphOptions.querySelector(cls).addEventListener("input", rePlot(conn));
