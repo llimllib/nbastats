@@ -308,22 +308,30 @@ function download() {
 }
 
 async function initDuckDb(): Promise<duckdb.AsyncDuckDBConnection> {
-  // I'm not serving this from my own CDN because it seems pretty complicated
-  // to do so due to web workers not being able to make CORS requests without
-  // annoying workarounds, see:
+  // TODO: figure this out in prod
+  //
+  // I've not been serving this from my own CDN because it seems pretty
+  // complicated to do so due to web workers not being able to make CORS
+  // requests without annoying workarounds, see:
   //
   // https://github.com/duckdb/duckdb-wasm/discussions/419#discussioncomment-1704798
   // https://stackoverflow.com/questions/21913673/execute-web-worker-from-different-origin
-  const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
-  const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
-  const worker_url = URL.createObjectURL(
-    new Blob([`importScripts("${bundle.mainWorker}");`], {
-      type: "text/javascript",
-    })
-  );
+  const MANUAL_BUNDLES: duckdb.DuckDBBundles = {
+    mvp: {
+      mainModule: "duckdb-mvp.wasm",
+      mainWorker: "duckdb-browser-mvp.worker.js",
+    },
+    eh: {
+      mainModule: "duckdb-eh.wasm",
+      mainWorker: "duckdb-browser-eh.worker.js",
+    },
+  };
+  // Select a bundle based on browser checks
+  const bundle = await duckdb.selectBundle(MANUAL_BUNDLES);
+  // Instantiate the asynchronus version of DuckDB-wasm
 
   // Instantiate the asynchronus version of DuckDB-wasm
-  const worker = new Worker(worker_url);
+  const worker = new Worker(bundle.mainWorker!);
   const logger = new duckdb.ConsoleLogger();
   const db = new duckdb.AsyncDuckDB(logger, worker);
   await db.instantiate(bundle.mainModule, bundle.pthreadWorker);

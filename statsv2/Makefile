@@ -1,6 +1,18 @@
 all: dist/index.js
 
-dist/index.js: src/index.ts
+dist/duckdb-mvp.wasm: node_modules/@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm
+	cp node_modules/@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm dist/
+
+dist/duckdb-eh.wasm: node_modules/@duckdb/duckdb-wasm/dist/duckdb-eh.wasm
+	cp node_modules/@duckdb/duckdb-wasm/dist/duckdb-eh.wasm dist/
+
+dist/duckdb-browser-mvp.worker.js: node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-mvp.worker.js
+	cp node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-mvp.worker.js dist/
+
+dist/duckdb-browser-eh.worker.js: node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-mvp.worker.js
+	cp node_modules/@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js dist/
+
+dist/index.js: src/index.ts dist/duckdb-browser-mvp.worker.js dist/duckdb-browser-eh.worker.js dist/duckdb-eh.wasm dist/duckdb-mvp.wasm
 	node_modules/.bin/tsc --noEmit --skipLibCheck && \
 		DATA_URL=https://cdn.billmill.org/nbastats node esbuild.config.mjs production
 
