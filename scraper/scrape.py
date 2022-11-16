@@ -5,7 +5,7 @@ from datetime import datetime
 import json
 import re
 from pathlib import Path
-from time import time
+from time import sleep, time
 from typing import Dict, Tuple, Any, Sequence, Union
 
 from bs4 import BeautifulSoup, element
@@ -89,9 +89,43 @@ def stale(fname: Path) -> bool:
 
 def save(url: str, fname: Path) -> None:
     """save the contents of url to fname"""
-    res = requests.get(url)
-    if res.status_code != 200:
-        raise Exception(res.text, url, fname)
+    # try without
+    # cookies = {
+    #     'sr_note_box_countdown': '0',
+    #     'is_live': 'true',
+    #     '__cf_bm': 'nnc9vSmA52ROsqagmQDoZ8j4XtUt_nkpR5Wg5fS2YLU-1668445958-0-AR5NWtXG4cuODW5ONUfqvqDm0GNJqiVQgnOAEbtxDtjzZFtbGq7P0hbKWIdPRjKSYXaDChqkIEgWwcCKTPryl7Y=',
+    #     'srcssfull': 'yes',
+    # }
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:106.0) Gecko/20100101 Firefox/106.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+        # 'Accept-Encoding': 'gzip, deflate, br',
+        "Connection": "keep-alive",
+        # 'Cookie': 'sr_note_box_countdown=0; is_live=true; __cf_bm=nnc9vSmA52ROsqagmQDoZ8j4XtUt_nkpR5Wg5fS2YLU-1668445958-0-AR5NWtXG4cuODW5ONUfqvqDm0GNJqiVQgnOAEbtxDtjzZFtbGq7P0hbKWIdPRjKSYXaDChqkIEgWwcCKTPryl7Y=; srcssfull=yes',
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "cross-site",
+        "Pragma": "no-cache",
+        "Cache-Control": "no-cache",
+    }
+
+    sleeps = 1
+    res = requests.get(url, headers=headers)
+    sleep(sleeps)
+
+    retries = 0
+    while res.status_code != 200:
+        res = requests.get(url)
+        sleeps *= 2
+        print(f"sleeping {sleeps}, retrying {url}")
+        sleep(sleeps)
+        retries += 1
+        if retries > 6:
+            raise Exception(res.text, url, fname)
+
     with open(fname, "w") as f:
         f.write(res.text)
 
