@@ -106,8 +106,6 @@ function makeMarks(series: Series, options: GraphOptions): any[] {
       ? (_: any) => Fields[options.rField].value
       : (d: any) => d[options.rField];
 
-  console.log("rfunc", rFunc);
-
   if (series.useTeamColors) {
     marks = [
       ...marks,
@@ -206,6 +204,7 @@ ${ylabel}: ${d[options.yfield]}`;
         Fields[options.rField].value as number,
       ]
     : extent(alldata, (d) => d[options.rField]);
+  rDomain[0] = rDomain[0] / 2;
 
   const rRange = constantR
     ? [
@@ -263,21 +262,18 @@ ${ylabel}: ${d[options.yfield]}`;
   svg.attr("overflow", "visible");
 
   // TODO: radius scale legend
-  // if (!constantR) {
-  //   svg
-  //     .append("circle")
-  //     .attr("cx", 20)
-  //     .attr("cy", 20)
-  //     .attr("r", 6)
-  //     .style("fill", "black");
-  //   svg
-  //     .append("text")
-  //     .attr("x", 30)
-  //     .attr("y", 20)
-  //     .text(options.rLabel)
-  //     .style("font-size", "15px")
-  //     .attr("alignment-baseline", "middle");
-  // }
+  if (!constantR) {
+    const g = svg.append("g").attr("class", "rLabel");
+    g.append("circle")
+      .attr("cx", 25)
+      .attr("cy", 45)
+      .attr("r", 4)
+      .style("fill", "black");
+    g.append("text")
+      .attr("x", 45)
+      .attr("y", 48)
+      .text(options.rLabel == "" ? options.rField : options.rLabel);
+  }
 
   // serialize the options and store them in the URL
   const jsonOptions = JSON.stringify(options, (key: string, val: any) =>
@@ -365,6 +361,10 @@ async function plotURLOptions(
     )
   ) as GraphOptions;
 
+  // TODO: we should find a way to map these automatically, it is very easy to
+  // miss one when adding/removing a field
+  setValue("#width", options.width);
+  setValue("#height", options.height);
   setValue("#xField", options.xfield);
   setValue("#yField", options.yfield);
   setValue("#title", options.title);
@@ -530,7 +530,7 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
           <input type="color" id="color${n}" class="color" value="#000000" />
         <br />
         <label for="filter${n}">filter:</label>
-          <input id="filter${n}" class="filter" value="quantile(fga) > 30"></input>
+          <input id="filter${n}" class="filter" value="quantile(fga) > 66"></input>
       </div>`;
 
   // wait for the element to hit the dom before re-plotting
@@ -735,14 +735,15 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
       <input type="number" class="axis number" id="xPadding" value="5" />
       label anchor:
       <select id="xLabelAnchor">
-        <option value="right" selected>right</option>
+        <option value="right">right</option>
         <option value="left">left</option>
-        <option value="center">center</option>
+        <option value="center" selected>center</option>
       </select>
       <br />
       label: <input type="text" id="xLabel" />
     </div>
     <button id="swapAxes">🔄 swap x and y</button>
+    <button id="clearOptions">🧹 clear options</button>
     <div>
       <h3>Y axis</h3>
       <select id="yField">
@@ -841,6 +842,12 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
     setValue("#xField", inputValue("#yField"));
     setValue("#yField", a);
     rePlot(conn)(null);
+  });
+
+  graphOptions.querySelector("#clearOptions").addEventListener("click", () => {
+    const url = new URL(window.location.toString());
+    const stateUrl = `${url.origin}${url.pathname}`;
+    window.history.replaceState(null, "", stateUrl);
   });
 }
 
