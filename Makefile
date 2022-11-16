@@ -118,13 +118,14 @@ flush:
 #
 # update the database
 update: requirements
-	./scraper/scrape.py
+	./scraper/scrape.py -y 2023
 
 # sync the stats database to my CDN
 syncdata: update
 	s3cmd sync --acl-public \
 		--exclude='*' \
 		--rinclude='\.(json|parquet)$$' \
+		--no-preserve \
 		data/ s3://llimllib/nbastats/
 
 # download CDN data to local
