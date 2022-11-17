@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+<style>
+#plot {
+  width: 800px;
+  height: 800px;
+  overflow: hidden;
+}
+div {
+  padding: 10px;
+}
+.number {
+  width: 40px;
+}
+.number2 {
+  width: 54px;
+}
+.serieses {
+  margin-top: 20px;
+}
+.flex {
+  /* TODO: start making the intput area nicer */
+  /* display: flex; */
+}
+.filter {
+  width: 500px;
+}
+</style>
+    <title>NBA Stats Visualizer</title>
+  <body>
+    <h1>NBA Stats Viz</h1>
+    <div id="plot"></div>
+    <div class="graph-options">
+    </div>
+    <div class="series-controls">
+      <button class="add-series">add series</button>
+      <button class="remove-series">remove series</button>
+    </div>
+    <div class="serieses">
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>

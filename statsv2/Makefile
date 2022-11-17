@@ -1,4 +1,7 @@
-all: dist/index.js
+all: dist/index.js dist/index.html
+
+dist/index.html: src/index.html
+	cp src/index.html dist/
 
 dist/duckdb-mvp.wasm: node_modules/@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm
 	cp node_modules/@duckdb/duckdb-wasm/dist/duckdb-mvp.wasm dist/
