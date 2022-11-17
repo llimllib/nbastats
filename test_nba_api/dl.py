@@ -50,14 +50,14 @@ def convert_i64_to_i32(df: pd.DataFrame) -> None:
             df[col] = column.astype("int32")
 
 
-def join(frames: List[pd.DataFrame]) -> pd.DataFrame:
+def join(frames: List[pd.DataFrame], on: List[str]) -> pd.DataFrame:
     """
     join a list of dataframes, adding a _DROP suffix for repeated
     columns, which we can then filter out
     """
-    return reduce(lambda x, y: x.join(y, rsuffix="_DROP"), frames).filter(
-        regex="^(?!.*_DROP$)"
-    )
+    return reduce(
+        lambda x, y: x.merge(y, on=on, suffixes=("", "_DROP")), frames
+    ).filter(regex="^(?!.*_DROP$)")
 
 
 def tryrm(path: str | Path):
@@ -113,7 +113,8 @@ def download_gamelogs():
                 ).get_data_frames()[0]
             )
 
-        games = join(logs)
+        # join games by game_id and team_id, which should serve as unique keys
+        games = join(logs, on=["GAME_ID", "TEAM_ID"])
 
         # if we had games from this season, we want to append the newly
         # downloaded ones. Otherwise, we should have all the games for this
@@ -227,7 +228,7 @@ def download_player_stats():
         # get bio stats: height, place of origin, etc
         stats.append(LeagueDashPlayerBioStats(season=season).get_data_frames()[0])
 
-        allstats = join(stats)
+        allstats = join(stats, on=["PLAYER_ID"])
         convert_i64_to_i32(allstats)
 
         playerstats.append(allstats)
