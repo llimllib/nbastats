@@ -251,6 +251,9 @@ if __name__ == "__main__":
     # if no arguments passed, download both
     runall = not args.gamelogs and not args.player_stats
 
+    if not DIR.is_dir():
+        DIR.mkdir()
+
     if args.gamelogs or runall:
         download_gamelogs()
     if args.player_stats or runall:
