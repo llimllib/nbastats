@@ -56,7 +56,7 @@ export const teams = new Map<string, Team>([
     "DEN",
     {
       name: "Denver Nuggets",
-      colors: ["#0E2240", "#FEC524", "#8B2131", "#244289"],
+      colors: ["#0E2240", "#8B2131", "#FEC524", "#244289"],
     },
   ],
   [
@@ -71,12 +71,12 @@ export const teams = new Map<string, Team>([
     "HOU",
     {
       name: "Houston Rockets",
-      colors: ["#CE1141", "#000000", "#9EA2A2", "#373A36", "#FFFFFF"],
+      colors: ["#CE1141", "#9EA2A2", "#000000", "#373A36", "#FFFFFF"],
     },
   ],
   [
     "IND",
-    { name: "Indiana Pacers", colors: ["#002D62", "#FDBB30", "#BEC0C2"] },
+    { name: "Indiana Pacers", colors: ["#BEC0C2", "#FDBB30", "#002D62"] },
   ],
   [
     "LAC",
@@ -147,8 +147,8 @@ export const teams = new Map<string, Team>([
       name: "Philadelphia 76ers",
       colors: [
         "#006BB6",
-        "#ED174C",
         "#C4CED4",
+        "#ED174C",
         "#000000",
         "#002B5C",
         "#FFFFFF",
@@ -166,7 +166,7 @@ export const teams = new Map<string, Team>([
     "POR",
     {
       name: "Portland Trailblazers",
-      colors: ["#E03A3E", "#000000", "#FFFFFF"],
+      colors: ["#E03A3E", "#FFFFFF", "#000000"],
     },
   ],
   [
@@ -190,7 +190,7 @@ export const teams = new Map<string, Team>([
       colors: ["#888888", "#888888"],
     },
   ],
-  ["UTA", { name: "Utah Jazz", colors: ["#002B5C", "#F9A01B", "#00471B"] }],
+  ["UTA", { name: "Utah Jazz", colors: ["#F9A01B", "#00471B", "#002B5C"] }],
   [
     "WAS",
     {
