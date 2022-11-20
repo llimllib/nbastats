@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import argparse
+from datetime import datetime, timezone
 from functools import reduce
+import json
 from time import time
 import os
 from pathlib import Path
@@ -67,6 +69,31 @@ def tryrm(path: str | Path):
         pass
 
 
+def dump_team_eff_json(df: pd.DataFrame, year: int) -> None:
+    """
+    write out efficiency stats to a json file for consumption by the team graph
+    page
+    """
+    eff = df[
+        [
+            "team_abbreviation",
+            "game_date",
+            "matchup",
+            "off_rating",
+            "def_rating",
+            "pts",
+            "poss",
+        ]
+    ]
+    assert isinstance(eff, pd.DataFrame)
+
+    data = {
+        "updated": datetime.now(timezone.utc).isoformat(),
+        "games": eff.to_dict(orient="records"),
+    }
+    json.dump(data, open(DIR / f"team_efficiency_{year}.json", "w"))
+
+
 def download_gamelogs():
     seasons = []
     for year in range(FIRST_SEASON, CURRENT_SEASON + 1):
@@ -93,7 +120,7 @@ def download_gamelogs():
             # can't find any documentation for this, I did curl requests until
             # something worked
             most_recent = (
-                pd.to_datetime(old_games["GAME_DATE"])
+                pd.to_datetime(old_games["game_date"])
                 .max()
                 .to_pydatetime()
                 .strftime("%m/%d/%Y")
@@ -116,6 +143,9 @@ def download_gamelogs():
         # join games by game_id and team_id, which should serve as unique keys
         games = join(logs, on=["GAME_ID", "TEAM_ID"])
 
+        # lower case all the columns
+        games.columns = games.columns.str.lower()
+
         # if we had games from this season, we want to append the newly
         # downloaded ones. Otherwise, we should have all the games for this
         # season in the games dataframe
@@ -132,6 +162,8 @@ def download_gamelogs():
         games.reset_index(inplace=True)
         games.rename(columns={"index": "game_n"}, inplace=True)
         convert_i64_to_i32(games)
+
+        dump_team_eff_json(games, year)
 
         seasons.append(games)
         games.to_parquet(file)
@@ -230,6 +262,9 @@ def download_player_stats():
 
         allstats = join(stats, on=["PLAYER_ID"])
         convert_i64_to_i32(allstats)
+
+        # lower case all the columns
+        allstats.columns = allstats.columns.str.lower()
 
         playerstats.append(allstats)
         allstats.to_parquet(file)
