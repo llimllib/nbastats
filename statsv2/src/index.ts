@@ -94,7 +94,7 @@ function makeMarks(series: Series, options: GraphOptions): any[] {
       Label(series.data, {
         x: options.xfield,
         y: options.yfield,
-        label: "PLAYER_NAME",
+        label: "player_name",
         padding: 10,
         minCellSize: 3000,
       }),
@@ -114,10 +114,10 @@ function makeMarks(series: Series, options: GraphOptions): any[] {
         y: options.yfield,
         r: rFunc,
         fill: (d: any) => {
-          if (!teams.get(d["TEAM_ABBREVIATION"])) {
+          if (!teams.get(d["team_abbreviation"])) {
             console.log("missing:", d);
           }
-          return teams.get(d["TEAM_ABBREVIATION"])?.colors[0];
+          return teams.get(d["team_abbreviation"])?.colors[0];
         },
         fillOpacity: series.opacity / 100,
       }),
@@ -125,7 +125,7 @@ function makeMarks(series: Series, options: GraphOptions): any[] {
         x: options.xfield,
         y: options.yfield,
         r: (d: any) => (rFunc(d) as number) / 2,
-        fill: (d: any) => teams.get(d["TEAM_ABBREVIATION"])?.colors[1],
+        fill: (d: any) => teams.get(d["team_abbreviation"])?.colors[1],
         fillOpacity: series.opacity / 100,
       }),
     ];
@@ -191,8 +191,8 @@ async function main(options: GraphOptions): Promise<void> {
   alldata.forEach((d) => {
     const xlabel = options.xLabel == "" ? options.xfield : options.xLabel;
     const ylabel = options.yLabel == "" ? options.yfield : options.yLabel;
-    d.tooltip = `${d.PLAYER_NAME}
-${d.TEAM_ABBREVIATION}
+    d.tooltip = `${d.player_name}
+${d.team_abbreviation}
 ${xlabel}: ${d[options.xfield]}
 ${ylabel}: ${d[options.yfield]}`;
   });
@@ -481,7 +481,6 @@ function rePlot(
       firstRun &&
       new URL(window.location.toString()).searchParams.get("options")
     ) {
-      firstRun = false;
       try {
         await plotURLOptions(conn);
       } catch (e) {
@@ -491,6 +490,7 @@ function rePlot(
     } else {
       plotFields(conn);
     }
+    firstRun = false;
   };
 }
 
@@ -683,7 +683,7 @@ async function getSerieses(
 }
 
 function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
-  const xDefault = "TS_PCT";
+  const xDefault = "ts_pct";
   // Iterating on this consumes it somehow? so do it twice. Yo no comprendo
   const xfields = Object.keys(Fields)
     .sort()
@@ -698,7 +698,7 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
       }
     });
 
-  const yDefault = "USG_PCT";
+  const yDefault = "usg_pct";
   const yfields = Object.keys(Fields)
     .sort()
     .map((key: string) => {
