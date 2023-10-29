@@ -1,6 +1,6 @@
 import * as Plot from "@observablehq/plot";
 import { select } from "d3-selection";
-import { extent } from "d3-array";
+import { extent, group } from "d3-array";
 
 import { addTooltips } from "tooltip";
 
@@ -17,6 +17,21 @@ interface TeamsMeta {
   updated: string;
   teams: Array<TeamData>;
 }
+
+type EffData = {
+  team_abbreviation: string;
+  game_date: string;
+  matchup: string;
+  off_rating: number;
+  def_rating: number;
+  pts: number;
+  poss: number;
+};
+
+type TeamEfficiency = {
+  updated: string;
+  games: EffData[];
+};
 
 async function main(year: string): Promise<void> {
   const res = await fetch(`${DATA_URL}/${year}/team_stats.json`);
@@ -149,7 +164,15 @@ async function main(year: string): Promise<void> {
 }
 
 window.addEventListener("DOMContentLoaded", async (_evt) => {
-  await main("2023");
+  const year = "2024";
+  const res = await fetch(`${DATA_URL}/team_efficiency_${year}.json`);
+  const data = (await res.json()) as TeamEfficiency;
+  // group by team and sort the games by date
+  const byTeam = group(data.games, (d) => d.team_abbreviation).forEach((val) =>
+    val.sort((a, b) => (a.game_date < b.game_date ? 1 : -1))
+  );
+  console.log(data, byTeam);
+  await main("2024");
 });
 
 document.querySelector("#year")?.addEventListener("change", async (evt) => {

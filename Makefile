@@ -118,7 +118,7 @@ flush:
 #
 # update the database
 update: requirements
-	./scraper/scrape.py -y 2023
+	./scraper/scrape.py -y 2024
 
 # sync the stats database to my CDN
 syncdata: update

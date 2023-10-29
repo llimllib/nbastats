@@ -12,6 +12,7 @@ import { teams } from "./teams";
 import { Fields, FieldType } from "./stats_meta";
 
 const $ = (s: string) => document.querySelector(s);
+const $$ = (s: string) => document.querySelectorAll(s);
 
 // TODO: all stats are currently considering a player on their final team for
 //       the year (I think?). Is that the best we can do?
@@ -502,7 +503,8 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
 
   const seriesNode = html`<div class="series" id="series${n}">
         Year: <select class="year" id="year${n}">
-          <option value="2023" selected>2023</option>
+          <option value="2024" selected>2024</option>
+          <option value="2023">2023</option>
           <option value="2022">2022</option>
           <option value="2021">2021</option>
           <option value="2020">2020</option>
@@ -531,6 +533,10 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
         <br />
         <label for="filter${n}">filter:</label>
           <input id="filter${n}" class="filter" value="quantile(fga) > 66"></input>
+        <br />
+        <button class="moveSeriesUp" id="moveSeriesUp${n}" disabled>↑</button>
+        <button class="moveSeriesDown" id="moveSeriesDown${n}" disabled>↓</button>
+
       </div>`;
 
   // wait for the element to hit the dom before re-plotting
@@ -551,6 +557,31 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
         series.querySelector(s)?.addEventListener("change", rePlot(conn))
       );
 
+      series
+        .querySelector(".moveSeriesUp")
+        ?.addEventListener("click", moveSeriesUp);
+      series
+        .querySelector(".moveSeriesDown")
+        ?.addEventListener("click", moveSeriesDown);
+
+      // if there's more than one series, enable moveSeriesUp and
+      // moveSeriesDown buttons, then disable the first and the last,
+      // respectively
+      const seriesN = Array.from(document.querySelectorAll(".series")).length;
+      ($$(".moveSeriesUp") as NodeListOf<Element>).forEach(
+        (node) => ((node as HTMLInputElement).disabled = seriesN == 1)
+      );
+      ($$(".moveSeriesDown") as NodeListOf<Element>).forEach(
+        (node) => ((node as HTMLInputElement).disabled = seriesN == 1)
+      );
+
+      // disable the first up button and last down button
+      ($(".moveSeriesUp") as HTMLInputElement).disabled = true;
+      const downButtons = Array.from(
+        $$(".moveSeriesDown") as NodeListOf<Element>
+      );
+      (downButtons[downButtons.length - 1] as HTMLInputElement).disabled = true;
+
       obs.disconnect();
       return;
     }
@@ -561,6 +592,24 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   });
 
   $(".serieses")?.appendChild(seriesNode);
+}
+
+function moveSeriesUp(evt: any) {
+  const upButton = evt.target;
+  const series = upButton.parentElement;
+  const prevSib = series?.previousSibling;
+  const serieses = series?.parentElement;
+  serieses?.removeChild(series);
+  serieses?.insertBefore(series, prevSib);
+}
+
+function moveSeriesDown(evt: any) {
+  const downButton = evt.target;
+  const series = downButton.parentElement;
+  const nextSib = series.nextSibling;
+  const serieses = series.parentElement;
+  serieses.removeChild(series);
+  nextSib.after(series);
 }
 
 async function removeSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
