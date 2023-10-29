@@ -104,3 +104,15 @@ this nba page has possessions (total per season tho):
 https://www.nba.com/stats/teams/advanced?sort=NET_RATING&dir=-1
 
 Can we get individual games?
+
+-----------------
+
+Open the playerstats parquet file in duckdb:
+
+CREATE TABLE playerstats AS SELECT * FROM '../../nba_data/data/playerstats.parquet';
+
+-------------------
+
+query for boston players: 
+
+quantile(fga) > 50 and team_abbreviation='BOS'
