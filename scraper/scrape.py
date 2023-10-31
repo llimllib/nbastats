@@ -359,8 +359,11 @@ def process_data(years: Sequence[str]) -> None:
     log("processing raptor")
     parse_raptor_stats(data, years)
 
+    log("creating dataframe")
     output = "data/stats.parquet"
     df = pd.DataFrame(data.values())
+
+    log("converting rows to proper type")
 
     # if any one of the first 20 rows in a column is numeric, assume the whole
     # column ought to be numeric
@@ -382,12 +385,16 @@ def process_data(years: Sequence[str]) -> None:
         if column.dtype == "int64":
             df[col] = column.astype("int32")
 
+    log("creating parquet table")
+
     dt = datetime.utcnow().isoformat() + "Z"
     schema = pa.Schema.from_pandas(df).with_metadata(
         {"updated": dt},
     )
     table = pa.Table.from_pandas(df, schema=schema)
     pq.write_table(table, output)
+
+    log("creating metadata json")
 
     # XXX: Until duckdb supports reading metadata out of parquet files, we will
     #      generate a metadata file
