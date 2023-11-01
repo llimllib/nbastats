@@ -4,7 +4,7 @@ DUCKDB_PREREQS = duckdb-mvp.wasm duckdb-eh.wasm duckdb-browser-mvp.worker.js duc
 DUCKDB_PREREQS_FULL = $(addprefix $(DUCKDB_DIST),$(DUCKDB_PREREQS))
 BUILD_PREREQS_FULL = $(addprefix $(DIST)/duckdb/,$(DUCKDB_PREREQS))
 
-all: wasm teamdiamond html static
+all: wasm teamdiamond statsv2 html static
 
 static:
 	cp -r logos dist/
@@ -22,6 +22,9 @@ production:
 
 teamdiamond:
 	make -C teamdiamond all
+
+statsv2:
+	make -C statsv2
 
 html: dist/index.html
 	# playoff is an observable plot experiment at the moment
