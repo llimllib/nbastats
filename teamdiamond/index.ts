@@ -76,6 +76,7 @@ async function main(year: string): Promise<void> {
         y: "DEF_RATING",
         width: imageSize,
         height: imageSize,
+        rotate: 45,
         title: (d: TeamData) =>
           `${d.TEAM_NAME}\nOffensive rating: ${d.OFF_RATING}\nDefensive rating: ${d.DEF_RATING}`,
         src: (d: TeamData) => `../logos/${d.TEAM_NAME}.svg`,
@@ -128,20 +129,6 @@ async function main(year: string): Promise<void> {
     .attr("width", chartSize / 2 - bgpadding)
     .attr("height", chartSize / 2 - bgpadding)
     .attr("fill", "#fbe8c8");
-
-  // There's not yet an option to rotate images;
-  // https://github.com/observablehq/plot/issues/1083
-  //
-  // once the referenced PR is merged and released, this can be removed in
-  // favor of a "rotate" channel on the image mark
-  select(chart)
-    .selectAll("image")
-    .attr("transform", (_, i, nodes) => {
-      const d = select(nodes[i]);
-      const rx = +d.attr("x") + imageSize / 2;
-      const ry = +d.attr("y") + imageSize / 2;
-      return `rotate(45 ${rx} ${ry})`;
-    });
 
   const fullSize = 800;
 
