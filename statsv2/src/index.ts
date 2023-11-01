@@ -143,18 +143,18 @@ function makeMarks(series: Series, options: GraphOptions): any[] {
 
   // Tooltips need to go after the dots, otherwise they hide behind and are not
   // readable. Don't allow rollovers on series that are unlabeled
-  if (series.useLabels) {
-    marks.push(
-      Plot.tip(
-        series.data,
-        Plot.pointer({
-          x: options.xfield,
-          y: options.yfield,
-          title: (d: any) => d.tooltip,
-        })
-      )
-    );
-  }
+  // if (series.useLabels) {
+  //   marks.push(
+  //     Plot.tip(
+  //       series.data,
+  //       Plot.pointer({
+  //         x: options.xfield,
+  //         y: options.yfield,
+  //         title: (d: any) => d.tooltip,
+  //       })
+  //     )
+  //   );
+  // }
 
   return marks;
 }
@@ -217,6 +217,20 @@ ${ylabel}: ${d[options.yfield]}`;
         Fields[options.rField].value,
       ]
     : [options.rMin, options.rMax];
+
+  // Add a tooltip for every piece of data shown on the graph, regardless of
+  // whether labels are on or not. This can be helpful, or confusing; for
+  // example it doesn't show _which series_ it belongs to
+  marks.push(
+    Plot.tip(
+      alldata,
+      Plot.pointer({
+        x: options.xfield,
+        y: options.yfield,
+        title: (d: any) => d.tooltip,
+      })
+    )
+  );
 
   const chart = Plot.plot({
     width: options.width,
