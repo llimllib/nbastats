@@ -1,6 +1,6 @@
 DIST = dist
 DUCKDB_DIST = node_modules/@duckdb/duckdb-wasm/dist/
-DUCKDB_PREREQS = duckdb.wasm duckdb-next.wasm duckdb-browser.worker.js duckdb-browser-next.worker.js
+DUCKDB_PREREQS = duckdb-mvp.wasm duckdb-eh.wasm duckdb-browser-mvp.worker.js duckdb-browser-eh.worker.js
 DUCKDB_PREREQS_FULL = $(addprefix $(DUCKDB_DIST),$(DUCKDB_PREREQS))
 BUILD_PREREQS_FULL = $(addprefix $(DIST)/duckdb/,$(DUCKDB_PREREQS))
 
@@ -49,6 +49,10 @@ endif
 
 	# replace $$SCRIPT_URL with the script URL
 	sed 's,\$$SCRIPT_URL,$(SCRIPT_URL),' src/index.html > dist/index.html
+
+$(BUILD_PREREQS_FULL):
+	mkdir -p dist/duckdb
+	cp $(DUCKDB_DIST)/{duckdb-mvp.wasm,duckdb-eh.wasm,duckdb-browser-mvp.worker.js,duckdb-browser-eh.worker.js} dist/duckdb/
 
 # if our source files have changed, rebuild the otuput bundle
 dist/viewer_duckdb.js: src/viewer.js package-lock.json $(BUILD_PREREQS_FULL) build.mjs
