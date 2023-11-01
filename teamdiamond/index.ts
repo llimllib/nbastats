@@ -1,16 +1,16 @@
 import * as Plot from "@observablehq/plot";
 import { select } from "d3-selection";
-import { extent, group } from "d3-array";
+import { extent } from "d3-array";
 
 import { addTooltips } from "tooltip";
 
-const DATA_URL = process.env.DATA_URL;
+const NBA_DATA_URL = "https://llimllib.github.io/nba_data";
 
 // there are more attributes, I just removed them for simplicity
 interface TeamData {
-  name: string;
-  off_rtg: number;
-  def_rtg: number;
+  TEAM_NAME: string;
+  OFF_RATING: number;
+  DEF_RATING: number;
 }
 
 interface TeamsMeta {
@@ -34,7 +34,7 @@ type TeamEfficiency = {
 };
 
 async function main(year: string): Promise<void> {
-  const res = await fetch(`${DATA_URL}/${year}/team_stats.json`);
+  const res = await fetch(`${NBA_DATA_URL}/team_summary_${year}.json`);
   const data = (await res.json()) as TeamsMeta;
   const teams = Object.values(data.teams);
 
@@ -43,8 +43,8 @@ async function main(year: string): Promise<void> {
 
   // we want to use the same domain for both sides of the graph, so get all
   // efficiencies, flatten the list, and pad it out a bit
-  const allEficiencies = teams.map((t) => [t.def_rtg, t.off_rtg]).flat();
-  const effExt = extent(allEficiencies);
+  const allEfficiencies = teams.map((t) => [t.DEF_RATING, t.OFF_RATING]).flat();
+  const effExt = extent(allEfficiencies);
   if (!effExt[0] || !effExt[1]) return;
   const paddedExtent = [effExt[0] * 0.99, effExt[1] * 1.01];
 
@@ -72,13 +72,13 @@ async function main(year: string): Promise<void> {
     },
     marks: [
       Plot.image(teams, {
-        x: "off_rtg",
-        y: "def_rtg",
+        x: "OFF_RATING",
+        y: "DEF_RATING",
         width: imageSize,
         height: imageSize,
         title: (d: TeamData) =>
-          `${d.name}\nOffensive rating: ${d.off_rtg}\nDefensive rating: ${d.def_rtg}`,
-        src: (d: TeamData) => `../logos/${d.name}.svg`,
+          `${d.TEAM_NAME}\nOffensive rating: ${d.OFF_RATING}\nDefensive rating: ${d.DEF_RATING}`,
+        src: (d: TeamData) => `../logos/${d.TEAM_NAME}.svg`,
       }),
       Plot.text(["Offensive Rating"], {
         frameAnchor: "bottom",
@@ -165,14 +165,19 @@ async function main(year: string): Promise<void> {
 
 window.addEventListener("DOMContentLoaded", async (_evt) => {
   const year = "2024";
-  const res = await fetch(`${DATA_URL}/team_efficiency_${year}.json`);
-  const data = (await res.json()) as TeamEfficiency;
-  // group by team and sort the games by date
-  const byTeam = group(data.games, (d) => d.team_abbreviation).forEach((val) =>
-    val.sort((a, b) => (a.game_date < b.game_date ? 1 : -1))
-  );
-  console.log(data, byTeam);
-  await main("2024");
+
+  // TODO: allow users to look at n-game windows by using the larger
+  // team_efficiency dataset. This is very unfinished
+  //
+  // const res = await fetch(`${NBA_DATA_URL}/team_efficiency_${year}.json`);
+  // const data = (await res.json()) as TeamEfficiency;
+  // // group by team and sort the games by date
+  // const byTeam = group(data.games, (d) => d.team_abbreviation).forEach((val) =>
+  //   val.sort((a, b) => (a.game_date < b.game_date ? 1 : -1))
+  // );
+  // console.log(data, byTeam);
+
+  await main(year);
 });
 
 document.querySelector("#year")?.addEventListener("change", async (evt) => {
