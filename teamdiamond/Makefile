@@ -2,7 +2,7 @@ all: dist/index.js
 
 dist/index.js: index.ts
 	tsc --noEmit --skipLibCheck && \
-		DATA_URL=https://devd.io:8000/data2/ node esbuild.config.mjs production
+		node esbuild.config.mjs production
 
 watch:
 	node esbuild.config.mjs
