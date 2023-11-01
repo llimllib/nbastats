@@ -27,7 +27,7 @@ esbuild
     define: {
       "process.env.DATA_URL":
         JSON.stringify(process.env.DATA_URL) ||
-        '"https://cdn.billmill.org/nbastats"',
+        '"https://llimllib.github.io/nba_data"',
     },
   })
   .catch(() => process.exit(1));
