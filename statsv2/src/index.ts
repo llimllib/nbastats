@@ -6,7 +6,6 @@ import { select } from "d3-selection";
 import d3ToPng from "d3-svg-to-png";
 import { html } from "htl";
 
-import { tooltip } from "./tooltip";
 import { label } from "./labels";
 import { teams } from "./teams";
 import { Fields, FieldType } from "./stats_meta";
@@ -18,17 +17,13 @@ const $$ = (s: string) => document.querySelectorAll(s);
 //       the year (I think?). Is that the best we can do?
 // TODO: allow re-ordering of series
 // TODO: get nice names for all stats
-// TODO: add stat values to tooltips
 // TODO: allow year to vary in makeQuery (?)
 //       - idea is a chart like: steph curry ts% every year
 // TODO: custom annotations (mvp: text with x/y coords)
-// TODO: fix tooltip scrollbar bug
 // TODO: tooltips only work on the top-most labelled layer, fix them
 // TODO: delay rendering on page load until all filters and series have been
 //       setup
 
-// https://observablehq.com/@fil/experimental-plot-tooltip-01#addTooltip
-const Tooltip = tooltip(Plot);
 const Label = label(Plot);
 
 const DATA_URL = process.env.DATA_URL;
@@ -83,12 +78,6 @@ function sanitize(s: string): string {
 function makeMarks(series: Series, options: GraphOptions): any[] {
   let marks: any[] = [];
 
-  // For now, we're going to tie tooltips and labels together - it doesn't make
-  // much sense to allow tooltips for a series that isn't labeled, I don't
-  // think. Possibly revisit.
-  //
-  // Put these before the dots, so that if we mistakenly overlap text on a dot,
-  // the text goes behind the dot and it's still hover-able
   if (series.useLabels) {
     marks = [
       ...marks,
@@ -149,6 +138,21 @@ function makeMarks(series: Series, options: GraphOptions): any[] {
         fill: "#888888",
         fillOpacity: series.opacity / 100,
       })
+    );
+  }
+
+  // Tooltips need to go after the dots, otherwise they hide behind and are not
+  // readable. Don't allow rollovers on series that are unlabeled
+  if (series.useLabels) {
+    marks.push(
+      Plot.tip(
+        series.data,
+        Plot.pointer({
+          x: options.xfield,
+          y: options.yfield,
+          title: (d: any) => d.tooltip,
+        })
+      )
     );
   }
 
@@ -247,16 +251,7 @@ ${ylabel}: ${d[options.yfield]}`;
       domain: rDomain,
       range: rRange,
     },
-    // We can only have one `Tooltip` mark. Give it the sum of all the data in
-    // all the serieses
-    marks: [
-      ...marks,
-      Tooltip(alldata, {
-        x: options.xfield,
-        y: options.yfield,
-        content: "tooltip",
-      }),
-    ].flat(),
+    marks: [...marks].flat(),
   });
 
   const svg = select(chart);
@@ -325,7 +320,6 @@ async function initDuckDb(): Promise<duckdb.AsyncDuckDBConnection> {
   };
   // Select a bundle based on browser checks
   const bundle = await duckdb.selectBundle(MANUAL_BUNDLES);
-  // Instantiate the asynchronus version of DuckDB-wasm
 
   // Instantiate the asynchronus version of DuckDB-wasm
   const worker = new Worker(bundle.mainWorker!);
