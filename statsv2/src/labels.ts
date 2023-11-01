@@ -5,6 +5,12 @@ import { polygonCentroid, polygonArea } from "d3-polygon";
 // Derived from https://observablehq.com/@d3/voronoi-labels
 // and
 // https://observablehq.com/@fil/experimental-plot-tooltip-01
+//
+// An interesting approach that I may want to investigate is @Fil's voronoi labeller:
+//
+// https://docs.mapbox.com/mapbox-gl-js/example/variable-label-placement/
+//
+// TODO: allow user to click to remove/add labels manually
 
 interface LabelOptions {
   x: string;
