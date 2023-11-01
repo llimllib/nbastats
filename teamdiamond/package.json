@@ -1,11 +1,8 @@
 {
-  "name": "observable_plot_template",
+  "name": "Team diamond chart",
   "version": "1.0.0",
-  "description": "Observable Plot Template",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "team diamond chart in observable plot",
+  "main": "index.ts",
   "author": "Bill Mill",
   "license": "ISC",
   "dependencies": {
