@@ -13,16 +13,18 @@ import { Fields, FieldType } from "./stats_meta";
 const $ = (s: string) => document.querySelector(s);
 const $$ = (s: string) => document.querySelectorAll(s);
 
-// TODO: all stats are currently considering a player on their final team for
-//       the year (I think?). Is that the best we can do?
-// TODO: allow re-ordering of series
-// TODO: get nice names for all stats
-// TODO: allow year to vary in makeQuery (?)
-//       - idea is a chart like: steph curry ts% every year
-// TODO: custom annotations (mvp: text with x/y coords)
-// TODO: tooltips only work on the top-most labelled layer, fix them
-// TODO: delay rendering on page load until all filters and series have been
+// TODO:
+// - all stats are currently considering a player on their final team for
+//   the year (I think?). Is that the best we can do?
+// - allow re-ordering of series
+// - get nice names for all stats
+// - allow year to vary in makeQuery (?)
+//   - idea is a chart like: steph curry ts% every year
+// - custom annotations (mvp: text with x/y coords)
+// - tooltips only work on the top-most labelled layer, fix them
+// - delay rendering on page load until all filters and series have been
 //       setup
+// - display updated date on the page
 
 const Label = label(Plot);
 
