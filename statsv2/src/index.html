@@ -4,6 +4,7 @@
 <style>
 body {
   background-color: #fff9eb;
+  max-width: 1700px;
 }
 #plot {
   width: 800px;
@@ -22,25 +23,54 @@ div {
 .serieses {
   margin-top: 20px;
 }
-.flex {
-  /* TODO: start making the intput area nicer */
-  /* display: flex; */
-}
 .filter {
   width: 500px;
+}
+.container {
+  display: flex;
+}
+
+.left-pane {
+  /* grow, shrink, basis */
+  flex: 10 1 224px;
+}
+
+.right-pane {
+  flex: 0 1 800px;
+}
+
+@media (max-width: 1224px) {
+  .container {
+    flex-direction: column-reverse;
+  }
+
+  .left-pane,
+  .right-pane {
+    width: 100%;
+  }
 }
 </style>
     <title>NBA Stats Visualizer</title>
   <body>
     <h1>NBA Stats Viz</h1>
-    <div id="plot"></div>
-    <div class="graph-options">
-    </div>
-    <div class="series-controls">
-      <button class="add-series">add series</button>
-      <button class="remove-series">remove series</button>
-    </div>
-    <div class="serieses">
+    <div class="container">
+      <div class="left-pane">
+        <div class="graph-options">
+        </div>
+        <div class="series-controls">
+          <button class="add-series">add series</button>
+          <button class="remove-series">remove series</button>
+        </div>
+        <div class="serieses">
+        </div>
+        <details>
+          <summary>Example queries</summary>
+          <ul>
+            <li><pre>quantile(fga_pergame) > 25 and team_abbreviation in ('BOS', 'MIL', 'MIA')</pre></li>
+          </ul>
+        </details>
+      </div>
+      <div id="plot" class="right-pane"></div>
     </div>
     <script src="index.js"></script>
   </body>
