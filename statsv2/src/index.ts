@@ -26,7 +26,7 @@ const $$ = (s: string) => document.querySelectorAll(s);
 
 const Label = label(Plot);
 
-const DATA_URL = process.env.DATA_URL;
+const DATA_URL = "https://llimllib.github.io/nba_data";
 
 type Series = {
   year: string;
@@ -797,7 +797,7 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
         <option value="center" selected>center</option>
       </select>
       <br />
-      label: <input type="text" id="xLabel" />
+      label: <input type="text" id="xLabel" value="true shooting %" />
     </div>
     <button id="swapAxes">🔄 swap x and y</button>
     <button id="clearOptions">🧹 clear options</button>
@@ -820,7 +820,7 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
         <option value="center">center</option>
       </select>
       <br />
-      label: <input type="text" id="yLabel" />
+      label: <input type="text" id="yLabel" value="usage percentage" />
     </div>
     <div>
       <h3>R axis</h3>
