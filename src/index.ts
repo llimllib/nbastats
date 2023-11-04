@@ -41,6 +41,8 @@ type Series = {
   data: any[];
 };
 
+type AnchorPosition = "top" | "right" | "bottom" | "left" | "center";
+
 type GraphOptions = {
   xfield: string;
   xfieldType: FieldType;
@@ -55,14 +57,12 @@ type GraphOptions = {
   marginBottom: number;
   marginLeft: number;
   xLabelOffset: number;
-  // "top"|"right"|"bottom"|"left"|"center"
-  // but actually typing it was making me insane
-  xLabelAnchor: string;
+  xLabelAnchor: AnchorPosition;
   xLabel: string;
   xTicks: number;
   xPadding: number;
   yLabelOffset: number;
-  yLabelAnchor: string;
+  yLabelAnchor: AnchorPosition;
   yTicks: number;
   yLabel: string;
   yPadding: number;
@@ -166,7 +166,9 @@ function makeMarks(series: Series, options: GraphOptions): any[] {
 //   - for now I'm going to restrict the graph to have one xfield and yfield,
 //     but this is an area for research
 async function main(options: GraphOptions): Promise<void> {
-  const marks = options.serieses.map((series) => makeMarks(series, options));
+  const marks = options.serieses
+    .map((series) => makeMarks(series, options))
+    .flat();
   if (options.title != "") {
     marks.push(
       Plot.text([options.title], {
@@ -267,7 +269,7 @@ ${ylabel}: ${d[options.yfield]}`;
       domain: rDomain,
       range: rRange,
     },
-    marks: [...marks].flat(),
+    marks: [...marks],
   });
 
   const svg = select(chart);
@@ -327,11 +329,11 @@ async function initDuckDb(): Promise<duckdb.AsyncDuckDBConnection> {
   const MANUAL_BUNDLES: duckdb.DuckDBBundles = {
     mvp: {
       mainModule: "duckdb-mvp.wasm",
-      mainWorker: "duckdb-browser-mvp.worker.js",
+      mainWorker: "duckdb/duckdb-browser-mvp.worker.js",
     },
     eh: {
       mainModule: "duckdb-eh.wasm",
-      mainWorker: "duckdb-browser-eh.worker.js",
+      mainWorker: "duckdb/duckdb-browser-eh.worker.js",
     },
   };
   // Select a bundle based on browser checks
@@ -459,12 +461,12 @@ async function plotFields(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
     xTicks: numValue("#xTicks"),
     xLabelOffset: numValue("#xLabelOffset"),
     xPadding: numValue("#xPadding"),
-    xLabelAnchor: inputValue("#xLabelAnchor"),
+    xLabelAnchor: inputValue("#xLabelAnchor") as AnchorPosition,
     xLabel: inputValue("#xLabel"),
     yTicks: numValue("#yTicks"),
     yLabelOffset: numValue("#yLabelOffset"),
     yPadding: numValue("#yPadding"),
-    yLabelAnchor: inputValue("#yLabelAnchor"),
+    yLabelAnchor: inputValue("#yLabelAnchor") as AnchorPosition,
     yLabel: inputValue("#yLabel"),
     rField: inputValue("#rField"),
     rMin: numValue("#rMin"),
