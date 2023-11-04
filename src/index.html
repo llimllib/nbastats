@@ -1,10 +1,30 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css"> -->
 <style>
 body {
   background-color: #fff9eb;
   max-width: 1700px;
+  line-height: 1.5;
+}
+button, input, select, textarea {
+  font-size: inherit;
+  font-family: inherit;
+  padding: .3rem;
+  margin-bottom: .3rem;
+  border-radius: 5px;
+  box-shadow: none;
+  max-width: 100%;
+  display: inline-block;
+}
+textarea, select, input {
+  background-color: #efefef;
+  border: 1px solid #898ea4;
+}
+div.controlrow {
+  margin: 0;
+  padding: 0;
 }
 #plot {
   width: 800px;
@@ -20,25 +40,23 @@ div {
 .number2 {
   width: 54px;
 }
-.serieses {
-  margin-top: 20px;
-}
 .filter {
   width: 500px;
 }
 .container {
   display: flex;
 }
-
+.series {
+  border-bottom: 1px solid grey;
+  padding-left: 0;
+}
 .left-pane {
   /* grow, shrink, basis */
   flex: 10 1 224px;
 }
-
 .right-pane {
   flex: 0 1 800px;
 }
-
 @media (max-width: 1224px) {
   .container {
     flex-direction: column-reverse;
@@ -56,12 +74,13 @@ div {
     <div class="container">
       <div class="left-pane">
         <div class="graph-options">
-        </div>
-        <div class="series-controls">
-          <button class="add-series">add series</button>
-          <button class="remove-series">remove series</button>
-        </div>
-        <div class="serieses">
+          <div class="controlgroup">
+            <div class="serieses">
+              <h3>Data Series</h3>
+              <button class="add-series">add series</button>
+              <button class="remove-series">remove series</button>
+            </div>
+          </div>
         </div>
         <details>
           <summary>Example queries</summary>

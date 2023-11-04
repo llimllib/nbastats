@@ -25,6 +25,7 @@ const $$ = (s: string) => document.querySelectorAll(s);
 // - delay rendering on page load until all filters and series have been
 //       setup
 // - display updated date on the page
+// - when you change a stat, update the label for that stat
 
 const Label = label(Plot);
 
@@ -514,6 +515,7 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   ($(".remove-series") as HTMLInputElement).disabled = n == 1;
 
   const seriesNode = html`<div class="series" id="series${n}">
+      <div class="controlrow">
         Year: <select class="year" id="year${n}">
           <option value="2024" selected>2024</option>
           <option value="2023">2023</option>
@@ -532,24 +534,32 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
           <option value="2010">2010</option>
           <option value="any">any</option>
           </select>
+      </div>
+      <div class="controlrow">
         <label for="useTeamColors${n}">Use Team Colors</label>
           <input type="checkbox" id="useTeamColors${n}" class="useTeamColors" checked></input>
         <label for="useLabels${n}">Use labels</label>
           <input type="checkbox" id="useLabels${n}" class="useLabels" checked></input>
         <label for="opacity${n}">Opacity</label>
-          <input type="number" id="opacity${n}" class="opacity number" value="100"></input>
+          <input type="number" id="opacity${n}" class="opacity number2" value="100"></input>
+      </div>
+      <div class="controlrow">
         <label for="customColor${n}">Custom color</label>
           <input type="checkbox" id="customColor${n}" class="customColor"></input>
         <label for="color${n}">choose color:</label>
           <input type="color" id="color${n}" class="color" value="#000000" />
         <br />
+      </div>
+      <div class="controlrow">
         <label for="filter${n}">filter:</label>
           <input id="filter${n}" class="filter" value="quantile(fga) > 66"></input>
         <br />
+      </div>
+      <div class="controlrow">
         <button class="moveSeriesUp" id="moveSeriesUp${n}" disabled>↑</button>
         <button class="moveSeriesDown" id="moveSeriesDown${n}" disabled>↓</button>
-
-      </div>`;
+      </div>
+    </div>`;
 
   // wait for the element to hit the dom before re-plotting
   const observer = new MutationObserver(async (_, obs) => {
@@ -626,9 +636,15 @@ function moveSeriesDown(evt: any) {
 
 async function removeSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   const serieses = Array.from(document.querySelectorAll(".series"));
+
   if (serieses.length == 1) {
     return;
   }
+
+  // if there are two series, disable the remove series button as we're about
+  // to remove the second
+  ($(".remove-series") as HTMLInputElement).disabled = serieses.length == 2;
+
   serieses[serieses.length - 1].remove();
 
   rePlot(conn)(null);
@@ -781,89 +797,118 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
       }
     });
 
-  const graphOptions = html`
-    <div class="flex">
-      <h3>X axis</h3>
-      <select id="xField">
-        ${xfields}
-      </select>
-      <br />
-      ticks:
-      <input type="number" class="axis number" id="xTicks" value="5" /> label
-      offset:
-      <input type="number" class="axis number" id="xLabelOffset" value="30" />
-      padding:
-      <input type="number" class="axis number" id="xPadding" value="5" />
-      label anchor:
-      <select id="xLabelAnchor">
-        <option value="right">right</option>
-        <option value="left">left</option>
-        <option value="center" selected>center</option>
-      </select>
-      <br />
-      label: <input type="text" id="xLabel" value="true shooting %" />
+  const graphOptions = html`<div>
+    <div class="controlrow">
+      <button id="swapAxes">🔄 swap x and y</button>
+      <button id="clearOptions">🧹 clear options</button>
+      <button id="download">⬇️ download</button>
     </div>
-    <button id="swapAxes">🔄 swap x and y</button>
-    <button id="clearOptions">🧹 clear options</button>
-    <div>
-      <h3>Y axis</h3>
-      <select id="yField">
-        ${yfields}
-      </select>
-      <br />
-      ticks:
-      <input type="number" class="axis number" id="yTicks" value="5" /> label
-      offset:
-      <input type="number" class="axis number" id="yLabelOffset" value="40" />
-      padding:
-      <input type="number" class="axis number" id="yPadding" value="5" />
-      label anchor:
-      <select id="yLabelAnchor">
-        <option value="top" selected>top</option>
-        <option value="bottom">bottom</option>
-        <option value="center">center</option>
-      </select>
-      <br />
-      label: <input type="text" id="yLabel" value="usage percentage" />
-    </div>
-    <div>
-      <h3>R axis</h3>
-      <select id="rField">
-        ${rfields}
-      </select>
-      min size:
-      <input type="number" class="axis number" id="rMin" value="4" /> max size:
-      <input type="number" class="axis number" id="rMax" value="8" />
-      label: <input type="text" id="rLabel" />
-    </div>
-    <div>
+
+    <div class="controlgroup">
       <h3>Graph Options</h3>
-      Width:
-      <input type="number" class="number2" id="width" value="800" />
-      Height:
-      <input type="number" class="number2" id="height" value="800" />
+      <div class="controlrow">
+        Width:
+        <input type="number" class="number2" id="width" value="800" />
+        Height:
+        <input type="number" class="number2" id="height" value="800" />
+      </div>
+      <div class="controlrow">Title: <input type="text" id="title" /></div>
+      <div class="controlrow">
+        Subtitle: <input type="text" id="subtitle" />
+      </div>
+      <div class="controlrow">
+        margin top:
+        <input type="number" class="margin number" id="marginTop" value="40" />
+        right:
+        <input
+          type="number"
+          class="margin number"
+          id="marginRight"
+          value="50"
+        />
+        bottom:
+        <input
+          type="number"
+          class="margin number"
+          id="marginBottom"
+          value="40"
+        />
+        left:
+        <input type="number" class="margin number" id="marginLeft" value="60" />
+      </div>
     </div>
-    <div>
-      Title: <input type="text" id="title" /><br />
-      Subtitle: <input type="text" id="subtitle" />
+
+    <div class="controlgroup">
+      <h3>X axis</h3>
+      <div class="controlrow">
+        <select id="xField">
+          ${xfields}
+        </select>
+      </div>
+      <div class="controlrow">
+        ticks:
+        <input type="number" class="axis number" id="xTicks" value="5" />
+        label offset:
+        <input type="number" class="axis number" id="xLabelOffset" value="30" />
+        padding:
+        <input type="number" class="axis number" id="xPadding" value="5" />
+        label anchor:
+        <select id="xLabelAnchor">
+          <option value="right">right</option>
+          <option value="left">left</option>
+          <option value="center" selected>center</option>
+        </select>
+      </div>
+      <div class="controlrow">
+        label: <input type="text" id="xLabel" value="true shooting %" />
+      </div>
     </div>
-    <div>
-      margin top:
-      <input type="number" class="margin number" id="marginTop" value="40" />
-      right:
-      <input type="number" class="margin number" id="marginRight" value="50" />
-      bottom:
-      <input type="number" class="margin number" id="marginBottom" value="40" />
-      left:
-      <input type="number" class="margin number" id="marginLeft" value="60" />
+
+    <div class="controlgroup">
+      <h3>Y axis</h3>
+      <div class="controlrow">
+        <select id="yField">
+          ${yfields}
+        </select>
+      </div>
+      <div class="controlrow">
+        ticks:
+        <input type="number" class="axis number" id="yTicks" value="5" />
+        label offset:
+        <input type="number" class="axis number" id="yLabelOffset" value="40" />
+        padding:
+        <input type="number" class="axis number" id="yPadding" value="5" />
+        label anchor:
+        <select id="yLabelAnchor">
+          <option value="top" selected>top</option>
+          <option value="bottom">bottom</option>
+          <option value="center">center</option>
+        </select>
+      </div>
+      <div class="controlrow">
+        label: <input type="text" id="yLabel" value="usage percentage" />
+      </div>
     </div>
-    <div></div>
-    <div></div>
-    <div>
-      <button id="download">download</button>
+
+    <div class="controlgroup">
+      <h3>R axis</h3>
+      <div class="controlrow">
+        <select id="rField">
+          ${rfields}
+        </select>
+      </div>
+      <div class="controlrow">
+        min size:
+        <input type="number" class="axis number" id="rMin" value="4" /> max
+        size:
+        <input type="number" class="axis number" id="rMax" value="8" />
+      </div>
+      <div class="controlrow">label: <input type="text" id="rLabel" /></div>
     </div>
-  `;
-  $(".graph-options")?.appendChild(graphOptions);
+  </div>`;
+  console.log(graphOptions);
+  $(".graph-options")?.insertAdjacentElement("afterbegin", graphOptions);
+  // $(".graph-options")?.insertBefore($(".serieses") as Element, graphOptions);
 
   // hook up each graph setting to redraw the graph
   [
