@@ -4,7 +4,7 @@ DUCKDB_PREREQS = duckdb-mvp.wasm duckdb-eh.wasm duckdb-browser-mvp.worker.js duc
 BUILD_PREREQS_FULL = $(addprefix $(DIST)/duckdb/,$(DUCKDB_PREREQS))
 
 .PHONY: all
-all: teamdiamond html static
+all: teamdiamond dist static
 
 .PHONY: viewer
 viewer: dist/index.html dist/index.js
