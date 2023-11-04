@@ -6,6 +6,9 @@ BUILD_PREREQS_FULL = $(addprefix $(DIST)/duckdb/,$(DUCKDB_PREREQS))
 .PHONY: all
 all: teamdiamond html static
 
+.PHONY: viewer
+viewer: dist/index.html dist/index.js
+
 .PHONY: static
 static:
 	cp -r logos dist/
