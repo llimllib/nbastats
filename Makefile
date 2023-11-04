@@ -1,31 +1,20 @@
 DIST = dist
 DUCKDB_DIST = node_modules/@duckdb/duckdb-wasm/dist/
 DUCKDB_PREREQS = duckdb-mvp.wasm duckdb-eh.wasm duckdb-browser-mvp.worker.js duckdb-browser-eh.worker.js
-DUCKDB_PREREQS_FULL = $(addprefix $(DUCKDB_DIST),$(DUCKDB_PREREQS))
 BUILD_PREREQS_FULL = $(addprefix $(DIST)/duckdb/,$(DUCKDB_PREREQS))
 
-all: wasm teamdiamond statsv2 html static
+.PHONY: all
+all: teamdiamond html static
 
+.PHONY: static
 static:
 	cp -r logos dist/
 
-# build our JS bundle. It depends on two things:
-# - the duckdb wasm files, which are copied from the node_modules dir if they
-#   are newer than the ones we already have in dist/duckdb
-# - the bundle output, dist/viewer_duckdb.js
-wasm: dist/viewer_duckdb.js
-
-# make a production build. Force all files to be rebuilt with
-# the production values
-production:
-	ENV=production DATA_URL=https://cdn.billmill.org/nbastats make -B all
-
+.PHONY: teamdiamond
 teamdiamond:
 	make -C teamdiamond all
 
-statsv2:
-	make -C statsv2
-
+.PHONY: html
 html: dist/index.html
 	# playoff is an observable plot experiment at the moment
 	cp -r playoff/ dist/playoff/
@@ -35,33 +24,18 @@ html: dist/index.html
 	mkdir -p dist/teams
 	cp teamdiamond/index.html dist/teams/
 	cp teamdiamond/index.js dist/teams/
-	rm -rf dist/statsv2
-	cp -r statsv2/dist dist/statsv2
-
-# build our index file. We're only doing one substitution, so we just do it by
-# sed-ing it in, think about a more comprehensive solution if we start doing
-# more.
-PROD_SCRIPT_URL = https://cdn.billmill.org/nbastats/dist/viewer_duckdb.js
-DEV_SCRIPT_URL = /viewer_duckdb.js
-dist/index.html: src/index.html
-ifeq ($(ENV),production)
-	$(eval SCRIPT_URL = $(PROD_SCRIPT_URL))
-else
-	$(eval SCRIPT_URL = $(DEV_SCRIPT_URL))
-endif
-
-	# replace $$SCRIPT_URL with the script URL
-	sed 's,\$$SCRIPT_URL,$(SCRIPT_URL),' src/index.html > dist/index.html
 
 $(BUILD_PREREQS_FULL):
 	mkdir -p dist/duckdb
 	cp $(DUCKDB_DIST)/{duckdb-mvp.wasm,duckdb-eh.wasm,duckdb-browser-mvp.worker.js,duckdb-browser-eh.worker.js} dist/duckdb/
 
 # if our source files have changed, rebuild the otuput bundle
-dist/viewer_duckdb.js: src/viewer.js package-lock.json $(BUILD_PREREQS_FULL) build.mjs
-	node build.mjs
+dist/index.js: src/index.ts src/labels.ts src/teams.ts src/stats_meta.ts package-lock.json $(BUILD_PREREQS_FULL) esbuild.config.mjs
+	npx tsc --noEmit --skipLibCheck && \
+		node esbuild.config.mjs
 
 # clean up the build files
+.PHONY: clean
 clean:
 	rm -rf dist/*
 
@@ -70,19 +44,14 @@ clean:
 # utilities
 #
 # serve the site for development
+.PHONY: serve
 serve:
 	devd -ol /=dist /data/=data
 
-# copy the dist folder to our CDN
-distribute: production
-	@# for now, we're using jsdelivr for the web workers, due to 
-	@# // https://github.com/duckdb/duckdb-wasm/discussions/419#discussioncomment-1704798
-	@# so we are excluding duckdb
-	s3cmd sync --exclude duckdb/* --acl-public dist/ s3://llimllib/nbastats/dist/
-	make flush
-
 # publish to github pages
-publish: distribute
+# TODO: make this into a github action
+.PHONY: publish
+publish:
 	# delete the current gh-pages branch
 	-git branch -D gh-pages
 
@@ -109,50 +78,6 @@ publish: distribute
 	rm -rf $(TMP)
 
 # lint the source
+.PHONY: lint
 lint:
-	eslint src/**/*.js
-
-# flush the CDN cache so it picks up new database files or javascript files
-# TODO: I'd like to run this on my remote server but I don't want to deal with
-# setting up doctl
-flush:
-	doctl compute cdn flush \
-		$$(doctl compute cdn list --format ID | tail -n1) \
-		--files nbastats/*
-
-##################
-# stats database
-#
-# update the database
-update: requirements
-	./scraper/scrape.py -y 2024
-
-# sync the stats database to my CDN
-syncdata: update
-	s3cmd sync --acl-public \
-		--exclude='*' \
-		--rinclude='\.(json|parquet)$$' \
-		--no-preserve \
-		data/ s3://llimllib/nbastats/
-
-# download CDN data to local
-dldata:
-	s3cmd sync --acl-public \
-		--exclude='*' \
-		--rinclude='\.(json|parquet)$$' \
-		s3://llimllib/nbastats/ data/
-
-# install the requirements for the data scraping script
-requirements:
-	pip install -r requirements.txt
-
-# create requirements.txt from requirements-to-freeze.txt
-freeze:
-	DIR=`mktemp -t nbastats -d` && \
-		python -mvenv "$$DIR" && \
-		source "$$DIR/bin/activate" && \
-		pip install -r requirements_to_freeze.txt && \
-		pip freeze > requirements.txt && \
-		deactivate
-
-.PHONY: all html static serve publish lint update syncdata requirements freeze flush wasm clean teamdiamond
+	npx eslint src/**/*.{ts,js}

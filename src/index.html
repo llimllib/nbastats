@@ -1,124 +1,77 @@
-<!DOCTYPE HTML>
-<html><head>
-    <meta charset="UTF-8">
-    <title>NBA Statistics Viewer</title>
-    <!-- vendor this? -->
-    <script src="$SCRIPT_URL" type="module"></script>
+<!DOCTYPE html>
+<html>
+  <head>
 <style>
-pre {
-  margin: 0px;
+body {
+  background-color: #fff9eb;
+  max-width: 1700px;
 }
-text.label {
-  font: 12px sans-serif;
+#plot {
+  width: 800px;
+  height: 800px;
+  overflow: hidden;
 }
-text.pointLabel {
-  font: 10px sans-serif;
+div {
+  padding: 10px;
 }
-.code {
-  background-color: #eee;
-  font-family: monospace;
+.number {
+  width: 40px;
 }
-.tooltip {
-  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple   Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  background: rgba(69,77,93,.9);
-  border-radius: .2rem;
-  color: #fff;
-  display: block;
-  font-size: 14px;
-  max-width: 320px;
-  padding: .2rem .4rem;
-  position: absolute;
-  text-overflow: ellipsis;
-  white-space: pre;
-  z-index: 300;
-  visibility: hidden;
+.number2 {
+  width: 54px;
+}
+.serieses {
+  margin-top: 20px;
+}
+.filter {
+  width: 500px;
+}
+.container {
+  display: flex;
+}
+
+.left-pane {
+  /* grow, shrink, basis */
+  flex: 10 1 224px;
+}
+
+.right-pane {
+  flex: 0 1 800px;
+}
+
+@media (max-width: 1224px) {
+  .container {
+    flex-direction: column-reverse;
+  }
+
+  .left-pane,
+  .right-pane {
+    width: 100%;
+  }
 }
 </style>
-  </head>
+    <title>NBA Stats Visualizer</title>
   <body>
-    <div>
-      <svg id="canvas" width="800" height="800"></svg>
+    <h1>NBA Stats Viz</h1>
+    <div class="container">
+      <div class="left-pane">
+        <div class="graph-options">
+        </div>
+        <div class="series-controls">
+          <button class="add-series">add series</button>
+          <button class="remove-series">remove series</button>
+        </div>
+        <div class="serieses">
+        </div>
+        <details>
+          <summary>Example queries</summary>
+          <ul>
+            <li><pre>quantile(fga_pergame) > 25 and team_abbreviation in ('BOS', 'MIL', 'MIA')</pre></li>
+          </ul>
+        </details>
+      </div>
+      <div id="plot" class="right-pane"></div>
     </div>
-    <div style="margin-top: 50px">
-      <span>Title: <textarea id="title" cols=80></textarea>
-        <input type="checkbox" id="bold" checked>bold</input>
-      </span><br>
-      <span>X axis: <select id="statx"></select></span>
-      <br>
-      Y axis: <select id="staty"></select></span>
-      <br>
-      <span>radius:
-        <select id="radius">
-          <option value="8" selected>constant: 8</option>
-          <option value="4">constant: 4</option>
-        </select>
-      </span>
-    </div>
-    <div style="margin-top: 20px">
-        <label for="teamcolors">Team Colors</label><input type="checkbox" id="teamcolors" checked></input>
-      </span>
-      <span style="margin-left: 40px" id="updated"></span>
-    </div>
-    <div style="margin-top: 20px" class="settings">
-      width: <input type="text" id="settings-width"></input>
-      <span style="margin-left: 40px">
-        height: <input type="text" id="settings-height"></input>
-      </span>
-      <br>
-      minRadius: <input type="text" id="settings-min-radius"></input>
-      <span style="margin-left: 40px">
-        maxRadius: <input type="text" id="settings-max-radius"></input>
-      </span>
-    </div>
-    <div style="margin-top: 20px">
-      <span>Year: <select id="yearChooser">
-        <option value="2024" selected>2024</option>
-        <option value="2023">2023</option>
-        <option value="2022">2022</option>
-        <option value="2021">2021</option>
-        <option value="2020">2020</option>
-        <option value="2019">2019</option>
-        <option value="2018">2018</option>
-        <option value="2017">2017</option>
-        <option value="2016">2016</option>
-        <option value="2015">2015</option>
-        <option value="2014">2014</option>
-        <option value="2013">2013</option>
-        <option value="2012">2012</option>
-        <option value="2011">2011</option>
-        <option value="2010">2010</option>
-        </select></span>
-      filter: <input type="text"
-        id="filter"
-        value="quantile(fga) > 66"
-        style="width: 500px"></input>
-      <span style="margin-left: 40px">
-        <button id="applyFilter">filter</button>
-        <p>
-          The filter syntax is a work in progress. You're essentially writing the
-          <span class="code">where</span> clause in a SQL statement (using <a
-          href="https://duckdb.org/docs/sql/query_syntax/where">DuckDB SQL</a>).
-        </p>
-        <p>
-          Here's some you can try:
-        </p>
-        <ul>
-          <li><pre>usg_pct &gt; 26 and fga &gt; 80</pre></li>
-          <li><pre>team in ('BOS', 'MIA', 'BRK') and fga &gt; 30</pre></li>
-          <li><pre>team = 'BOS'</pre></li>
-          <li><pre>quantile(fga) &gt; 80 or quantile(trb) &gt; 80</pre></li>
-          <li><pre>pts_per_g &gt; 20</pre></li>
-          <li><pre>fg3a_per_g &gt; 5 and quantile(fg3a) &gt; 75</pre></li>
-          <li><pre>quantile(stl) &gt; 75 and quantile(ast) &gt; 75 or name like '%Thybulle'</pre></li>
-          <li><pre>name SIMILAR TO '.*(Tatum|Giannis|Durant|Embiid|Harden|Towns).*'</pre>
-        </ul>
-      </span>
-    </div>
-    <hr>
-    <ul>
-      <li><a href="./teams/">team efficiency graph</a></li>
-      <li><a href="https://github.com/llimllib/nbastats/">source code</a></li>
-    </ul>
-    <div class="tooltip" style="position: absolute; visibility: hidden"></div>
+    <script src="index.js"></script>
   </body>
 </html>
