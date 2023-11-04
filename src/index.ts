@@ -13,20 +13,6 @@ import { Fields, FieldType } from "./stats_meta";
 const $ = (s: string) => document.querySelector(s);
 const $$ = (s: string) => document.querySelectorAll(s);
 
-// TODO:
-// - all stats are currently considering a player on their final team for
-//   the year (I think?). Is that the best we can do?
-// - allow re-ordering of series
-// - get nice names for all stats
-// - allow year to vary in makeQuery (?)
-//   - idea is a chart like: steph curry ts% every year
-// - custom annotations (mvp: text with x/y coords)
-// - tooltips only work on the top-most labelled layer, fix them
-// - delay rendering on page load until all filters and series have been
-//       setup
-// - display updated date on the page
-// - when you change a stat, update the label for that stat
-
 const Label = label(Plot);
 
 const DATA_URL = "https://llimllib.github.io/nba_data";
@@ -270,12 +256,13 @@ ${ylabel}: ${d[options.yfield]}`;
     const g = svg.append("g").attr("class", "rLabel");
     g.append("circle")
       .attr("cx", 25)
-      .attr("cy", 45)
+      .attr("cy", 27)
       .attr("r", 4)
       .style("fill", "black");
     g.append("text")
-      .attr("x", 45)
-      .attr("y", 48)
+      .attr("x", 32)
+      .attr("y", 30)
+      .attr("text-anchor", "start")
       .text(options.rLabel == "" ? options.rField : options.rLabel);
   }
 
