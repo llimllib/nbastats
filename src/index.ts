@@ -31,6 +31,10 @@ const Label = label(Plot);
 
 const DATA_URL = "https://llimllib.github.io/nba_data";
 
+interface StatsMeta {
+  updated: string;
+}
+
 type Series = {
   year: string;
   useTeamColors: boolean;
@@ -143,21 +147,6 @@ function makeMarks(series: Series, options: GraphOptions): any[] {
       })
     );
   }
-
-  // Tooltips need to go after the dots, otherwise they hide behind and are not
-  // readable. Don't allow rollovers on series that are unlabeled
-  // if (series.useLabels) {
-  //   marks.push(
-  //     Plot.tip(
-  //       series.data,
-  //       Plot.pointer({
-  //         x: options.xfield,
-  //         y: options.yfield,
-  //         title: (d: any) => d.tooltip,
-  //       })
-  //     )
-  //   );
-  // }
 
   return marks;
 }
@@ -957,7 +946,27 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
   });
 }
 
+function formatDate(date: Date): string {
+  const options: Intl.DateTimeFormatOptions = {
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+    timeZone: "UTC",
+  };
+
+  const formattedDate = date.toLocaleString("en-US", options);
+  return formattedDate;
+}
+
 window.addEventListener("DOMContentLoaded", async (_evt) => {
+  const res = await fetch(`${DATA_URL}/metadata.json`);
+  const data = (await res.json()) as StatsMeta;
+  ($(".updated") as HTMLElement).innerText = `data updated on ${formatDate(
+    new Date(data.updated)
+  )} UTC`;
+
   const conn = await initDuckDb();
   window.conn = conn;
 
