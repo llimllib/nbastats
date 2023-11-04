@@ -15,9 +15,7 @@ teamdiamond:
 	make -C teamdiamond all
 
 .PHONY: html
-html: dist/index.html
-	# playoff is an observable plot experiment at the moment
-	cp -r playoff/ dist/playoff/
+html: dist/index.html dist/index.js
 	cp favicon.ico dist/
 
 	rm -rf dist/teams
@@ -28,6 +26,10 @@ html: dist/index.html
 $(BUILD_PREREQS_FULL):
 	mkdir -p dist/duckdb
 	cp $(DUCKDB_DIST)/{duckdb-mvp.wasm,duckdb-eh.wasm,duckdb-browser-mvp.worker.js,duckdb-browser-eh.worker.js} dist/duckdb/
+
+dist/index.html: src/index.html
+	mkdir -p dist
+	cp src/index.html dist/
 
 # if our source files have changed, rebuild the otuput bundle
 dist/index.js: src/index.ts src/labels.ts src/teams.ts src/stats_meta.ts package-lock.json $(BUILD_PREREQS_FULL) esbuild.config.mjs
