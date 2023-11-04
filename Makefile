@@ -17,15 +17,6 @@ static:
 teamdiamond:
 	make -C teamdiamond all
 
-.PHONY: html
-html: dist/index.html dist/index.js
-	cp favicon.ico dist/
-
-	rm -rf dist/teams
-	mkdir -p dist/teams
-	cp teamdiamond/index.html dist/teams/
-	cp teamdiamond/index.js dist/teams/
-
 $(BUILD_PREREQS_FULL):
 	mkdir -p dist/duckdb
 	cp $(DUCKDB_DIST)/{duckdb-mvp.wasm,duckdb-eh.wasm,duckdb-browser-mvp.worker.js,duckdb-browser-eh.worker.js} dist/duckdb/
@@ -53,10 +44,21 @@ clean:
 serve:
 	devd -ol /=dist /data/=data
 
+# build everything that goes in dist
+.PHONY: dist
+dist: dist/index.html dist/index.js teamdiamond
+	cp favicon.ico dist/
+
+	rm -rf dist/teams
+	mkdir -p dist/teams
+	cp teamdiamond/index.html dist/teams/
+	cp teamdiamond/index.js dist/teams/
+
+
 # publish to github pages
 # TODO: make this into a github action
 .PHONY: publish
-publish:
+publish: dist
 	# delete the current gh-pages branch
 	-git branch -D gh-pages
 
