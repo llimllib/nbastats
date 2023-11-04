@@ -33,6 +33,20 @@ type TeamEfficiency = {
   games: EffData[];
 };
 
+function formatDate(date: Date): string {
+  const options: Intl.DateTimeFormatOptions = {
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+    timeZone: "UTC",
+  };
+
+  const formattedDate = date.toLocaleString("en-US", options);
+  return formattedDate;
+}
+
 async function main(year: string): Promise<void> {
   const res = await fetch(`${NBA_DATA_URL}/team_summary_${year}.json`);
   const data = (await res.json()) as TeamsMeta;
@@ -148,6 +162,9 @@ async function main(year: string): Promise<void> {
     )
     .node()
     ?.append(addTooltips(chart));
+
+  const date = new Date(data.updated);
+  select("#updated").html(`data updated ${formatDate(date)} UTC`);
 }
 
 window.addEventListener("DOMContentLoaded", async (_evt) => {
