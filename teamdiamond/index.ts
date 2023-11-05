@@ -11,27 +11,14 @@ interface TeamData {
   TEAM_NAME: string;
   OFF_RATING: number;
   DEF_RATING: number;
+  W: number;
+  L: number;
 }
 
 interface TeamsMeta {
   updated: string;
   teams: Array<TeamData>;
 }
-
-type EffData = {
-  team_abbreviation: string;
-  game_date: string;
-  matchup: string;
-  off_rating: number;
-  def_rating: number;
-  pts: number;
-  poss: number;
-};
-
-type TeamEfficiency = {
-  updated: string;
-  games: EffData[];
-};
 
 function formatDate(date: Date): string {
   const options: Intl.DateTimeFormatOptions = {
@@ -92,7 +79,7 @@ async function main(year: string): Promise<void> {
         height: imageSize,
         rotate: 45,
         title: (d: TeamData) =>
-          `${d.TEAM_NAME}\nOffensive rating: ${d.OFF_RATING}\nDefensive rating: ${d.DEF_RATING}`,
+          `${d.TEAM_NAME}\nRecord: ${d.W} - ${d.L}\nOffensive rating: ${d.OFF_RATING}\nDefensive rating: ${d.DEF_RATING}`,
         src: (d: TeamData) => `../logos/${d.TEAM_NAME}.svg`,
       }),
       Plot.text(["Offensive Rating"], {
