@@ -87,4 +87,4 @@ publish: dist
 # lint the source
 .PHONY: lint
 lint:
-	npx eslint src/**/*.{ts,js}
+	npx eslint src/**/*.ts

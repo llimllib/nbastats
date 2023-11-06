@@ -1,3 +1,6 @@
+import type { Markish } from "@observablehq/plot";
+import type { PlayerData } from "./stats_meta";
+
 import * as duckdb from "@duckdb/duckdb-wasm";
 import * as Plot from "@observablehq/plot";
 import { base64encode, base64decode } from "byte-base64";
@@ -29,15 +32,22 @@ type Series = {
   useCustomColor: boolean;
   customColor: string;
   filter: string;
-  data: any[];
+  data: PlayerData[];
 };
 
 type AnchorPosition = "top" | "right" | "bottom" | "left" | "center";
 
 type GraphOptions = {
-  xfield: string;
+  /* This type of a bit of a lie: there are a few Fields that this can be - for
+   * example it can be "zzconst8", which is a constant with the value of 8. I
+   * can tell typescript "this is a type in Fields" with "keyof typeof Fields"
+   * (I think?) but then later on indexing a PlayerData fails because typescript
+   * doesn't understand that only constant types can be present in the Fields
+   * object, so we've ruled out invalid indexes when we eliminate constant
+   * fields. Probably I should separate the types somehow? */
+  xfield: keyof PlayerData;
   xfieldType: FieldType;
-  yfield: string;
+  yfield: keyof PlayerData;
   yfieldType: FieldType;
   title: string;
   subtitle: string;
@@ -57,7 +67,7 @@ type GraphOptions = {
   yTicks: number;
   yLabel: string;
   yPadding: number;
-  rField: string;
+  rField: keyof PlayerData;
   rMin: number;
   rMax: number;
   rLabel: string;
@@ -68,8 +78,8 @@ function sanitize(s: string): string {
   return s.replace(/[^a-z0-9]/gi, "_").toLowerCase();
 }
 
-function makeMarks(series: Series, options: GraphOptions): any[] {
-  let marks: any[] = [];
+function makeMarks(series: Series, options: GraphOptions): Markish[] {
+  let marks: Markish[] = [];
 
   if (series.useLabels) {
     marks = [
@@ -86,8 +96,8 @@ function makeMarks(series: Series, options: GraphOptions): any[] {
 
   const rFunc =
     Fields[options.rField].type == FieldType.Constant
-      ? (_: any) => Fields[options.rField].value
-      : (d: any) => d[options.rField];
+      ? () => Fields[options.rField ?? ""].value
+      : (d: PlayerData) => d[options.rField];
 
   if (series.useTeamColors) {
     marks = [
@@ -96,7 +106,7 @@ function makeMarks(series: Series, options: GraphOptions): any[] {
         x: options.xfield,
         y: options.yfield,
         r: rFunc,
-        fill: (d: any) => {
+        fill: (d: PlayerData) => {
           if (!teams.get(d["team_abbreviation"])) {
             console.log("missing:", d);
           }
@@ -107,8 +117,8 @@ function makeMarks(series: Series, options: GraphOptions): any[] {
       Plot.dot(series.data, {
         x: options.xfield,
         y: options.yfield,
-        r: (d: any) => (rFunc(d) as number) / 2,
-        fill: (d: any) => teams.get(d["team_abbreviation"])?.colors[1],
+        r: (d: PlayerData) => (rFunc(d) as number) / 2,
+        fill: (d: PlayerData) => teams.get(d.team_abbreviation)?.colors[1],
         fillOpacity: series.opacity / 100,
       }),
     ];
@@ -188,8 +198,8 @@ ${ylabel}: ${d[options.yfield]}`;
         (Fields[options.rField].value as number) / 2,
         Fields[options.rField].value as number,
       ]
-    : extent(alldata, (d) => d[options.rField]);
-  rDomain[0] = rDomain[0] / 2;
+    : extent(alldata, (d) => d[options.rField] as number);
+  rDomain[0] = (rDomain[0] ?? 0) / 2;
 
   const rRange = constantR
     ? [
@@ -207,7 +217,7 @@ ${ylabel}: ${d[options.yfield]}`;
       Plot.pointer({
         x: options.xfield,
         y: options.yfield,
-        title: (d: any) => d.tooltip,
+        title: (d: PlayerData) => d.tooltip,
       })
     )
   );
@@ -266,7 +276,9 @@ ${ylabel}: ${d[options.yfield]}`;
       .text(options.rLabel == "" ? options.rField : options.rLabel);
   }
 
-  // serialize the options and store them in the URL
+  // serialize the options and store them in the URL. The value of the function
+  // must actually be any, so disable eslint here
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const jsonOptions = JSON.stringify(options, (key: string, val: any) =>
     key == "data" ? undefined : val
   );
@@ -317,7 +329,10 @@ async function initDuckDb(): Promise<duckdb.AsyncDuckDBConnection> {
   const bundle = await duckdb.selectBundle(MANUAL_BUNDLES);
 
   // Instantiate the asynchronus version of DuckDB-wasm
-  const worker = new Worker(bundle.mainWorker!);
+  if (!bundle.mainWorker) {
+    throw new Error("should never happen: bundle.mainWorker missing");
+  }
+  const worker = new Worker(bundle.mainWorker);
   const logger = new duckdb.ConsoleLogger();
   const db = new duckdb.AsyncDuckDB(logger, worker);
   await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
@@ -330,6 +345,9 @@ async function initDuckDb(): Promise<duckdb.AsyncDuckDBConnection> {
   return conn;
 }
 
+// conn.query fundamentally returns anything, we can't and don't want to type
+// it as anything other than `any`
+/* eslint-disable @typescript-eslint/no-explicit-any */
 async function query(
   conn: duckdb.AsyncDuckDBConnection,
   query: string
@@ -337,6 +355,7 @@ async function query(
   const data = await conn.query(query);
   return data.toArray().map((x) => x.toJSON());
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 async function plotURLOptions(
   conn: duckdb.AsyncDuckDBConnection
@@ -390,11 +409,11 @@ async function plotURLOptions(
       const observer = new MutationObserver(async (_, obs) => {
         const seriesElt = document.getElementById(`series${n}`);
         if (seriesElt) {
-          setValue(`#series${i + 1} .year`, series.year);
-          setValue(`#series${i + 1} .useTeamColors`, series.useTeamColors);
-          setValue(`#series${i + 1} .useLabels`, series.useLabels);
-          setValue(`#series${i + 1} .opacity`, series.opacity);
-          setValue(`#series${i + 1} .filter`, series.filter);
+          setValue(`#series${i + 1}.year`, series.year);
+          setValue(`#series${i + 1}.useTeamColors`, series.useTeamColors);
+          setValue(`#series${i + 1}.useLabels`, series.useLabels);
+          setValue(`#series${i + 1}.opacity`, series.opacity);
+          setValue(`#series${i + 1}.filter`, series.filter);
 
           obs.disconnect();
           return;
@@ -406,11 +425,11 @@ async function plotURLOptions(
       });
       await addSeries(conn);
     } else {
-      setValue(`#series${i + 1} .year`, series.year);
-      setValue(`#series${i + 1} .useTeamColors`, series.useTeamColors);
-      setValue(`#series${i + 1} .useLabels`, series.useLabels);
-      setValue(`#series${i + 1} .opacity`, series.opacity);
-      setValue(`#series${i + 1} .filter`, series.filter);
+      setValue(`#series${i + 1}.year`, series.year);
+      setValue(`#series${i + 1}.useTeamColors`, series.useTeamColors);
+      setValue(`#series${i + 1}.useLabels`, series.useLabels);
+      setValue(`#series${i + 1}.opacity`, series.opacity);
+      setValue(`#series${i + 1}.filter`, series.filter);
     }
   });
 
@@ -423,9 +442,9 @@ async function plotFields(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   const xfield = inputValue("#xField");
   const yfield = inputValue("#yField");
   await main({
-    xfield: xfield,
+    xfield: xfield as keyof PlayerData,
     xfieldType: Fields[xfield].type,
-    yfield: inputValue("#yField"),
+    yfield: inputValue("#yField") as keyof PlayerData,
     yfieldType: Fields[yfield].type,
     title: inputValue("#title"),
     subtitle: inputValue("#subtitle"),
@@ -445,7 +464,7 @@ async function plotFields(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
     yPadding: numValue("#yPadding"),
     yLabelAnchor: inputValue("#yLabelAnchor") as AnchorPosition,
     yLabel: inputValue("#yLabel"),
-    rField: inputValue("#rField"),
+    rField: inputValue("#rField") as keyof PlayerData,
     rMin: numValue("#rMin"),
     rMax: numValue("#rMax"),
     rLabel: inputValue("#rLabel"),
@@ -458,8 +477,8 @@ let firstRun = true;
 
 function rePlot(
   conn: duckdb.AsyncDuckDBConnection
-): (event: any) => Promise<void> {
-  return async (_: Event) => {
+): (evt?: Event) => Promise<void> {
+  return async () => {
     // if it's the page's first run, and there is an options object in the URL,
     // get the options object from the URL and use it to set the options fields
     // and draw the graph.
@@ -541,7 +560,7 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   const observer = new MutationObserver(async (_, obs) => {
     const series = document.getElementById(`series${n}`);
     if (series) {
-      rePlot(conn)(null);
+      rePlot(conn)();
 
       [
         ".year",
@@ -592,8 +611,12 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
   $(".serieses")?.appendChild(seriesNode);
 }
 
-function moveSeriesUp(evt: any) {
-  const upButton = evt.target;
+function moveSeriesUp(evt: Event) {
+  const upButton = evt.target as HTMLElement;
+
+  if (!upButton.parentElement) {
+    throw new Error("unable to find parent element");
+  }
   const series = upButton.parentElement;
   const prevSib = series?.previousSibling;
   const serieses = series?.parentElement;
@@ -601,13 +624,17 @@ function moveSeriesUp(evt: any) {
   serieses?.insertBefore(series, prevSib);
 }
 
-function moveSeriesDown(evt: any) {
-  const downButton = evt.target;
-  const series = downButton.parentElement;
-  const nextSib = series.nextSibling;
-  const serieses = series.parentElement;
-  serieses.removeChild(series);
-  nextSib.after(series);
+function moveSeriesDown(evt: Event) {
+  const downButton = evt.target as HTMLElement;
+
+  if (!downButton.parentElement) {
+    throw new Error("unable to find parent element");
+  }
+  const series = downButton?.parentElement;
+  const nextSib = series?.nextSibling;
+  const serieses = series?.parentElement;
+  serieses?.removeChild(series);
+  nextSib?.after(series);
 }
 
 async function removeSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
@@ -623,7 +650,7 @@ async function removeSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
 
   serieses[serieses.length - 1].remove();
 
-  rePlot(conn)(null);
+  rePlot(conn)();
 }
 
 const QUANTILE_RE = /quantile\((\w+)\)/;
@@ -631,7 +658,7 @@ function parseQuantiles(filter: string): [string, string[]] {
   const quantiles = [];
   let res = null;
   while ((res = QUANTILE_RE.exec(filter)) !== null) {
-    let [call, field] = res;
+    const [call, field] = res;
     filter = filter.replace(call, `_${field}_ntile`);
     quantiles.push(field);
   }
@@ -691,9 +718,12 @@ function inputValue(selector: string, node: Element = document.body): string {
   return (node.querySelector(selector) as HTMLInputElement).value;
 }
 
-function setValue(selector: string, value: any): void {
+function setValue(selector: string, value: string | number | boolean): void {
   if (typeof value == "boolean") {
     (document.querySelector(selector) as HTMLInputElement).checked = value;
+  } else if (typeof value == "number") {
+    (document.querySelector(selector) as HTMLInputElement).value =
+      value.toString();
   } else {
     (document.querySelector(selector) as HTMLInputElement).value = value;
   }
@@ -720,7 +750,7 @@ async function getSerieses(
       const customColor = inputValue(`#color${n}`, series);
       const filter = inputValue(`#filter${n}`, series);
 
-      const data = await query(conn, makeQuery(filter, year));
+      const data = (await query(conn, makeQuery(filter, year))) as PlayerData[];
       return {
         year: year,
         useTeamColors: useTeamColors,
@@ -923,7 +953,7 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
     const a = inputValue("#xField");
     setValue("#xField", inputValue("#yField"));
     setValue("#yField", a);
-    rePlot(conn)(null);
+    rePlot(conn)();
   });
 
   graphOptions.querySelector("#clearOptions").addEventListener("click", () => {
@@ -947,7 +977,7 @@ function formatDate(date: Date): string {
   return formattedDate;
 }
 
-window.addEventListener("DOMContentLoaded", async (_evt) => {
+window.addEventListener("DOMContentLoaded", async (_: Event) => {
   const res = await fetch(`${DATA_URL}/metadata.json`);
   const data = (await res.json()) as StatsMeta;
   ($(".updated") as HTMLElement).innerText = `data updated on ${formatDate(
