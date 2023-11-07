@@ -1,5 +1,5 @@
 DIST = dist
-DUCKDB_DIST = node_modules/@duckdb/duckdb-wasm/dist/
+DUCKDB_DIST = node_modules/@duckdb/duckdb-wasm/dist
 DUCKDB_PREREQS = duckdb-mvp.wasm duckdb-eh.wasm duckdb-browser-mvp.worker.js duckdb-browser-eh.worker.js
 BUILD_PREREQS_FULL = $(addprefix $(DIST)/duckdb/,$(DUCKDB_PREREQS))
 
