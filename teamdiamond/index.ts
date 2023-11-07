@@ -154,7 +154,7 @@ async function main(year: string): Promise<void> {
   select("#updated").html(`data updated ${formatDate(date)} UTC`);
 }
 
-window.addEventListener("DOMContentLoaded", async (_evt) => {
+window.addEventListener("DOMContentLoaded", async () => {
   const year = "2024";
 
   // TODO: allow users to look at n-game windows by using the larger
