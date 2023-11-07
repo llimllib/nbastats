@@ -59,6 +59,7 @@ dist: dist/index.html dist/index.js teamdiamond
 
 	rm -rf dist/teams
 	mkdir -p dist/teams
+	cp -r logos dist/logos
 	cp teamdiamond/index.html dist/teams/
 	cp teamdiamond/index.js dist/teams/
 
