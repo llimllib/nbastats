@@ -44,6 +44,10 @@ clean:
 serve:
 	devd -ol /=dist /data/=data
 
+.PHONY: deps
+deps: package.json package-lock.json
+	npm ci
+
 # build everything that goes in dist
 .PHONY: dist
 dist: dist/index.html dist/index.js teamdiamond
