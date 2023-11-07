@@ -19,7 +19,10 @@ teamdiamond:
 
 $(BUILD_PREREQS_FULL):
 	mkdir -p dist/duckdb
-	cp $(DUCKDB_DIST)/{duckdb-mvp.wasm,duckdb-eh.wasm,duckdb-browser-mvp.worker.js,duckdb-browser-eh.worker.js} dist/duckdb/
+	cp $(DUCKDB_DIST)/duckdb-mvp.wasm dist/duckdb/
+	cp $(DUCKDB_DIST)/duckdb-eh.wasm dist/duckdb/
+	cp $(DUCKDB_DIST)/duckdb-browser-mvp.worker.js dist/duckdb/
+	cp $(DUCKDB_DIST)/duckdb-browser-eh.worker.js dist/duckdb/
 
 dist/index.html: src/index.html
 	mkdir -p dist
