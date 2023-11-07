@@ -47,6 +47,7 @@ serve:
 .PHONY: deps
 deps: package.json package-lock.json
 	npm ci
+	make -C teamdiamond ci
 
 # build everything that goes in dist
 .PHONY: dist
