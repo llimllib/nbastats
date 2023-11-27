@@ -57,11 +57,13 @@ type GraphOptions = {
   marginRight: number;
   marginBottom: number;
   marginLeft: number;
+  xIncludeZero: boolean;
   xLabelOffset: number;
   xLabelAnchor: AnchorPosition;
   xLabel: string;
   xTicks: number;
   xPadding: number;
+  yIncludeZero: boolean;
   yLabelOffset: number;
   yLabelAnchor: AnchorPosition;
   yTicks: number;
@@ -234,22 +236,24 @@ ${ylabel}: ${d[options.yfield]}`;
       background: "#fff9eb",
     },
     x: {
+      inset: options.xPadding,
       label: options.xLabel.length > 0 ? options.xLabel : options.xfield,
       labelOffset: options.xLabelOffset,
       labelAnchor: options.xLabelAnchor,
-      ticks: options.xTicks,
       nice: true,
-      inset: options.xPadding,
+      ticks: options.xTicks,
       tickFormat: options.xfieldType == FieldType.Year ? "c" : undefined,
+      zero: options.xIncludeZero,
     },
     y: {
+      inset: options.yPadding,
       label: options.yLabel.length > 0 ? options.yLabel : options.yfield,
       labelOffset: options.yLabelOffset,
       labelAnchor: options.yLabelAnchor,
-      ticks: options.yTicks,
       nice: true,
-      inset: options.yPadding,
+      ticks: options.yTicks,
       tickFormat: options.yfieldType == FieldType.Year ? "c" : undefined,
+      zero: options.yIncludeZero,
     },
     r: {
       domain: rDomain,
@@ -384,11 +388,13 @@ async function plotURLOptions(
   setValue("#marginRight", options.marginRight);
   setValue("#marginBottom", options.marginBottom);
   setValue("#marginLeft", options.marginLeft);
+  setValue("#xIncludeZero", options.xIncludeZero);
   setValue("#xTicks", options.xTicks);
   setValue("#xLabelOffset", options.xLabelOffset);
   setValue("#xPadding", options.xPadding);
   setValue("#xLabelAnchor", options.xLabelAnchor);
   setValue("#xLabel", options.xLabel);
+  setValue("#yIncludeZero", options.yIncludeZero);
   setValue("#yTicks", options.yTicks);
   setValue("#yLabelOffset", options.yLabelOffset);
   setValue("#yPadding", options.yPadding);
@@ -409,11 +415,11 @@ async function plotURLOptions(
       const observer = new MutationObserver(async (_, obs) => {
         const seriesElt = document.getElementById(`series${n}`);
         if (seriesElt) {
-          setValue(`#series${i + 1}.year`, series.year);
-          setValue(`#series${i + 1}.useTeamColors`, series.useTeamColors);
-          setValue(`#series${i + 1}.useLabels`, series.useLabels);
-          setValue(`#series${i + 1}.opacity`, series.opacity);
-          setValue(`#series${i + 1}.filter`, series.filter);
+          setValue(`#series${i + 1} .year`, series.year);
+          setValue(`#series${i + 1} .useTeamColors`, series.useTeamColors);
+          setValue(`#series${i + 1} .useLabels`, series.useLabels);
+          setValue(`#series${i + 1} .opacity`, series.opacity);
+          setValue(`#series${i + 1} .filter`, series.filter);
 
           obs.disconnect();
           return;
@@ -425,11 +431,11 @@ async function plotURLOptions(
       });
       await addSeries(conn);
     } else {
-      setValue(`#series${i + 1}.year`, series.year);
-      setValue(`#series${i + 1}.useTeamColors`, series.useTeamColors);
-      setValue(`#series${i + 1}.useLabels`, series.useLabels);
-      setValue(`#series${i + 1}.opacity`, series.opacity);
-      setValue(`#series${i + 1}.filter`, series.filter);
+      setValue(`#series${i + 1} .year`, series.year);
+      setValue(`#series${i + 1} .useTeamColors`, series.useTeamColors);
+      setValue(`#series${i + 1} .useLabels`, series.useLabels);
+      setValue(`#series${i + 1} .opacity`, series.opacity);
+      setValue(`#series${i + 1} .filter`, series.filter);
     }
   });
 
@@ -454,11 +460,13 @@ async function plotFields(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
     marginRight: numValue("#marginRight"),
     marginBottom: numValue("#marginBottom"),
     marginLeft: numValue("#marginLeft"),
+    xIncludeZero: isChecked("#xIncludeZero"),
     xTicks: numValue("#xTicks"),
     xLabelOffset: numValue("#xLabelOffset"),
     xPadding: numValue("#xPadding"),
     xLabelAnchor: inputValue("#xLabelAnchor") as AnchorPosition,
     xLabel: inputValue("#xLabel"),
+    yIncludeZero: isChecked("#yIncludeZero"),
     yTicks: numValue("#yTicks"),
     yLabelOffset: numValue("#yLabelOffset"),
     yPadding: numValue("#yPadding"),
@@ -708,7 +716,7 @@ function makeQuery(filter: string, year: string): string {
   }
 }
 
-function isChecked(selector: string, node: Element): boolean {
+function isChecked(selector: string, node: Element = document.body): boolean {
   return (node.querySelector(selector) as HTMLInputElement).checked
     ? true
     : false;
@@ -719,13 +727,19 @@ function inputValue(selector: string, node: Element = document.body): string {
 }
 
 function setValue(selector: string, value: string | number | boolean): void {
-  if (typeof value == "boolean") {
-    (document.querySelector(selector) as HTMLInputElement).checked = value;
-  } else if (typeof value == "number") {
-    (document.querySelector(selector) as HTMLInputElement).value =
-      value.toString();
-  } else {
-    (document.querySelector(selector) as HTMLInputElement).value = value;
+  try {
+    if (typeof value == "boolean") {
+      (document.querySelector(selector) as HTMLInputElement).checked = value;
+    } else if (typeof value == "number") {
+      (document.querySelector(selector) as HTMLInputElement).value =
+        value.toString();
+    } else {
+      (document.querySelector(selector) as HTMLInputElement).value = value;
+    }
+  } catch (err) {
+    console.error(
+      `Failed setting selector ${selector} to value ${value}:\n${err}`
+    );
   }
 }
 
@@ -867,6 +881,8 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
       </div>
       <div class="controlrow">
         label: <input type="text" id="xLabel" value="true shooting %" />
+        <label for="xIncludeZero">Start range at 0</label>
+          <input type="checkbox" id="xIncludeZero"></input>
       </div>
     </div>
 
@@ -893,6 +909,8 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
       </div>
       <div class="controlrow">
         label: <input type="text" id="yLabel" value="usage percentage" />
+        <label for="yIncludeZero">Start range at 0</label>
+          <input type="checkbox" id="yIncludeZero"></input>
       </div>
     </div>
 
@@ -928,11 +946,13 @@ function addGraphOptions(conn: duckdb.AsyncDuckDBConnection) {
     "#marginRight",
     "#marginLeft",
     "#marginBottom",
+    "#xIncludeZero",
     "#xTicks",
     "#xLabelOffset",
     "#xLabelAnchor",
     "#xLabel",
     "#xPadding",
+    "#yIncludeZero",
     "#yTicks",
     "#yLabelOffset",
     "#yLabelAnchor",
