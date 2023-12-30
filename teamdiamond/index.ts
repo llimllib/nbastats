@@ -133,8 +133,6 @@ async function graph(
   if (!effExt[0] || !effExt[1]) return;
   const paddedExtent = [effExt[0] * 0.99, effExt[1] * 1.01];
 
-  console.log("slicedGames:", slicedGames);
-
   const chart = Plot.plot({
     width: chartSize,
     height: chartSize,
@@ -251,7 +249,6 @@ async function prepareGamelogs(
   byTeam.forEach((val) =>
     val.sort((a, b) => (a.game_date < b.game_date ? 1 : -1))
   );
-  console.log(data.games, byTeam);
   return byTeam;
 }
 
@@ -289,7 +286,6 @@ window.addEventListener("DOMContentLoaded", async () => {
   document
     .querySelector("#ngames")
     ?.addEventListener("change", async (evt: InputEvent) => {
-      console.log("changed");
       select("#plot").html("");
       await graph(
         teamsMeta.teams,
@@ -306,7 +302,6 @@ window.addEventListener("DOMContentLoaded", async () => {
       const ngames = parseFloat(
         (document.querySelector("#ngames") as HTMLInputElement).value
       );
-      console.log("changed");
       const actualNGames = [5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90];
       if (ngames < 10) {
         (
@@ -317,5 +312,14 @@ window.addEventListener("DOMContentLoaded", async () => {
           document.querySelector("#gameslabel") as HTMLElement
         ).innerText = `All games`;
       }
+      select("#plot").html("");
+      await graph(
+        teamsMeta.teams,
+        gamelogs,
+        parseFloat(
+          (document.querySelector("#ngames") as HTMLInputElement).value
+        ),
+        teamsMeta.updated
+      );
     });
 });
