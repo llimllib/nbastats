@@ -1,6 +1,7 @@
 import * as Plot from "@observablehq/plot";
 import { select } from "d3-selection";
 import { extent, group } from "d3-array";
+import { format } from "d3-format";
 
 import { addTooltips } from "tooltip";
 
@@ -92,8 +93,8 @@ function summary(
   }
   return {
     games: games.length,
-    off_rating: totals.pts / totals.poss,
-    def_rating: totals.opp_pts / totals.opp_poss,
+    off_rating: (totals.pts / totals.poss) * 100,
+    def_rating: (totals.opp_pts / totals.opp_poss) * 100,
     team: games[0].team_abbreviation,
     w: team.W,
     l: team.L,
@@ -133,6 +134,8 @@ async function graph(
   if (!effExt[0] || !effExt[1]) return;
   const paddedExtent = [effExt[0] * 0.99, effExt[1] * 1.01];
 
+  // format a float with two trailing digits
+  const twof = format(".2f");
   const chart = Plot.plot({
     width: chartSize,
     height: chartSize,
@@ -163,7 +166,9 @@ async function graph(
         height: imageSize,
         rotate: 45,
         title: (d: GamelogSummary) =>
-          `${d.team}\nRecord: ${d.w} - ${d.l}\nOffensive rating: ${d.off_rating}\nDefensive rating: ${d.def_rating}`,
+          `${d.team}\nRecord: ${d.w} - ${d.l}\nOffensive rating: ${twof(
+            d.off_rating
+          )}\nDefensive rating: ${twof(d.def_rating)}`,
         src: (d: GamelogSummary) => `../logos/${d.fullname}.svg`,
       }),
       Plot.text(["Offensive Rating"], {
