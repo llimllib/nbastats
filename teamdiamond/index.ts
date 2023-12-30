@@ -1,10 +1,19 @@
 import * as Plot from "@observablehq/plot";
 import { select } from "d3-selection";
-import { extent } from "d3-array";
+import { extent, group } from "d3-array";
 
 import { addTooltips } from "tooltip";
 
 const NBA_DATA_URL = "https://llimllib.github.io/nba_data";
+
+declare global {
+  interface Window {
+    teams: TeamData[];
+    gamelogs?: Map<string, TeamGamelogs[]>;
+    ngames: number;
+    updated: string;
+  }
+}
 
 // there are more attributes, I just removed them for simplicity
 interface TeamData {
@@ -15,9 +24,26 @@ interface TeamData {
   L: number;
 }
 
+interface TeamGamelogsMeta {
+  updated: string;
+  games: TeamGamelogs[];
+}
+
+interface TeamGamelogs {
+  team_abbreviation: string;
+  game_date: string;
+  matchup: string;
+  off_rating: number;
+  def_rating: number;
+  pts: number;
+  poss: number;
+  opp_pts: number;
+  opp_poss: number;
+}
+
 interface TeamsMeta {
   updated: string;
-  teams: Array<TeamData>;
+  teams: Record<string, TeamData>;
 }
 
 function formatDate(date: Date): string {
@@ -34,20 +60,80 @@ function formatDate(date: Date): string {
   return formattedDate;
 }
 
-async function main(year: string): Promise<void> {
-  const res = await fetch(`${NBA_DATA_URL}/team_summary_${year}.json`);
-  const data = (await res.json()) as TeamsMeta;
-  const teams = Object.values(data.teams);
+interface GamelogSummary {
+  games: number;
+  off_rating: number;
+  def_rating: number;
+  team: string;
+  w: number;
+  l: number;
+  fullname: string;
+}
 
+function summary(
+  teams: Record<string, TeamData>,
+  games: TeamGamelogs[]
+): GamelogSummary {
+  const totals = {
+    poss: 0,
+    pts: 0,
+    opp_poss: 0,
+    opp_pts: 0,
+  };
+  for (const game of games) {
+    totals.poss += game.poss;
+    totals.pts += game.pts;
+    totals.opp_pts += game.opp_pts;
+    totals.opp_poss += game.opp_poss;
+  }
+  const team = teams[games[0].team_abbreviation];
+  if (!team) {
+    throw Error(`unable to find team ${games[0].team_abbreviation}`);
+  }
+  return {
+    games: games.length,
+    off_rating: totals.pts / totals.poss,
+    def_rating: totals.opp_pts / totals.opp_poss,
+    team: games[0].team_abbreviation,
+    w: team.W,
+    l: team.L,
+    fullname: team.TEAM_NAME,
+  };
+}
+
+async function graph(
+  teams: Record<string, TeamData>,
+  gamelogs: Map<string, TeamGamelogs[]>,
+  ngames: number,
+  updated: string
+): Promise<void> {
   const imageSize = 40;
   const chartSize = 800 / Math.sqrt(2);
 
+  // slice the gamelogs
+  const actualNGames = [5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90];
+  // firefox lacks support for entries.map, so fall back on splatting
+  const slicedGames = new Map(
+    [...gamelogs].map(([x, y]) => [
+      x,
+      summary(teams, y.slice(0, actualNGames[ngames])),
+    ])
+  );
+  if (!slicedGames) {
+    return;
+  }
+
   // we want to use the same domain for both sides of the graph, so get all
   // efficiencies, flatten the list, and pad it out a bit
-  const allEfficiencies = teams.map((t) => [t.DEF_RATING, t.OFF_RATING]).flat();
-  const effExt = extent(allEfficiencies);
+  const effExt = extent(
+    [...slicedGames]
+      .map(([_, summ]) => [summ.def_rating, summ.off_rating])
+      .flat()
+  );
   if (!effExt[0] || !effExt[1]) return;
   const paddedExtent = [effExt[0] * 0.99, effExt[1] * 1.01];
+
+  console.log("slicedGames:", slicedGames);
 
   const chart = Plot.plot({
     width: chartSize,
@@ -72,15 +158,15 @@ async function main(year: string): Promise<void> {
       label: "",
     },
     marks: [
-      Plot.image(teams, {
-        x: "OFF_RATING",
-        y: "DEF_RATING",
+      Plot.image(slicedGames.values(), {
+        x: "off_rating",
+        y: "def_rating",
         width: imageSize,
         height: imageSize,
         rotate: 45,
-        title: (d: TeamData) =>
-          `${d.TEAM_NAME}\nRecord: ${d.W} - ${d.L}\nOffensive rating: ${d.OFF_RATING}\nDefensive rating: ${d.DEF_RATING}`,
-        src: (d: TeamData) => `../logos/${d.TEAM_NAME}.svg`,
+        title: (d: GamelogSummary) =>
+          `${d.team}\nRecord: ${d.w} - ${d.l}\nOffensive rating: ${d.off_rating}\nDefensive rating: ${d.def_rating}`,
+        src: (d: GamelogSummary) => `../logos/${d.fullname}.svg`,
       }),
       Plot.text(["Offensive Rating"], {
         frameAnchor: "bottom",
@@ -150,28 +236,86 @@ async function main(year: string): Promise<void> {
     .node()
     ?.append(addTooltips(chart));
 
-  const date = new Date(data.updated);
+  const date = new Date(updated);
   select("#updated").html(`data updated ${formatDate(date)} UTC`);
+}
+
+async function prepareGamelogs(
+  year: string
+): Promise<Map<string, TeamGamelogs[]>> {
+  const res = await fetch(`${NBA_DATA_URL}/team_efficiency_${year}.json`);
+  const data = (await res.json()) as TeamGamelogsMeta;
+  // group games by team
+  const byTeam = group(data.games, (d) => d.team_abbreviation);
+  // sort each game list by date
+  byTeam.forEach((val) =>
+    val.sort((a, b) => (a.game_date < b.game_date ? 1 : -1))
+  );
+  console.log(data.games, byTeam);
+  return byTeam;
+}
+
+async function fetchTeams(year: string): Promise<TeamsMeta> {
+  const res = await fetch(`${NBA_DATA_URL}/team_summary_${year}.json`);
+  return (await res.json()) as TeamsMeta;
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
   const year = "2024";
+  let teamsMeta = await fetchTeams(year);
+  let gamelogs = await prepareGamelogs(year);
+  const ngames = parseFloat(
+    (document.querySelector("#ngames") as HTMLInputElement).value
+  );
+  await graph(teamsMeta.teams, gamelogs, ngames, teamsMeta.updated);
 
-  // TODO: allow users to look at n-game windows by using the larger
-  // team_efficiency dataset. This is very unfinished
-  //
-  // const res = await fetch(`${NBA_DATA_URL}/team_efficiency_${year}.json`);
-  // const data = (await res.json()) as TeamEfficiency;
-  // // group by team and sort the games by date
-  // const byTeam = group(data.games, (d) => d.team_abbreviation).forEach((val) =>
-  //   val.sort((a, b) => (a.game_date < b.game_date ? 1 : -1))
-  // );
-  // console.log(data, byTeam);
+  // handle updates on the year selector
+  document.querySelector("#year")?.addEventListener("change", async (evt) => {
+    select("#plot").html("");
+    const year = (evt.target as HTMLInputElement).value;
+    // closes over let binding in above scope ^^^
+    teamsMeta = await fetchTeams(year);
+    gamelogs = await prepareGamelogs(year);
+    await graph(
+      teamsMeta.teams,
+      gamelogs,
+      parseFloat((document.querySelector("#ngames") as HTMLInputElement).value),
+      teamsMeta.updated
+    );
+  });
 
-  await main(year);
-});
-
-document.querySelector("#year")?.addEventListener("change", async (evt) => {
-  select("#plot").html("");
-  await main((evt.target as HTMLInputElement).value);
+  // handle updates to the number of games
+  // TODO: we don't need to re-fetch teams data here
+  document
+    .querySelector("#ngames")
+    ?.addEventListener("change", async (evt: InputEvent) => {
+      console.log("changed");
+      select("#plot").html("");
+      await graph(
+        teamsMeta.teams,
+        gamelogs,
+        parseFloat(
+          (document.querySelector("#ngames") as HTMLInputElement).value
+        ),
+        teamsMeta.updated
+      );
+    });
+  document
+    .querySelector("#ngames")
+    ?.addEventListener("input", async (evt: InputEvent) => {
+      const ngames = parseFloat(
+        (document.querySelector("#ngames") as HTMLInputElement).value
+      );
+      console.log("changed");
+      const actualNGames = [5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90];
+      if (ngames < 10) {
+        (
+          document.querySelector("#gameslabel") as HTMLElement
+        ).innerText = `Last ${actualNGames[ngames]} games`;
+      } else {
+        (
+          document.querySelector("#gameslabel") as HTMLElement
+        ).innerText = `All games`;
+      }
+    });
 });

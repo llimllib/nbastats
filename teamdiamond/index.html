@@ -1,103 +1,137 @@
 <!DOCTYPE html>
 <html>
   <head>
-  <script>
-    // Add the subdomain to the path. https://www.goatcounter.com/help/domains
-    window.goatcounter = {
-      path: function (p) {return location.host + p}
-    }
-  </script>
-  <!-- visitor counter that does not track personal info -->
-  <script data-goatcounter="https://goatcounter.billmill.org/count" async
-    src="//goatcounter.billmill.org/count.js"></script>
-<style>
-body {
-  width: 800px;
-  margin: 40px auto 0 auto;
-  font-family: sans-serif;
-  background-color: #fff9eb;
-}
-#container {
-  position: relative;
-  width: 800px;
-  height: 800px;
-  margin-top: -20px;
-}
-#plot, #quadlabels {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-#quadlabels {
-  z-index: 10;
-  /* we want pointer events to go to the #plot container, not this one */
-  pointer-events: none;
-}
-.ql {
-  text-align: center;
-  padding: 4px;
-  border-radius: 4px;
-  font-size: 17px;
-  font-weight: bold;
-  border: 1px solid black;
-}
-#top_quad {
-  position: absolute;
-  left: 320px;
-  top: 70px;
-  background-color: #9fc3b588;
-}
-#right_quad {
-  position: absolute;
-  left: 650px;
-  top: 350px;
-  background-color: #f1cb9a88;
-}
-#left_quad {
-  position: absolute;
-  left: 20px;
-  top: 350px;
-  background-color: #f1cb9a88;
-}
-#bottom_quad {
-  position: absolute;
-  left: 320px;
-  top: 680px;
-  background-color: #eca5aa88;
-}
-h1, h2 {
-  text-align: center;
-}
-h2 {
-  font-weight: normal;
-}
-</style>
-    <title>NBA Team Efficiency</title>
+    <meta charset="utf-8" />
+    <script>
+      // Add the subdomain to the path. https://www.goatcounter.com/help/domains
+      window.goatcounter = {
+        path: function (p) {
+          return location.host + p;
+        },
+      };
+    </script>
+    <!-- visitor counter that does not track personal info -->
+    <script
+      data-goatcounter="https://goatcounter.billmill.org/count"
+      async
+      src="//goatcounter.billmill.org/count.js"
+    ></script>
+    <style>
+      body {
+        width: 800px;
+        margin: 40px auto 0 auto;
+        font-family: sans-serif;
+        background-color: #fff9eb;
+      }
+      #container {
+        position: relative;
+        width: 800px;
+        height: 800px;
+        margin-top: -20px;
+      }
+      #plot,
+      #quadlabels {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      #quadlabels {
+        z-index: 10;
+        /* we want pointer events to go to the #plot container, not this one */
+        pointer-events: none;
+      }
+      .ql {
+        text-align: center;
+        padding: 4px;
+        border-radius: 4px;
+        font-size: 17px;
+        font-weight: bold;
+        border: 1px solid black;
+      }
+      #top_quad {
+        position: absolute;
+        left: 320px;
+        top: 70px;
+        background-color: #9fc3b588;
+      }
+      #right_quad {
+        position: absolute;
+        left: 650px;
+        top: 350px;
+        background-color: #f1cb9a88;
+      }
+      #left_quad {
+        position: absolute;
+        left: 20px;
+        top: 350px;
+        background-color: #f1cb9a88;
+      }
+      #bottom_quad {
+        position: absolute;
+        left: 320px;
+        top: 680px;
+        background-color: #eca5aa88;
+      }
+      h1,
+      h2 {
+        text-align: center;
+      }
+      h2 {
+        font-weight: normal;
+        margin: 4px;
+      }
+    </style>
+  </head>
+  <title>NBA Team Efficiency</title>
   <body>
     <h1>NBA Team Efficiency</h1>
-    <h2 id="subhead">
-<select name="year" id="year">
-  <option value="2024" selected>2024</option>
-  <option value="2023">2023</option>
-  <option value="2022">2022</option>
-  <option value="2021">2021</option>
-  <option value="2020">2020</option>
-  <option value="2019">2019</option>
-  <option value="2018">2018</option>
-  <option value="2017">2017</option>
-  <option value="2016">2016</option>
-  <option value="2015">2015</option>
-  <option value="2014">2014</option>
-  <option value="2013">2013</option>
-  <option value="2012">2012</option>
-  <option value="2011">2011</option>
-  <option value="2010">2010</option>
-</select> Regular Season</h2>
+    <table class="options" style="margin: auto">
+      <tr>
+        <td><h2>Season</h2></td>
+        <td>
+          <select name="year" id="year">
+            <option value="2024" selected>2024</option>
+            <option value="2023">2023</option>
+            <option value="2022">2022</option>
+            <option value="2021">2021</option>
+            <option value="2020">2020</option>
+            <option value="2019">2019</option>
+            <option value="2018">2018</option>
+            <option value="2017">2017</option>
+            <option value="2016">2016</option>
+            <option value="2015">2015</option>
+            <option value="2014">2014</option>
+            <option value="2013">2013</option>
+            <option value="2012">2012</option>
+            <option value="2011">2011</option>
+            <option value="2010">2010</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td width="200">
+          <h2>
+            <label for="ngames" id="gameslabel">All games</label>
+          </h2>
+        </td>
+        <td>
+          <!-- 5, 10, 15, 20, 30, 40, 50, 60, 70, 80 -->
+          <input
+            type="range"
+            id="ngames"
+            name="ngames"
+            min="0"
+            max="10"
+            value="10"
+            step="1"
+          />
+        </td>
+      </tr>
+    </table>
     <div id="container">
-      <div id="plot">
-      </div>
+      <div id="plot"></div>
       <div id="quadlabels">
         <span class="ql" id="top_quad">Good O and D</span>
         <span class="ql" id="right_quad">Good O, Bad D</span>
@@ -105,10 +139,11 @@ h2 {
         <span class="ql" id="bottom_quad">Bad O, Bad D</span>
       </div>
     </div>
-    <div id="updated" style="margin: auto; text-align: center;">
-    </div>
+    <div id="updated" style="margin: auto; text-align: center"></div>
     <ul>
-      <li><a href="https://github.com/llimllib/nbastats/tree/main">source</a></li>
+      <li>
+        <a href="https://github.com/llimllib/nbastats/tree/main">source</a>
+      </li>
       <li><a href="..">stats visualizer</a></li>
     </ul>
     <script src="index.js"></script>
