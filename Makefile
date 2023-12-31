@@ -64,35 +64,6 @@ dist: dist/index.html dist/index.js teamdiamond
 	cp teamdiamond/index.js dist/teams/
 
 
-# publish to github pages
-# TODO: make this into a github action
-.PHONY: publish
-publish: dist
-	# delete the current gh-pages branch
-	-git branch -D gh-pages
-
-	# copy dist folder to a temp dir
-	$(eval TMP = $(shell mktemp -d))
-	cp -r dist/* $(TMP)
-
-	# get a list of all files in the dist dir, and surround them in quotes
-	# because some have spaces
-	$(eval MANIFEST = $(shell cd dist && find . -type file -not -path '*/\.*' | sed 's,\(.*\),"\1",'))
-
-	# create an empty gh-pages branch (requires a recent-ish git version)
-	git switch --orphan gh-pages
-
-	# copy dist folder into root
-	cp -r $(TMP)/* .
-
-	git add $(MANIFEST)
-	git commit -m "update gh-pages"
-	git push -f -u origin gh-pages
-	git checkout main
-
-	# remove the temp dir
-	rm -rf $(TMP)
-
 # lint the source
 .PHONY: lint
 lint:
