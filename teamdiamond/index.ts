@@ -112,7 +112,7 @@ async function graph(
   const chartSize = 800 / Math.sqrt(2);
 
   // slice the gamelogs
-  const actualNGames = [5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90];
+  const actualNGames = [90, 5, 10, 15, 20, 30, 40, 50, 60, 70, 80];
   // firefox lacks support for entries.map, so fall back on splatting
   const slicedGames = new Map(
     [...gamelogs].map(([x, y]) => [
@@ -307,8 +307,8 @@ window.addEventListener("DOMContentLoaded", async () => {
       const ngames = parseFloat(
         (document.querySelector("#ngames") as HTMLInputElement).value
       );
-      const actualNGames = [5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90];
-      if (ngames < 10) {
+      const actualNGames = [90, 5, 10, 15, 20, 30, 40, 50, 60, 70, 80];
+      if (ngames > 0) {
         (
           document.querySelector("#gameslabel") as HTMLElement
         ).innerText = `Last ${actualNGames[ngames]} games`;
