@@ -10,14 +10,14 @@
     "@duckdb/duckdb-wasm": "^1.11.0",
     "@observablehq/plot": "^0.6.11",
     "byte-base64": "^1.1.0",
-    "d3-svg-to-png": "^0.2.0",
+    "d3-svg-to-png": "^0.3.1",
     "htl": "^0.3.1"
   },
   "devDependencies": {
     "@types/d3": "^7.4.0",
-    "@typescript-eslint/eslint-plugin": "^5.62.0",
-    "@typescript-eslint/parser": "^5.62.0",
-    "esbuild": "^0.15.10",
+    "@typescript-eslint/eslint-plugin": "^6.16.0",
+    "@typescript-eslint/parser": "^6.16.0",
+    "esbuild": "^0.19.11",
     "eslint": "^8.25.0",
     "http-server": "^14.1.1",
     "prettier": "^2.7.1",
