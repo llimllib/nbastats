@@ -60,7 +60,7 @@ export function label(Plot: any): any {
           { name: "z", value: options.z, optional: true },
           { name: "content", value: options.label },
         ],
-        options
+        options,
       );
       this.data = data;
       this.x = options.x;
@@ -78,7 +78,7 @@ export function label(Plot: any): any {
         this.data,
         scales,
         style.width,
-        style.height
+        style.height,
       );
 
       // If two data points are coincident, we may get a null cell. I can't
@@ -120,15 +120,15 @@ export function label(Plot: any): any {
             angle === 0
               ? orient.right
               : angle === 3
-              ? orient.top
-              : angle === 1
-              ? orient.bottom
-              : orient.left
+                ? orient.top
+                : angle === 1
+                  ? orient.bottom
+                  : orient.left,
           );
         })
         .attr("transform", ([d]) => `translate(${d})`)
         .attr("display", ([, cell]) =>
-          -polygonArea(cell) > this.minCellSize ? null : "none"
+          -polygonArea(cell) > this.minCellSize ? null : "none",
         )
         .text((d: any, __: any) => d[2][this.label]);
       return g.node();
@@ -138,12 +138,12 @@ export function label(Plot: any): any {
       data: object[],
       scales: Scales,
       width: number,
-      height: number
+      height: number,
     ): Cell[] {
       const delaunay = Delaunay.from(
         data,
         (d: any) => scales.x(d[this.x]),
-        (d: any) => scales.y(d[this.y])
+        (d: any) => scales.y(d[this.y]),
       );
       const voronoi = delaunay.voronoi([-1, -1, width + 1, height + 1]);
       let cells = data.map(
@@ -151,7 +151,7 @@ export function label(Plot: any): any {
           [scales.x(d[this.x]), scales.y(d[this.y])],
           voronoi.cellPolygon(i),
           d,
-        ]
+        ],
       );
 
       return cells;

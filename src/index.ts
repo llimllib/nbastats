@@ -132,7 +132,7 @@ function makeMarks(series: Series, options: GraphOptions): Markish[] {
         r: rFunc,
         fill: series.customColor,
         fillOpacity: series.opacity / 100,
-      })
+      }),
     );
   } else {
     marks.push(
@@ -142,7 +142,7 @@ function makeMarks(series: Series, options: GraphOptions): Markish[] {
         r: rFunc,
         fill: "#888888",
         fillOpacity: series.opacity / 100,
-      })
+      }),
     );
   }
 
@@ -165,7 +165,7 @@ async function main(options: GraphOptions): Promise<void> {
         fontVariant: "bold",
         fontFamily: "serif",
         dy: 10 - options.marginTop,
-      })
+      }),
     );
   }
 
@@ -176,14 +176,14 @@ async function main(options: GraphOptions): Promise<void> {
         fontSize: 15,
         fontFamily: "serif",
         dy: 35 - options.marginTop,
-      })
+      }),
     );
   }
 
   console.log("making chart with options:", options);
 
   const alldata = Array.from(
-    new Set(options.serieses.reduce((dat, obj) => [...dat, ...obj.data], []))
+    new Set(options.serieses.reduce((dat, obj) => [...dat, ...obj.data], [])),
   );
   alldata.forEach((d) => {
     const xlabel = options.xLabel == "" ? options.xfield : options.xLabel;
@@ -220,8 +220,8 @@ ${ylabel}: ${d[options.yfield]}`;
         x: options.xfield,
         y: options.yfield,
         title: (d: PlayerData) => d.tooltip,
-      })
-    )
+      }),
+    ),
   );
 
   const chart = Plot.plot({
@@ -284,11 +284,11 @@ ${ylabel}: ${d[options.yfield]}`;
   // must actually be any, so disable eslint here
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const jsonOptions = JSON.stringify(options, (key: string, val: any) =>
-    key == "data" ? undefined : val
+    key == "data" ? undefined : val,
   );
   const url = new URL(window.location.toString());
   const stateUrl = `${url.origin}${url.pathname}?options=${encodeURIComponent(
-    base64encode(jsonOptions)
+    base64encode(jsonOptions),
   )}`;
   window.history.replaceState(null, "", stateUrl);
 
@@ -354,7 +354,7 @@ async function initDuckDb(): Promise<duckdb.AsyncDuckDBConnection> {
 /* eslint-disable @typescript-eslint/no-explicit-any */
 async function query(
   conn: duckdb.AsyncDuckDBConnection,
-  query: string
+  query: string,
 ): Promise<any[]> {
   const data = await conn.query(query);
   return data.toArray().map((x) => x.toJSON());
@@ -362,16 +362,16 @@ async function query(
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 async function plotURLOptions(
-  conn: duckdb.AsyncDuckDBConnection
+  conn: duckdb.AsyncDuckDBConnection,
 ): Promise<void> {
   const options = JSON.parse(
     base64decode(
       decodeURIComponent(
         new URL(window.location.toString()).searchParams.get(
-          "options"
-        ) as string
-      )
-    )
+          "options",
+        ) as string,
+      ),
+    ),
   ) as GraphOptions;
 
   // TODO: we should find a way to map these automatically, it is very easy to
@@ -484,7 +484,7 @@ async function plotFields(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
 let firstRun = true;
 
 function rePlot(
-  conn: duckdb.AsyncDuckDBConnection
+  conn: duckdb.AsyncDuckDBConnection,
 ): (evt?: Event) => Promise<void> {
   return async () => {
     // if it's the page's first run, and there is an options object in the URL,
@@ -578,8 +578,9 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
         ".customColor",
         ".color",
         ".filter",
-      ].forEach((s) =>
-        series.querySelector(s)?.addEventListener("change", rePlot(conn))
+      ].forEach(
+        (s) =>
+          series.querySelector(s)?.addEventListener("change", rePlot(conn)),
       );
 
       series
@@ -594,16 +595,16 @@ async function addSeries(conn: duckdb.AsyncDuckDBConnection): Promise<void> {
       // respectively
       const seriesN = Array.from(document.querySelectorAll(".series")).length;
       ($$(".moveSeriesUp") as NodeListOf<Element>).forEach(
-        (node) => ((node as HTMLInputElement).disabled = seriesN == 1)
+        (node) => ((node as HTMLInputElement).disabled = seriesN == 1),
       );
       ($$(".moveSeriesDown") as NodeListOf<Element>).forEach(
-        (node) => ((node as HTMLInputElement).disabled = seriesN == 1)
+        (node) => ((node as HTMLInputElement).disabled = seriesN == 1),
       );
 
       // disable the first up button and last down button
       ($(".moveSeriesUp") as HTMLInputElement).disabled = true;
       const downButtons = Array.from(
-        $$(".moveSeriesDown") as NodeListOf<Element>
+        $$(".moveSeriesDown") as NodeListOf<Element>,
       );
       (downButtons[downButtons.length - 1] as HTMLInputElement).disabled = true;
 
@@ -738,7 +739,7 @@ function setValue(selector: string, value: string | number | boolean): void {
     }
   } catch (err) {
     console.error(
-      `Failed setting selector ${selector} to value ${value}:\n${err}`
+      `Failed setting selector ${selector} to value ${value}:\n${err}`,
     );
   }
 }
@@ -751,7 +752,7 @@ function numValue(selector: string, node: Element = document.body): number {
 // graphing. No other function should be reaching into a series to check its
 // values.
 async function getSerieses(
-  conn: duckdb.AsyncDuckDBConnection
+  conn: duckdb.AsyncDuckDBConnection,
 ): Promise<Series[]> {
   return await Promise.all(
     Array.from(document.querySelectorAll(".series")).map(async (series, i) => {
@@ -775,7 +776,7 @@ async function getSerieses(
         filter: filter,
         data: data,
       };
-    })
+    }),
   );
 }
 
@@ -1001,7 +1002,7 @@ window.addEventListener("DOMContentLoaded", async (_: Event) => {
   const res = await fetch(`${DATA_URL}/metadata.json`);
   const data = (await res.json()) as StatsMeta;
   ($(".updated") as HTMLElement).innerText = `data updated on ${formatDate(
-    new Date(data.updated)
+    new Date(data.updated),
   )} UTC`;
 
   const conn = await initDuckDb();
