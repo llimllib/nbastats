@@ -73,7 +73,7 @@ interface GamelogSummary {
 
 function summary(
   teams: Record<string, TeamData>,
-  games: TeamGamelogs[]
+  games: TeamGamelogs[],
 ): GamelogSummary {
   const totals = {
     poss: 0,
@@ -106,7 +106,7 @@ async function graph(
   teams: Record<string, TeamData>,
   gamelogs: Map<string, TeamGamelogs[]>,
   ngames: number,
-  updated: string
+  updated: string,
 ): Promise<void> {
   const imageSize = 40;
   const chartSize = 800 / Math.sqrt(2);
@@ -118,7 +118,7 @@ async function graph(
     [...gamelogs].map(([x, y]) => [
       x,
       summary(teams, y.slice(0, actualNGames[ngames])),
-    ])
+    ]),
   );
   if (!slicedGames) {
     return;
@@ -129,7 +129,7 @@ async function graph(
   const effExt = extent(
     [...slicedGames]
       .map(([_, summ]) => [summ.def_rating, summ.off_rating])
-      .flat()
+      .flat(),
   );
   if (!effExt[0] || !effExt[1]) return;
   const paddedExtent = [effExt[0] * 0.99, effExt[1] * 1.01];
@@ -167,7 +167,7 @@ async function graph(
         rotate: 45,
         title: (d: GamelogSummary) =>
           `${d.team}\nRecord: ${d.w} - ${d.l}\nOffensive rating: ${twof(
-            d.off_rating
+            d.off_rating,
           )}\nDefensive rating: ${twof(d.def_rating)}`,
         src: (d: GamelogSummary) => `../logos/${d.fullname}.svg`,
       }),
@@ -234,7 +234,7 @@ async function graph(
       "transform",
       ` translate(${(fullSize - 506) / 2} ${(fullSize - 828) / 2}) rotate(-45 ${
         fullSize / 2
-      } ${fullSize / 2})`
+      } ${fullSize / 2})`,
     )
     .node()
     ?.append(addTooltips(chart));
@@ -244,7 +244,7 @@ async function graph(
 }
 
 async function prepareGamelogs(
-  year: string
+  year: string,
 ): Promise<Map<string, TeamGamelogs[]>> {
   const res = await fetch(`${NBA_DATA_URL}/team_efficiency_${year}.json`);
   const data = (await res.json()) as TeamGamelogsMeta;
@@ -252,7 +252,7 @@ async function prepareGamelogs(
   const byTeam = group(data.games, (d) => d.team_abbreviation);
   // sort each game list by date
   byTeam.forEach((val) =>
-    val.sort((a, b) => (a.game_date < b.game_date ? 1 : -1))
+    val.sort((a, b) => (a.game_date < b.game_date ? 1 : -1)),
   );
   return byTeam;
 }
@@ -267,7 +267,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   let teamsMeta = await fetchTeams(year);
   let gamelogs = await prepareGamelogs(year);
   const ngames = parseFloat(
-    (document.querySelector("#ngames") as HTMLInputElement).value
+    (document.querySelector("#ngames") as HTMLInputElement).value,
   );
   await graph(teamsMeta.teams, gamelogs, ngames, teamsMeta.updated);
 
@@ -282,7 +282,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       teamsMeta.teams,
       gamelogs,
       parseFloat((document.querySelector("#ngames") as HTMLInputElement).value),
-      teamsMeta.updated
+      teamsMeta.updated,
     );
   });
 
@@ -296,35 +296,33 @@ window.addEventListener("DOMContentLoaded", async () => {
         teamsMeta.teams,
         gamelogs,
         parseFloat(
-          (document.querySelector("#ngames") as HTMLInputElement).value
+          (document.querySelector("#ngames") as HTMLInputElement).value,
         ),
-        teamsMeta.updated
+        teamsMeta.updated,
       );
     });
   document
     .querySelector("#ngames")
     ?.addEventListener("input", async (evt: InputEvent) => {
       const ngames = parseFloat(
-        (document.querySelector("#ngames") as HTMLInputElement).value
+        (document.querySelector("#ngames") as HTMLInputElement).value,
       );
       const actualNGames = [90, 5, 10, 15, 20, 30, 40, 50, 60, 70, 80];
       if (ngames > 0) {
-        (
-          document.querySelector("#gameslabel") as HTMLElement
-        ).innerText = `Last ${actualNGames[ngames]} games`;
+        (document.querySelector("#gameslabel") as HTMLElement).innerText =
+          `Last ${actualNGames[ngames]} games`;
       } else {
-        (
-          document.querySelector("#gameslabel") as HTMLElement
-        ).innerText = `All games`;
+        (document.querySelector("#gameslabel") as HTMLElement).innerText =
+          `All games`;
       }
       select("#plot").html("");
       await graph(
         teamsMeta.teams,
         gamelogs,
         parseFloat(
-          (document.querySelector("#ngames") as HTMLInputElement).value
+          (document.querySelector("#ngames") as HTMLInputElement).value,
         ),
-        teamsMeta.updated
+        teamsMeta.updated,
       );
     });
 });
