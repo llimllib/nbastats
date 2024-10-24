@@ -2,20 +2,6 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <script>
-      // Add the subdomain to the path. https://www.goatcounter.com/help/domains
-      window.goatcounter = {
-        path: function (p) {
-          return location.host + p;
-        },
-      };
-    </script>
-    <!-- visitor counter that does not track personal info -->
-    <script
-      data-goatcounter="https://goatcounter.billmill.org/count"
-      async
-      src="//goatcounter.billmill.org/count.js"
-    ></script>
     <style>
       body {
         width: 800px;
@@ -23,11 +9,13 @@
         font-family: sans-serif;
         background-color: #fff9eb;
       }
+
       #container {
         position: relative;
         width: 800px;
         height: 800px;
       }
+
       #plot,
       #quadlabels {
         width: 100%;
@@ -36,11 +24,13 @@
         top: 0;
         left: 0;
       }
+
       #quadlabels {
         z-index: 10;
         /* we want pointer events to go to the #plot container, not this one */
         pointer-events: none;
       }
+
       .ql {
         text-align: center;
         padding: 4px;
@@ -49,34 +39,40 @@
         font-weight: bold;
         border: 1px solid black;
       }
+
       #top_quad {
         position: absolute;
         left: 320px;
         top: 70px;
         background-color: #9fc3b588;
       }
+
       #right_quad {
         position: absolute;
         left: 650px;
         top: 350px;
         background-color: #f1cb9a88;
       }
+
       #left_quad {
         position: absolute;
         left: 20px;
         top: 350px;
         background-color: #f1cb9a88;
       }
+
       #bottom_quad {
         position: absolute;
         left: 320px;
         top: 680px;
         background-color: #eca5aa88;
       }
+
       h1,
       h2 {
         text-align: center;
       }
+
       h2 {
         font-weight: normal;
         margin: 4px;
@@ -84,14 +80,18 @@
     </style>
   </head>
   <title>NBA Team Efficiency</title>
+
   <body>
     <h1>NBA Team Efficiency</h1>
     <table class="options" style="margin: auto">
       <tr>
-        <td><h2>Season</h2></td>
+        <td>
+          <h2>Season</h2>
+        </td>
         <td>
           <select name="year" id="year">
-            <option value="2024" selected>2024</option>
+            <option value="2025" selected>2025</option>
+            <option value="2024">2024</option>
             <option value="2023">2023</option>
             <option value="2022">2022</option>
             <option value="2021">2021</option>
