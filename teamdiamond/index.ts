@@ -31,15 +31,16 @@ interface TeamGamelogsMeta {
 }
 
 interface TeamGamelogs {
-  team_abbreviation: string;
+  def_rating: number;
+  game_id: string;
   game_date: string;
   matchup: string;
   off_rating: number;
-  def_rating: number;
-  pts: number;
-  poss: number;
   opp_pts: number;
   opp_poss: number;
+  pts: number;
+  poss: number;
+  team_abbreviation: string;
 }
 
 interface TeamsMeta {
@@ -249,7 +250,15 @@ async function prepareGamelogs(
   const res = await fetch(`${NBA_DATA_URL}/team_efficiency_${year}.json`);
   const data = (await res.json()) as TeamGamelogsMeta;
   // group games by team
-  const byTeam = group(data.games, (d) => d.team_abbreviation);
+  const byTeam = group(
+    data.games.filter(
+      // 002 -> regular season (normal)
+      // 003 -> NBA cup
+      // The intent of this is to filter out 001 (preseason)
+      (g) => g.game_id.startsWith("002") || g.game_id.startsWith("003"),
+    ),
+    (d) => d.team_abbreviation,
+  );
   // sort each game list by date
   byTeam.forEach((val) =>
     val.sort((a, b) => (a.game_date < b.game_date ? 1 : -1)),
