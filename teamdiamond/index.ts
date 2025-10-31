@@ -263,7 +263,7 @@ async function fetchTeams(year: string): Promise<TeamsMeta> {
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
-  const year = "2025";
+  const year = "2026";
   let teamsMeta = await fetchTeams(year);
   let gamelogs = await prepareGamelogs(year);
   const ngames = parseFloat(

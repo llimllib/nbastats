@@ -40,7 +40,7 @@ import pyarrow.parquet as pq
 
 DEBUG = True
 MIN_YEAR = 2010
-MAX_YEAR = 2025
+MAX_YEAR = 2026
 
 # a player key is a 3-tuple of (bb_ref_id, team, year)
 PlayerKey = Tuple[str, str, str]
