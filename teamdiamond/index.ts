@@ -1,9 +1,9 @@
-import * as Plot from "@observablehq/plot";
+import { image, plot, text } from "@observablehq/plot";
 import { select } from "d3-selection";
 import { extent, group } from "d3-array";
 import { format } from "d3-format";
 
-import { addTooltips } from "tooltip";
+import { addTooltips } from "./tooltip.js";
 
 const NBA_DATA_URL = "https://llimllib.github.io/nba_data";
 
@@ -137,7 +137,7 @@ async function graph(
 
   // format a float with two trailing digits
   const twof = format(".2f");
-  const chart = Plot.plot({
+  const chart = plot({
     width: chartSize,
     height: chartSize,
     grid: true,
@@ -160,7 +160,7 @@ async function graph(
       label: "",
     },
     marks: [
-      Plot.image(slicedGames.values(), {
+      image(slicedGames.values(), {
         x: "off_rating",
         y: "def_rating",
         width: imageSize,
@@ -172,14 +172,14 @@ async function graph(
           )}\nDefensive rating: ${twof(d.def_rating)}`,
         src: (d: GamelogSummary) => `../logos/${d.fullname}.svg`,
       }),
-      Plot.text(["Offensive Rating"], {
+      text(["Offensive Rating"], {
         frameAnchor: "bottom",
         dy: 70,
         fontSize: 25,
         fontWeight: "bold",
         textAnchor: "middle",
       }),
-      Plot.text(["Defensive Rating"], {
+      text(["Defensive Rating"], {
         frameAnchor: "Left",
         dx: -60,
         fontSize: 25,
