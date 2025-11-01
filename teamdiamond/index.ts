@@ -299,7 +299,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   // TODO: we don't need to re-fetch teams data here
   document
     .querySelector("#ngames")
-    ?.addEventListener("change", async (evt: InputEvent) => {
+    ?.addEventListener("change", async (_evt: Event) => {
       select("#plot").html("");
       await graph(
         teamsMeta.teams,
@@ -312,7 +312,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
   document
     .querySelector("#ngames")
-    ?.addEventListener("input", async (evt: InputEvent) => {
+    ?.addEventListener("input", async (_evt: Event) => {
       const ngames = parseFloat(
         (document.querySelector("#ngames") as HTMLInputElement).value,
       );

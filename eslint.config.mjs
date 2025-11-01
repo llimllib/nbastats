@@ -8,7 +8,7 @@ export default [
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ["src/**/*.{js,ts,tsx}"],
+    files: ["src/**/*.{js,ts,tsx}", "teamdiamond/**"],
     rules: {
       "@typescript-eslint/no-unused-vars": [
         "error",
