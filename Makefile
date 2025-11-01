@@ -58,3 +58,4 @@ dist: clean dist/index.html dist/index.js
 .PHONY: lint
 lint:
 	npx eslint src/**/*.ts
+	npx eslint teamdiamond/**/*.ts
