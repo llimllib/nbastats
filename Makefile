@@ -4,18 +4,11 @@ DUCKDB_PREREQS = duckdb-mvp.wasm duckdb-eh.wasm duckdb-browser-mvp.worker.js duc
 BUILD_PREREQS_FULL = $(addprefix $(DIST)/duckdb/,$(DUCKDB_PREREQS))
 
 .PHONY: all
-all: teamdiamond dist static
-
-.PHONY: viewer
-viewer: dist/index.html dist/index.js
+all: dist static
 
 .PHONY: static
 static:
 	cp -r logos dist/
-
-.PHONY: teamdiamond
-teamdiamond:
-	make -C teamdiamond all
 
 $(BUILD_PREREQS_FULL):
 	mkdir -p dist/duckdb
@@ -29,9 +22,9 @@ dist/index.html: src/index.html
 	cp src/index.html dist/
 
 # if our source files have changed, rebuild the otuput bundle
-dist/index.js: src/index.ts src/labels.ts src/teams.ts src/stats_meta.ts package-lock.json $(BUILD_PREREQS_FULL) esbuild.config.mjs
+dist/index.js: teamdiamond/index.ts src/index.ts src/labels.ts src/teams.ts src/stats_meta.ts package-lock.json $(BUILD_PREREQS_FULL) esbuild.config.mjs
 	npx tsc --noEmit --skipLibCheck && \
-		node esbuild.config.mjs
+		node esbuild.config.mjs production
 
 # clean up the build files
 .PHONY: clean
@@ -50,21 +43,19 @@ serve:
 .PHONY: deps
 deps: package.json package-lock.json
 	npm ci
-	make -C teamdiamond ci
 
 # build everything that goes in dist
 .PHONY: dist
-dist: dist/index.html dist/index.js teamdiamond
+dist: clean dist/index.html dist/index.js
 	cp favicon.ico dist/
 
-	rm -rf dist/teams
 	mkdir -p dist/teams
 	cp -r logos dist/logos
 	cp teamdiamond/index.html dist/teams/
-	cp teamdiamond/index.js dist/teams/
 
 
 # lint the source
 .PHONY: lint
 lint:
 	npx eslint src/**/*.ts
+	npx eslint teamdiamond/**/*.ts

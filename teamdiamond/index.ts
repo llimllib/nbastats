@@ -1,9 +1,9 @@
-import * as Plot from "@observablehq/plot";
+import { image, plot, text } from "@observablehq/plot";
 import { select } from "d3-selection";
 import { extent, group } from "d3-array";
 import { format } from "d3-format";
 
-import { addTooltips } from "tooltip";
+import { addTooltips } from "./tooltip.js";
 
 const NBA_DATA_URL = "https://llimllib.github.io/nba_data";
 
@@ -129,7 +129,7 @@ async function graph(
   // efficiencies, flatten the list, and pad it out a bit
   const effExt = extent(
     [...slicedGames]
-      .map(([_, summ]) => [summ.def_rating, summ.off_rating])
+      .map(([, summ]) => [summ.def_rating, summ.off_rating])
       .flat(),
   );
   if (!effExt[0] || !effExt[1]) return;
@@ -137,7 +137,7 @@ async function graph(
 
   // format a float with two trailing digits
   const twof = format(".2f");
-  const chart = Plot.plot({
+  const chart = plot({
     width: chartSize,
     height: chartSize,
     grid: true,
@@ -160,7 +160,7 @@ async function graph(
       label: "",
     },
     marks: [
-      Plot.image(slicedGames.values(), {
+      image(slicedGames.values(), {
         x: "off_rating",
         y: "def_rating",
         width: imageSize,
@@ -172,15 +172,15 @@ async function graph(
           )}\nDefensive rating: ${twof(d.def_rating)}`,
         src: (d: GamelogSummary) => `../logos/${d.fullname}.svg`,
       }),
-      Plot.text(["Offensive Rating"], {
+      text(["Offensive Rating"], {
         frameAnchor: "bottom",
         dy: 70,
         fontSize: 25,
         fontWeight: "bold",
         textAnchor: "middle",
       }),
-      Plot.text(["Defensive Rating"], {
-        frameAnchor: "Left",
+      text(["Defensive Rating"], {
+        frameAnchor: "left",
         dx: -60,
         fontSize: 25,
         fontWeight: "bold",
@@ -299,7 +299,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   // TODO: we don't need to re-fetch teams data here
   document
     .querySelector("#ngames")
-    ?.addEventListener("change", async (evt: InputEvent) => {
+    ?.addEventListener("change", async (_evt: Event) => {
       select("#plot").html("");
       await graph(
         teamsMeta.teams,
@@ -312,7 +312,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     });
   document
     .querySelector("#ngames")
-    ?.addEventListener("input", async (evt: InputEvent) => {
+    ?.addEventListener("input", async (_evt: Event) => {
       const ngames = parseFloat(
         (document.querySelector("#ngames") as HTMLInputElement).value,
       );
