@@ -14,7 +14,10 @@ esbuild
     banner: {
       js: banner,
     },
-    entryPoints: ["src/index.ts"],
+    entryPoints: {
+      index: "src/index.ts",
+      "teams/index": "teamdiamond/index.ts",
+    },
     bundle: true,
     external: [],
     format: "cjs",
@@ -22,7 +25,7 @@ esbuild
     logLevel: "info",
     sourcemap: prod ? false : "inline",
     treeShaking: true,
-    outfile: "dist/index.js",
+    outdir: "dist",
     minify: true,
     define: {
       "process.env.DATA_URL":

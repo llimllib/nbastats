@@ -4,7 +4,7 @@ DUCKDB_PREREQS = duckdb-mvp.wasm duckdb-eh.wasm duckdb-browser-mvp.worker.js duc
 BUILD_PREREQS_FULL = $(addprefix $(DIST)/duckdb/,$(DUCKDB_PREREQS))
 
 .PHONY: all
-all: teamdiamond dist static
+all: dist static
 
 .PHONY: viewer
 viewer: dist/index.html dist/index.js
@@ -12,10 +12,6 @@ viewer: dist/index.html dist/index.js
 .PHONY: static
 static:
 	cp -r logos dist/
-
-.PHONY: teamdiamond
-teamdiamond:
-	make -C teamdiamond all
 
 $(BUILD_PREREQS_FULL):
 	mkdir -p dist/duckdb
@@ -50,18 +46,15 @@ serve:
 .PHONY: deps
 deps: package.json package-lock.json
 	npm ci
-	make -C teamdiamond ci
 
 # build everything that goes in dist
 .PHONY: dist
-dist: dist/index.html dist/index.js teamdiamond
+dist: clean dist/index.html dist/index.js
 	cp favicon.ico dist/
 
-	rm -rf dist/teams
 	mkdir -p dist/teams
 	cp -r logos dist/logos
 	cp teamdiamond/index.html dist/teams/
-	cp teamdiamond/index.js dist/teams/
 
 
 # lint the source
