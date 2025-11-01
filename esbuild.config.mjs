@@ -22,7 +22,7 @@ const sharedConfig = {
   minify: true,
 };
 
-const res = await Promise.all([
+Promise.all([
   esbuild.build({
     ...sharedConfig,
     entryPoints: ["src/index.ts"],
@@ -39,7 +39,6 @@ const res = await Promise.all([
     entryPoints: ["teamdiamond/index.ts"],
     target: "es2020",
     outfile: "dist/teams/index.js",
-    metafile: true,
     define: {
       "process.env.DATA_URL":
         JSON.stringify(process.env.DATA_URL) ||
@@ -47,5 +46,3 @@ const res = await Promise.all([
     },
   }),
 ]).catch(() => process.exit(1));
-
-console.log(await esbuild.analyzeMetafile(res[1].metafile));
