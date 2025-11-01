@@ -6,9 +6,6 @@ BUILD_PREREQS_FULL = $(addprefix $(DIST)/duckdb/,$(DUCKDB_PREREQS))
 .PHONY: all
 all: dist static
 
-.PHONY: viewer
-viewer: dist/index.html dist/index.js
-
 .PHONY: static
 static:
 	cp -r logos dist/
@@ -25,9 +22,9 @@ dist/index.html: src/index.html
 	cp src/index.html dist/
 
 # if our source files have changed, rebuild the otuput bundle
-dist/index.js: src/index.ts src/labels.ts src/teams.ts src/stats_meta.ts package-lock.json $(BUILD_PREREQS_FULL) esbuild.config.mjs
+dist/index.js: teamdiamond/index.ts src/index.ts src/labels.ts src/teams.ts src/stats_meta.ts package-lock.json $(BUILD_PREREQS_FULL) esbuild.config.mjs
 	npx tsc --noEmit --skipLibCheck && \
-		node esbuild.config.mjs
+		node esbuild.config.mjs production
 
 # clean up the build files
 .PHONY: clean
