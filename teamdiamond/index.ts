@@ -129,7 +129,7 @@ async function graph(
   // efficiencies, flatten the list, and pad it out a bit
   const effExt = extent(
     [...slicedGames]
-      .map(([_, summ]) => [summ.def_rating, summ.off_rating])
+      .map(([, summ]) => [summ.def_rating, summ.off_rating])
       .flat(),
   );
   if (!effExt[0] || !effExt[1]) return;
@@ -180,7 +180,7 @@ async function graph(
         textAnchor: "middle",
       }),
       text(["Defensive Rating"], {
-        frameAnchor: "Left",
+        frameAnchor: "left",
         dx: -60,
         fontSize: 25,
         fontWeight: "bold",
