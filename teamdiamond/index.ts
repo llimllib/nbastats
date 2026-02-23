@@ -252,10 +252,13 @@ async function prepareGamelogs(
   // group games by team
   const byTeam = group(
     data.games.filter(
-      // 002 -> regular season (normal)
-      // 003 -> NBA cup
-      // The intent of this is to filter out 001 (preseason)
-      (g) => g.game_id.startsWith("002") || g.game_id.startsWith("003"),
+      // group games by team
+      // Game ID prefixes:
+      //   001 -> preseason
+      //   002 -> regular season + NBA Cup (except final)
+      //   003 -> All-Star games (have null team_abbreviation)
+      //   006 -> NBA Cup final
+      (g) => g.team_abbreviation !== null && g.game_id.startsWith("002"),
     ),
     (d) => d.team_abbreviation,
   );
